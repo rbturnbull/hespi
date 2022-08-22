@@ -8,9 +8,9 @@ readme = "README.rst"
 
 [tool.poetry.dependencies]
 python = "^3.8"
-rich = "^12.5.1"
+rich = "^10.16.1"
 yolov5 = "^6.1.8"
-fastapp = {git = "https://github.com/rbturnbull/fastapp.git", branch = "main"}
+pytesseract = "^0.3.10"
 
 [tool.poetry.dev-dependencies]
 pytest = "^6.2.5"

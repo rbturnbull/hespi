@@ -7,6 +7,10 @@ import tempfile
 from shutil import move
 from PIL import Image
 from collections import defaultdict
+import pytesseract
+# from fastapp.examples.image_classifier import ImageClassifier
+# fastapp = {git = "https://github.com/rbturnbull/fastapp.git", branch = "main"}
+
 
 console = Console()
 
@@ -53,7 +57,7 @@ def yolo_output(model, images, output_dir):
 @app.command()
 def main(images:List[Path], output_dir:Path=Path("output")):
     """
-    HErbarium SPecimen sheet Inference
+    HErbarium Specimen sheet PIpeline
 
     Takes a herbarium specimen sheet image and:
     - detects components such as the institutional label, swatch, etc.
@@ -73,6 +77,10 @@ def main(images:List[Path], output_dir:Path=Path("output")):
     institutional_label_fields_weights_path = "institutional-label-fields.pt"
     institutional_label_fields_model = YOLOv5(institutional_label_fields_weights_path, device)
 
+    # ImageClassifier
+    # institutional_label_classifier = ImageClassifier()
+    # institutional_label_classifier_weights = "institutional-label-classifier.pkl"
+
     # Sheet-Components predictions
     component_files = yolo_output( sheet_component_model, images, output_dir=output_dir )
 
@@ -80,6 +88,22 @@ def main(images:List[Path], output_dir:Path=Path("output")):
     for stub, components in component_files.items():
         for component in components:
             if component.name.endswith("institutional_label.jpg"):
-                field_files = yolo_output( institutional_label_fields_model, [component], output_dir=output_dir/stub/ )
+                field_files = yolo_output( institutional_label_fields_model, [component], output_dir=output_dir/stub )
 
-                # TODO Institutional Label Classification
+                # Institutional Label Classification
+                # breakpoint()
+                # classifier_results = institutional_label_classifier([component], pretrained=institutional_label_classifier_weights)
+
+                # Tesseract OCR
+                for institution_stub, fields in field_files.items():
+                    for field in fields:
+                        print("field_file:", field)
+                        text = pytesseract.image_to_string(str(field)).strip()
+                        if text:
+                            text_path = field.parent/(field.name[:-3] + "txt")
+                            print(f"Writing '{text}' to '{text_path}'")
+                            text_path.write_text(text+"\n")
+                
+                # TODO HTR
+
+    # Report

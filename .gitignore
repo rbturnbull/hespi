@@ -6,6 +6,7 @@ outputs/*
 output/
 runs/
 *.pt
+*.pkl
 
 
 # From https://github.com/github/gitignore/blob/main/Python.gitignore
