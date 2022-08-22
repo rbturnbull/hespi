@@ -43,7 +43,7 @@ def yolo_output(model, images, output_dir):
             output_filename = image_output_dir/f"{stub}.{prediction_index}.{category}.jpg"
             console.print(f"Saving {category} to '{output_filename}'")
             im_crop.save(output_filename)    
-            output_files[image].append(output_filename)
+            output_files[stub].append(output_filename)
     
     tmp_dir.cleanup()
 
@@ -75,51 +75,11 @@ def main(images:List[Path], output_dir:Path=Path("output")):
 
     # Sheet-Components predictions
     component_files = yolo_output( sheet_component_model, images, output_dir=output_dir )
+
+    # Institutional Label Field Detection Model Predictions
     for stub, components in component_files.items():
         for component in components:
             if component.name.endswith("institutional_label.jpg"):
-                field_files = yolo_output( institutional_label_fields_model, [component], output_dir=output_dir/stub/"fields" )
+                field_files = yolo_output( institutional_label_fields_model, [component], output_dir=output_dir/stub/ )
 
-
-    # results = sheet_component_model.predict(images)
-    # tmp_dir = tempfile.TemporaryDirectory()
-    # tmp_dir_path = Path(tmp_dir.name)
-    # results.save( save_dir=tmp_dir_path )
-
-    # for image, predictions in zip(images, results.pred):
-    #     last_period = image.name.rfind(".")
-    #     stub = image.name[:last_period] if last_period else image.name
-    #     image_output_dir = output_dir/stub
-    #     image_output_dir.mkdir(exist_ok=True, parents=True)
-    #     prediction_path = image_output_dir/f"{stub}-predictions.jpg"
-    #     console.print(f"Saving sheet component predicitons with bounding boxes to '{prediction_path}'")
-    #     move(tmp_dir_path/f"{stub}.jpg", prediction_path)
-
-    #     for prediction_index, prediction in enumerate(predictions):
-    #         category_index = prediction[5].int().numpy()
-    #         category = results.names[category_index].replace(" ", "_").replace(":","").strip()
-
-    #         x0, y0, x1, y1 = prediction[:4].numpy()
-            
-    #         # open image
-    #         im = Image.open(image)
-    #         im_crop = im.crop((x0, y0, x1, y1))
-    #         output_filename = image_output_dir/f"{stub}.{prediction_index}.{category}.jpg"
-    #         console.print(f"Saving {category} to '{output_filename}'")
-    #         im_crop.save(output_filename)
-
-    #         breakpoint()
-
-    #         # Institutional Label Field Detection Model Predictions
-    #         if category == "institutional_label":
-    #             field_results = institutional_label_fields_model.predict(output_filename)
-    #             field_results.save( save_dir=tmp_dir_path )
-    #             field_predictions = field_results.pred[0]
-
-    #             # TODO Institutional Label Classification
-    # for image, predictions in zip(images, results.pred):
-
-    #             # OCR/HTR
-
-    # tmp_dir.cleanup()
-    # Report
+                # TODO Institutional Label Classification
