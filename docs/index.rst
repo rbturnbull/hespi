@@ -16,8 +16,10 @@ HErbarium Specimen sheet PIpeline
    :maxdepth: 2
    :caption: Contents:
 
-   api
-   cli
+   quickstart
+   .. cli
+   development
+   contributing
    credits
 
 Indices and tables

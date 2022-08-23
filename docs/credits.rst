@@ -2,7 +2,6 @@
 Credits
 =======================
 
-Robert Turnbull
-For more information contact: <robert.turnbull@unimelb.edu.au>
+Robert Turnbull, Karen Thompson, Emily Fitzgerald, Jo Birch
 
-Created using fastapp (https://github.com/rbturnbull/fastapp).
+Publication details to follow.
