@@ -31,9 +31,9 @@ def yolo_output(model, images, output_dir):
         stub = image.name[:last_period] if last_period else image.name
         image_output_dir = output_dir/stub
         image_output_dir.mkdir(exist_ok=True, parents=True)
-        prediction_path = image_output_dir/f"{stub}-predictions.jpg"
+        prediction_path = image_output_dir/f"{stub}-predictions.png"
         console.print(f"Saving sheet component predicitons with bounding boxes to '{prediction_path}'")
-        move(tmp_dir_path/f"{stub}.jpg", prediction_path)
+        move(tmp_dir_path/f"{stub}.png", prediction_path)
 
         for prediction_index, prediction in enumerate(predictions):
             category_index = prediction[5].int().numpy()
@@ -44,7 +44,7 @@ def yolo_output(model, images, output_dir):
             # open image
             im = Image.open(image)
             im_crop = im.crop((x0, y0, x1, y1))
-            output_filename = image_output_dir/f"{stub}.{prediction_index}.{category}.jpg"
+            output_filename = image_output_dir/f"{stub}.{prediction_index}.{category}.png"
             console.print(f"Saving {category} to '{output_filename}'")
             im_crop.save(output_filename)    
             output_files[stub].append(output_filename)
@@ -87,7 +87,7 @@ def main(images:List[Path], output_dir:Path=Path("output")):
     # Institutional Label Field Detection Model Predictions
     for stub, components in component_files.items():
         for component in components:
-            if component.name.endswith("institutional_label.jpg"):
+            if component.name.endswith("institutional_label.png"):
                 field_files = yolo_output( institutional_label_fields_model, [component], output_dir=output_dir/stub )
 
                 # Institutional Label Classification

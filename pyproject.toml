@@ -11,6 +11,7 @@ python = "^3.8"
 rich = "^10.16.1"
 yolov5 = "^6.1.8"
 pytesseract = "^0.3.10"
+typer = "^0.6.1"
 
 
 [tool.poetry.dev-dependencies]
