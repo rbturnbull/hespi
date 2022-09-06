@@ -74,4 +74,5 @@ def detect(
                 
                 # TODO HTR
 
+    print('csv output')
     # Report
