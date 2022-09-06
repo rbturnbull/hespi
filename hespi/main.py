@@ -6,6 +6,7 @@ import pytesseract
 from torchapp.examples.image_classifier import ImageClassifier
 from rich.console import Console
 from .yolo import yolo_output
+import pandas as pd
 
 
 console = Console()
@@ -77,7 +78,9 @@ def detect(
                 print(row)
                 data[str(field).split('/')[-1].split('.')[0]] = row
                 # TODO HTR
-
-    print('csv output')
-    print(data)
+    
+    df = pd.DataFrame.from_dict(data)
+    df.reset_index()
+    print(df)
+    df.to_csv(output_dir) 
     # Report
