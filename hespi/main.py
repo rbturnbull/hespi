@@ -8,7 +8,6 @@ from rich.console import Console
 from .yolo import yolo_output
 import pandas as pd
 import numpy as np
-from importlib import resources
 
 
 console = Console()
@@ -112,7 +111,7 @@ def csv_creation(data, output_dir):
 
     # currently exact matches based of what is in Specify - to be updated
 
-    ref = pd.read_csv(resources.path("hespi", "data/maria_db_plants.csv"))
+    ref = pd.read_csv('https://raw.githubusercontent.com/rbturnbull/hespi/csv/data/maria_db_plants.csv')
     
     df["family_match"] = np.where(df['family'].isin(ref['family']), True, False)
     df.loc[(df['family'].isna())|(df['family']==''), 'family_match'] = ''
