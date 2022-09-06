@@ -113,17 +113,11 @@ def csv_creation(data, output_dir):
 
     ref = pd.read_csv('https://raw.githubusercontent.com/rbturnbull/hespi/csv/data/maria_db_plants.csv')
     
-    df["family_match"] = np.where(df['family'].isin(ref['family']), True, False)
-    df.loc[(df['family'].isna())|(df['family']==''), 'family_match'] = ''
+    match_cols = ['family', 'genus', 'species', 'authority']
 
-    df["genus_match"] = np.where(df['genus'].isin(ref['genus']), True, False)
-    df.loc[(df['genus'].isna())|(df['genus']==''), 'genus_match'] = ''
-
-    df["species_match"] = np.where(df['species'].isin(ref['species']), True, False)
-    df.loc[(df['species'].isna())|(df['species']==''), 'species_match'] = ''
-
-    df["authority_match"] = np.where(df['authority'].isin(ref['Author']), True, False)
-    df.loc[(df['authority'].isna())|(df['authority']==''), 'authority_match'] = ''
+    for col in match_cols:
+        df[f"{col}_match"] = np.where(df[col].isin(ref[col]), True, False)
+        df.loc[(df[col].isna())|(df[col]==''), f"{col}_match"] = ''
 
     # CSV output
     df.to_csv(str(output_dir)+'/ocr_results.csv', index=False) 
