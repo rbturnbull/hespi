@@ -5,6 +5,7 @@ from yolov5 import YOLOv5
 import pytesseract
 from torchapp.examples.image_classifier import ImageClassifier
 from rich.console import Console
+import pandas as pd
 from .yolo import yolo_output
 
 
@@ -59,17 +60,32 @@ def detect(
                 field_files = yolo_output( institutional_label_fields_model, [component], output_dir=output_dir/stub )
 
                 # Institutional Label Classification
-                # classifier_results = institutional_label_classifier([component], pretrained=institutional_label_classifier_weights)
-                # breakpoint()
+                classification_csv = component.parent/f"{component.name[:3]}.classification.csv"
+                console.print(f"Classifying institution label: '{component}'")
+                console.print(f"Saving result to '{classification_csv}'")
+                classifier_results = institutional_label_classifier(
+                    items=component, 
+                    pretrained=institutional_label_classifier_weights, 
+                    gpu=gpu, 
+                    output_csv=classification_csv,
+                    verbose=False,
+                )
+
+                if isinstance(classifier_results, pd.DataFrame):
+                    classiciation = classifier_results.iloc[0]['prediction']
+                    console.print(f"'{component}' classified as '[red]{classiciation}[/red]'.")
+                else:
+                    console.print(f"Could not get classification of institutional label '{component}'")
+                    classiciation = None
 
                 # Tesseract OCR
                 for institution_stub, fields in field_files.items():
                     for field in fields:
-                        print("field_file:", field)
+                        console.print("field_file:", field)
                         text = pytesseract.image_to_string(str(field)).strip()
                         if text:
                             text_path = field.parent/(field.name[:-3] + "txt")
-                            print(f"Writing '{text}' to '{text_path}'")
+                            console.print(f"Writing [red]'{text}'[/red] to '{text_path}'")
                             text_path.write_text(text+"\n")
                 
                 # TODO HTR
