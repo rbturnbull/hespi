@@ -79,8 +79,8 @@ def detect(
                 data[str(field).split('/')[-1].split('.')[0]] = row
                 # TODO HTR
     
-    df = pd.DataFrame.from_dict(data)
+    df = pd.DataFrame.from_dict(data, orient='index')
     df.reset_index()
     print(df)
-    df.to_csv(output_dir) 
+    df.to_csv(str(output_dir)+'/ocr_results.csv') 
     # Report
