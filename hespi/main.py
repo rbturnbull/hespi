@@ -75,12 +75,24 @@ def detect(
                             text_path.write_text(text+"\n")
 
                             row[field.name.split('.')[-2]]=text
-                print(row)
+                
                 data[str(field).split('/')[-1].split('.')[0]] = row
                 # TODO HTR
-    
+
+    # Creating CSV export
     df = pd.DataFrame.from_dict(data, orient='index')
-    df.reset_index()
+    df = df.reset_index().rename(columns={"index": "image"})
+
+    col_options = ['image', 'family', 'genus', 'species', 'infrasp taxon', 
+                    'authority', 'collector_number', 'collector', 
+                    'locality', 'geolocation', 'year', 'month', 'day']
+
+    cols = [col for col in col_options if col in df.columns]
+    extra_cols = [col for col in df.columns if col not in col_options]
+    cols = cols + extra_cols
+
+    df = df[cols]
+
     print(df)
     df.to_csv(str(output_dir)+'/ocr_results.csv') 
     # Report
