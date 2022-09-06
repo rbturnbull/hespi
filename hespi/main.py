@@ -99,7 +99,6 @@ def detect(
 
     csv_creation(data, output_dir)
 
-    # Report
 
 
 def csv_creation(data, output_dir):
@@ -127,8 +126,8 @@ def csv_creation(data, output_dir):
     # removing result if original column is blank for easier reading
 
     # currently exact matches based of what is in Specify - to be updated
-
-    ref = pd.read_csv('https://raw.githubusercontent.com/rbturnbull/hespi/csv/data/maria_db_plants.csv')
+    plants_csv = Path(__file__).parent/"data/plants.csv"
+    ref = pd.read_csv(plants_csv)
     
     match_cols = ['family', 'genus', 'species', 'authority']
 
