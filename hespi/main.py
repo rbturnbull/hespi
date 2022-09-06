@@ -52,6 +52,7 @@ def detect(
     # Sheet-Components predictions
     component_files = yolo_output( sheet_component_model, images, output_dir=output_dir )
 
+    data = {}
     # Institutional Label Field Detection Model Predictions
     for stub, components in component_files.items():
         for component in components:
@@ -61,7 +62,7 @@ def detect(
                 # Institutional Label Classification
                 # classifier_results = institutional_label_classifier([component], pretrained=institutional_label_classifier_weights)
                 # breakpoint()
-
+                row = {}
                 # Tesseract OCR
                 for institution_stub, fields in field_files.items():
                     for field in fields:
@@ -71,8 +72,12 @@ def detect(
                             text_path = field.parent/(field.name[:-3] + "txt")
                             print(f"Writing '{text}' to '{text_path}'")
                             text_path.write_text(text+"\n")
-                
+
+                            row[field.name[:-3]]=text
+                print(row)
+                data[str(field)] = row
                 # TODO HTR
 
     print('csv output')
+    print(data)
     # Report
