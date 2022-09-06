@@ -87,12 +87,11 @@ def detect(
                     'authority', 'collector_number', 'collector', 
                     'locality', 'geolocation', 'year', 'month', 'day']
 
-    cols = [col for col in col_options if col in df.columns]
+    missing_cols = [col for col in col_options if col not in df.columns]
+    df[missing_cols] = ''
     extra_cols = [col for col in df.columns if col not in col_options]
-    cols = cols + extra_cols
-
+    cols = col_options + extra_cols
     df = df[cols]
 
-    print(df)
-    df.to_csv(str(output_dir)+'/ocr_results.csv') 
+    df.to_csv(str(output_dir)+'/ocr_results.csv', index=False) 
     # Report
