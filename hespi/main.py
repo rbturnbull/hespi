@@ -75,7 +75,7 @@ def detect(
 
                             row[field.name.split('.')[-2]]=text
                 print(row)
-                data[field.split('/')[-1].split('.')[0]] = row
+                data[str(field).split('/')[-1].split('.')[0]] = row
                 # TODO HTR
 
     print('csv output')
