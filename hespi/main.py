@@ -7,6 +7,7 @@ from torchapp.examples.image_classifier import ImageClassifier
 from rich.console import Console
 from .yolo import yolo_output
 import pandas as pd
+import numpy as np
 
 
 console = Console()
@@ -79,10 +80,21 @@ def detect(
                 data[str(field).split('/')[-1].split('.')[0]] = row
                 # TODO HTR
 
-    # Creating CSV export
+    csv_creation(data, output_dir)
+
+    # Report
+
+
+def csv_creation(data, output_dir):
+    """Function to create a df on data, check if OCR output is a known value,
+    and output a csv with OCR values"""
+
+    # create dataframe
     df = pd.DataFrame.from_dict(data, orient='index')
     df = df.reset_index().rename(columns={"index": "image"})
 
+    # insert columns not included in dataframe, and re-order
+    # including any columns not included in col_options to account for any updates
     col_options = ['image', 'family', 'genus', 'species', 'infrasp taxon', 
                     'authority', 'collector_number', 'collector', 
                     'locality', 'geolocation', 'year', 'month', 'day']
@@ -93,5 +105,26 @@ def detect(
     cols = col_options + extra_cols
     df = df[cols]
 
+    # checking to see if species values are known species
+    # adding a column with True/False if known
+    # removing result if original column is blank for easier reading
+
+    # currently exact matches based of what is in Specify - to be updated
+
+    ref = pd.read_csv('maria_db_plants.csv')
+
+    df["family_match"] = np.where(df['family'].isin(ref['family']), True, False)
+    df.loc[(df['family'].isna())|(df['family']==''), 'family_match'] = ''
+
+    df["genus_match"] = np.where(df['genus'].isin(ref['genus']), True, False)
+    df.loc[(df['genus'].isna())|(df['genus']==''), 'genus_match'] = ''
+
+    df["species_match"] = np.where(df['species'].isin(ref['species']), True, False)
+    df.loc[(df['species'].isna())|(df['species']==''), 'species_match'] = ''
+
+    df["authority_match"] = np.where(df['authority'].isin(ref['Author']), True, False)
+    df.loc[(df['authority'].isna())|(df['authority']==''), 'authority_match'] = ''
+
+    # CSV output
     df.to_csv(str(output_dir)+'/ocr_results.csv', index=False) 
-    # Report
+    return df
