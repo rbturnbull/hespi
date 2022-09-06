@@ -111,7 +111,7 @@ def csv_creation(data, output_dir):
 
     # currently exact matches based of what is in Specify - to be updated
 
-    ref = pd.read_csv('maria_db_plants.csv')
+    ref = pd.read_csv('hespi/maria_db_plants.csv')
 
     df["family_match"] = np.where(df['family'].isin(ref['family']), True, False)
     df.loc[(df['family'].isna())|(df['family']==''), 'family_match'] = ''
