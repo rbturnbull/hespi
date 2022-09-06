@@ -73,9 +73,9 @@ def detect(
                             print(f"Writing '{text}' to '{text_path}'")
                             text_path.write_text(text+"\n")
 
-                            row[field.name[:-3]]=text
+                            row[field.name.split('.')[-2]]=text
                 print(row)
-                data[str(field)] = row
+                data[field.split('/')[-1].split('.')[0]] = row
                 # TODO HTR
 
     print('csv output')
