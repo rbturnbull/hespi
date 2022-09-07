@@ -64,16 +64,10 @@ Install phytest using pip:
 
 .. code-block:: bash
 
-    pip install git+https://github.com/rbturnbull/hespi.git
+    pip install hespi
 
-At the moment it requires that the model weight files are in the working directory:
+The first time it runs, it will download the required model weights from the internet.
 
-- sheet-component-weights.pt
-- institutional-label-fields.pt
-
-.. note ::
-
-    Soon these will download automatically.
 
 Usage
 ==================================
@@ -97,5 +91,16 @@ The detected components and text fields will be cropped and stored in the output
 Credits
 ==================================
 
-* Robert Turnbull, Karen Thompson, Emily Fitzgerald, Jo Birch
+.. start-credits
 
+Robert Turnbull, Karen Thompson, Emily Fitzgerald, Jo Birch.
+
+Publication and citation details to follow.
+
+This pipeline depends on `YOLOv5 <https://github.com/ultralytics/yolov5>`_, 
+`torchapp <https://github.com/rbturnbull/torchapp>`_,
+Microsoft's `TrOCR <https://www.microsoft.com/en-us/research/publication/trocr-transformer-based-optical-character-recognition-with-pre-trained-models/>`_.
+
+Logo derived from artwork by `ka reemov <https://thenounproject.com/icon/plant-1386076/>`_.
+
+.. end-credits
