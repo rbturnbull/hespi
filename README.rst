@@ -90,7 +90,7 @@ This will prompt you to specify an output directory. You can set the output dire
 
     hespi images/*.tif --output-dir ./hespi-output
 
-The detected components and text fields will be 
+The detected components and text fields will be cropped and stored in the output directory. There will also be a CSV file with the text recognition results for any institutional labels found.
 
 .. end-quickstart
 
