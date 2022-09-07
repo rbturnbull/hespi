@@ -134,7 +134,6 @@ def detect(
 
                             if ocr_text != text_adjusted:
                                 console.print(f"OCR text [red]'{ocr_text}'[/red] adjusted to [purple]'{text_adjusted}'[/purple]")
-                                breakpoint()
 
                             row[field] = text_adjusted
                             row[f"{field}_ocr"] = ocr_text
