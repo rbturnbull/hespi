@@ -3,14 +3,14 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to hespi's documentation!
+Hespi
 ===========================================================
 
 .. include:: ../README.rst
    :start-after: start-badges
    :end-before: end-badges
 
-HErbarium Specimen sheet PIpeline
+.. image:: https://raw.githubusercontent.com/rbturnbull/hespi/main/docs/images/hespi-banner.svg
 
 .. toctree::
    :maxdepth: 2
