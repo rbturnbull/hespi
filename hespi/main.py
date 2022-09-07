@@ -152,7 +152,6 @@ def detect(
                 )
 
                 # Get classification of institution label
-                #
                 if isinstance(classifier_results, pd.DataFrame):
                     classification = classifier_results.iloc[0]["prediction"]
                     row["label_classification"] = classification
