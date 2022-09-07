@@ -21,7 +21,7 @@
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Development" href="development.html" />
+    <link rel="next" title="Command Line Interface Reference" href="cli.html" />
     <link rel="prev" title="Hespi" href="index.html" /> 
 </head>
 
@@ -47,6 +47,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#usage">Usage</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="cli.html">Command Line Interface Reference</a></li>
 <li class="toctree-l1"><a class="reference internal" href="development.html">Development</a></li>
 <li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="credits.html">Credits</a></li>
@@ -111,18 +112,10 @@
 <section id="installation">
 <h2>Installation<a class="headerlink" href="#installation" title="Permalink to this headline"></a></h2>
 <p>Install phytest using pip:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip install git+https://github.com/rbturnbull/hespi.git
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip install hespi
 </pre></div>
 </div>
-<p>At the moment it requires that the model weight files are in the working directory:</p>
-<ul class="simple">
-<li><p>sheet-component-weights.pt</p></li>
-<li><p>institutional-label-fields.pt</p></li>
-</ul>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>Soon these will download automatically.</p>
-</div>
+<p>The first time it runs, it will download the required model weights from the internet.</p>
 </section>
 <section id="usage">
 <h2>Usage<a class="headerlink" href="#usage" title="Permalink to this headline"></a></h2>
@@ -143,7 +136,7 @@
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="index.html" class="btn btn-neutral float-left" title="Hespi" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="development.html" class="btn btn-neutral float-right" title="Development" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="cli.html" class="btn btn-neutral float-right" title="Command Line Interface Reference" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

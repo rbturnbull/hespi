@@ -17,7 +17,7 @@ Hespi
    :caption: Contents:
 
    quickstart
-   .. cli
+   cli
    development
    contributing
    credits
