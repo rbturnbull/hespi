@@ -1,16 +1,18 @@
 from typing import List 
 import typer
 from pathlib import Path
-from yolov5 import YOLOv5
+import pandas as pd
+
 from difflib import get_close_matches
 import torch
-import pytesseract
+from yolov5 import YOLOv5
 from torchapp.examples.image_classifier import ImageClassifier
+import pytesseract
+
 from rich.console import Console
-import pandas as pd
+
 from .yolo import yolo_output
-import pandas as pd
-import numpy as np
+from .ocr import Tesseract, TrOCR, TrOCRSize
 
 
 console = Console()
@@ -38,6 +40,8 @@ def detect(
     gpu:bool = typer.Option(True, help="Whether or not to use a GPU if available."),
     fuzzy:bool = typer.Option(True, help="Whether or not to use fuzzy matching from teh reference database."),
     fuzzy_cutoff:float = typer.Option(0.8, min=0.0, max=1.0, help="The threshold for the fuzzy matching score to use."),
+    htr:bool = typer.Option(True, help="Whether or not to do handwritten text recognition using Microsoft's TrOCR."),
+    trocr_size:TrOCRSize = typer.Option(TrOCRSize.BASE.value, help="The size of the TrOCR model to use for handwritten text recognition.", case_sensitive=False),
 ):
     """
     HErbarium Specimen sheet PIpeline
@@ -74,6 +78,13 @@ def detect(
     reference_fields = ['family', 'genus', 'species', 'authority']
     reference = {field:read_reference(field) for field in reference_fields}
 
+    # OCR models
+    tesseract = Tesseract()
+    if htr:
+        print(f"Getting TrOCR model of size '{trocr_size}'")
+        trocr = TrOCR(size=trocr_size)
+        print("TrOCR model available")
+
     # Sheet-Components predictions
     component_files = yolo_output( sheet_component_model, images, output_dir=output_dir )
 
@@ -102,29 +113,46 @@ def detect(
                 # Get classification of institution label
                 # 
                 if isinstance(classifier_results, pd.DataFrame):
-                    classiciation = classifier_results.iloc[0]['prediction']
-                    row['label_classification'] = classiciation
-                    console.print(f"'{component}' classified as '[red]{classiciation}[/red]'.")
+                    classification = classifier_results.iloc[0]['prediction']
+                    row['label_classification'] = classification
+                    console.print(f"'{component}' classified as '[red]{classification}[/red]'.")
                 else:
                     console.print(f"Could not get classification of institutional label '{component}'")
-                    classiciation = None
+                    classification = None
 
-                # Tesseract OCR
-                for institution_stub, fields in field_files.items():
+                # Text Recognition on bounding boxes found by Yolo
+                for fields in field_files.values():
                     for field_file in fields:
                         console.print("field_file:", field_file)
-                        ocr_text = pytesseract.image_to_string(str(field_file)).strip()
-                        if ocr_text:
-                            field_file_components = field_file.name.split(".")
-                            assert len(field_file_components) >= 5
-                            field = field_file_components[-2]
+                        field_file_components = field_file.name.split(".")
+                        assert len(field_file_components) >= 5
+                        field = field_file_components[-2]
 
-                            text_path = field_file.parent/(field_file.name[:-3] + "txt")
-                            console.print(f"Writing [red]'{ocr_text}'[/red] to '{text_path}'")
-                            text_path.write_text(ocr_text+"\n")
+                        # HTR
+                        recognised_text = ""
+                        if htr:
+                            htr_text = trocr.get_text(field_file)
+                            if htr_text:
+                                print(f"HTR: {htr_text}")
+                                console.print(f"Handwritten Text Recognition (TrOCR): [red]'{htr_text}'[/red]")
 
+                                row[f"{field}_TrOCR"] = htr_text
+                                recognised_text = htr_text
+
+                        # OCR
+                        tesseract_text = tesseract.get_text(field_file)
+                        if tesseract_text:
+                            row[f"{field}_tesseract"] = tesseract_text
+                            console.print(f"Optical Character Recognition (Tesseract): [red]'{tesseract_text}'[/red]")
+                            
+                            if (classification and classification in ["printed", "typewriter"]) or not recognised_text:
+                                recognised_text = tesseract_text
+
+
+                        # Adjust text if necessary
+                        if recognised_text:
                             # Adjust case
-                            text_adjusted = adjust_case(field, ocr_text)
+                            text_adjusted = adjust_case(field, recognised_text)
 
                             # Match with database
                             if fuzzy and field in reference:
@@ -132,13 +160,10 @@ def detect(
                                 if close_matches:
                                     text_adjusted = close_matches[0]
 
-                            if ocr_text != text_adjusted:
-                                console.print(f"OCR text [red]'{ocr_text}'[/red] adjusted to [purple]'{text_adjusted}'[/purple]")
+                            if recognised_text != text_adjusted:
+                                console.print(f"Recognized text [red]'{recognised_text}'[/red] adjusted to [purple]'{text_adjusted}'[/purple]")
 
                             row[field] = text_adjusted
-                            row[f"{field}_ocr"] = ocr_text
-
-                # TODO HTR
                 
                 ocr_data[str(component)] = row
 
@@ -148,9 +173,8 @@ def detect(
 
 def csv_creation(data:dict, output_dir:Path):
     """
-    Creates a DataFrame of data, checks if OCR output is a known value, and outputs a CSV with OCR values
+    Creates a DataFrame of data, sorts columns and outputs a CSV with OCR values.
     """
-
     df = pd.DataFrame.from_dict(data, orient='index')
     df = df.reset_index().rename(columns={"index": "institutional label"})
 
