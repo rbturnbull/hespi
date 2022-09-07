@@ -82,11 +82,13 @@ To run the pipeline, use the executable ``hespi`` and give it any number of imag
 
     hespi image1.jpg image2.jpg
 
-The output will go in a directory called 'output'. You can explicitly set the output directory with the ``--output-dir`` argument:
+This will prompt you to specify an output directory. You can set the output directory with the command with the ``--output-dir`` argument:
 
 .. code-block:: bash
 
     hespi images/*.tif --output-dir ./hespi-output
+
+The detected components and text fields will be 
 
 .. end-quickstart
 

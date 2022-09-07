@@ -42,6 +42,9 @@ def detect(
     fuzzy_cutoff:float = typer.Option(0.8, min=0.0, max=1.0, help="The threshold for the fuzzy matching score to use."),
     htr:bool = typer.Option(True, help="Whether or not to do handwritten text recognition using Microsoft's TrOCR."),
     trocr_size:TrOCRSize = typer.Option(TrOCRSize.BASE.value, help="The size of the TrOCR model to use for handwritten text recognition.", case_sensitive=False),
+    sheet_component_weights:Path = typer.Option("sheet-component-weights.pt", help="The path to the sheet component model weights."),
+    institutional_label_fields_weights:Path = typer.Option("institutional-label-fields.pt", help="The path to the institutional label field model weights."),
+    institutional_label_classifier_weights:Path = typer.Option("institutional-label-classifier.pkl", help="The path to the institutional label classifier weights."),
 ):
     """
     HErbarium Specimen sheet PIpeline
@@ -64,16 +67,19 @@ def detect(
     device = "gpu" if gpu else "cpu"
 
     # Sheet-Components Detection Model
-    sheet_component_weights_path = "sheet-component-weights.pt"
-    sheet_component_model = YOLOv5(sheet_component_weights_path, device)
+    if not sheet_component_weights.exists():
+        raise FileNotFoundError(f"Cannot find the Sheet-Components model weights at path '{sheet_component_weights}.'")
+    sheet_component_model = YOLOv5(sheet_component_weights, device)
 
     # Institutional-Label-Fields Detection Model
-    institutional_label_fields_weights_path = "institutional-label-fields.pt"
-    institutional_label_fields_model = YOLOv5(institutional_label_fields_weights_path, device)
+    if not institutional_label_fields_weights.exists():
+        raise FileNotFoundError(f"Cannot find the Institutional-Label-Fields model weights at path '{institutional_label_fields_weights}.'")
+    institutional_label_fields_model = YOLOv5(institutional_label_fields_weights, device)
 
     # ImageClassifier
+    if not institutional_label_classifier_weights.exists():
+        raise FileNotFoundError(f"Cannot find the Institutional-Label-Classifier model weights at path '{institutional_label_classifier_weights}.'")
     institutional_label_classifier = ImageClassifier()
-    institutional_label_classifier_weights = "institutional-label-classifier.pkl"
 
     reference_fields = ['family', 'genus', 'species', 'authority']
     reference = {field:read_reference(field) for field in reference_fields}
