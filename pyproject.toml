@@ -6,6 +6,18 @@ authors = ["Robert Turnbull <robert.turnbull@unimelb.edu.au>"]
 license = "Apache-2.0"
 readme = "README.rst"
 exclude = ["hespi/data/plants.csv"]
+homepage = "https://rbturnbull.github.io/hespi/"
+repository = "https://github.com/rbturnbull/hespi"
+documentation = "https://rbturnbull.github.io/hespi/"
+keywords = ["herbarium", "object detection", "OCR", "HTR", "specimen", "handwritten text recognition"]
+classifiers = [
+    "License :: OSI Approved :: Apache Software License",
+    "Intended Audience :: Science/Research",
+    "Topic :: Scientific/Engineering :: Bio-Informatics",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: Scientific/Engineering :: Image Processing",
+    "Topic :: Scientific/Engineering :: Image Recognition"
+]
 
 [tool.poetry.dependencies]
 python = ">=3.8,<3.12"
