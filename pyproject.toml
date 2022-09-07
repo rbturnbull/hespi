@@ -5,6 +5,7 @@ description = "HErbarium Specimen sheet PIpeline"
 authors = ["Robert Turnbull <robert.turnbull@unimelb.edu.au>"]
 license = "Apache-2.0"
 readme = "README.rst"
+exclude = ["hespi/data/plants.csv"]
 
 [tool.poetry.dependencies]
 python = ">=3.8,<3.12"
