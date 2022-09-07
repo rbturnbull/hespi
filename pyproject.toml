@@ -15,6 +15,7 @@ yolov5 = "^6.1.8"
 torchapp = "^0.2.0"
 pytesseract = "^0.3.10"
 transformers = "^4.21.3"
+appdirs = "^1.4.4"
 
 [tool.poetry.dev-dependencies]
 pytest = "^6.2.5"

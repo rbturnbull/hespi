@@ -10,6 +10,7 @@ from rich.console import Console
 
 from .yolo import yolo_output
 from .ocr import Tesseract, TrOCR, TrOCRSize
+from .download import get_weights
 
 console = Console()
 
@@ -54,27 +55,26 @@ def detect(
         help="The size of the TrOCR model to use for handwritten text recognition.",
         case_sensitive=False,
     ),
-    sheet_component_weights: Path = typer.Option(
-        "sheet-component-weights.pt",
+    sheet_component_weights: str = typer.Option(
+        "https://github.com/rbturnbull/hespi/releases/download/v0.1.0-alpha/sheet-component-weights.pt",
         help="The path to the sheet component model weights.",
     ),
-    institutional_label_fields_weights: Path = typer.Option(
-        "institutional-label-fields.pt",
+    institutional_label_fields_weights: str = typer.Option(
+        "https://github.com/rbturnbull/hespi/releases/download/v0.1.0-alpha/institutional-label-fields.pt",
         help="The path to the institutional label field model weights.",
     ),
-    institutional_label_classifier_weights: Path = typer.Option(
-        "institutional-label-classifier.pkl",
+    institutional_label_classifier_weights: str = typer.Option(
+        "https://github.com/rbturnbull/hespi/releases/download/v0.1.0-alpha/institutional-label-classifier.pkl",
         help="The path to the institutional label classifier weights.",
     ),
+    force_download:bool = typer.Option(False, help="Whether or not to force download model weights even if a weights file is present."),
 ):
     """
     HErbarium Specimen sheet PIpeline
 
-    Takes a herbarium specimen sheet image and:
-    - detects components such as the institutional label, swatch, etc.
-    - classifies whether the institutional label is printed, typed, handwritten or a combination.
-    - detects the fields of the institutional label
-    - attempts OCR/HTR on the institutional label fields
+    Takes a herbarium specimen sheet image detects components such as the institutional label, swatch, etc.
+    It then classifies whether the institutional label is printed, typed, handwritten or a combination.
+    If then detects the fields of the institutional label and attempts to read them through OCR and HTR models.
 
     Args:
         images (List[Path]): A list of images to process.
@@ -88,26 +88,17 @@ def detect(
     device = "gpu" if gpu else "cpu"
 
     # Sheet-Components Detection Model
-    if not sheet_component_weights.exists():
-        raise FileNotFoundError(
-            f"Cannot find the Sheet-Components model weights at path '{sheet_component_weights}.'"
-        )
+    sheet_component_weights = get_weights(sheet_component_weights, force=force_download)
     sheet_component_model = YOLOv5(sheet_component_weights, device)
 
     # Institutional-Label-Fields Detection Model
-    if not institutional_label_fields_weights.exists():
-        raise FileNotFoundError(
-            f"Cannot find the Institutional-Label-Fields model weights at path '{institutional_label_fields_weights}.'"
-        )
+    institutional_label_fields_weights = get_weights(institutional_label_fields_weights, force=force_download)
     institutional_label_fields_model = YOLOv5(
         institutional_label_fields_weights, device
     )
 
     # ImageClassifier
-    if not institutional_label_classifier_weights.exists():
-        raise FileNotFoundError(
-            f"Cannot find the Institutional-Label-Classifier model weights at path '{institutional_label_classifier_weights}.'"
-        )
+    institutional_label_classifier_weights = get_weights(institutional_label_classifier_weights, force=force_download)
     institutional_label_classifier = ImageClassifier()
 
     reference_fields = ["family", "genus", "species", "authority"]
