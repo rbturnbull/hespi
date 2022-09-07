@@ -2,6 +2,8 @@
 hespi
 ================================================================
 
+.. image:: https://raw.githubusercontent.com/rbturnbull/hespi/main/docs/images/hespi-banner.svg
+
 .. start-badges
 
 |testing badge| |coverage badge| |docs badge| |black badge|
