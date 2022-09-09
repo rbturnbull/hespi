@@ -60,7 +60,7 @@ These text fields are then run through the OCR program Tesseract.
 Installation
 ==================================
 
-Install phytest using pip:
+Install hespi using pip:
 
 .. code-block:: bash
 
