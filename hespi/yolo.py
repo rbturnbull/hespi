@@ -31,12 +31,12 @@ def yolo_output(model, images, output_dir):
         move(tmp_dir_path / f"{stub}.jpg", prediction_path)
 
         for prediction_index, prediction in enumerate(predictions):
-            category_index = prediction[5].int().numpy()
+            category_index = prediction[5].int().cpu().numpy()
             category = (
                 results.names[category_index].replace(" ", "_").replace(":", "").strip()
             )
 
-            x0, y0, x1, y1 = prediction[:4].numpy()
+            x0, y0, x1, y1 = prediction[:4].cpu().numpy()
 
             # open image
             im = Image.open(image)

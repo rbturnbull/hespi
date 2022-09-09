@@ -52,5 +52,20 @@ class TrOCR(OCR):
 
 
 class Tesseract(OCR):
+    def __init__(self):
+        super().__init__()
+        
+        self.no_tesseract = False # This will be set to True later if it isn't found.
+
     def get_text(self, image_path: Path) -> str:
-        return pytesseract.image_to_string(str(image_path)).strip()
+        if self.no_tesseract:
+            return None
+
+        try:
+            return pytesseract.image_to_string(str(image_path)).strip()
+        except Exception:
+            print("No tesseract available.")
+            self.no_tesseract = True
+        
+        return None
+

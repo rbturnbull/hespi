@@ -68,6 +68,7 @@ Install hespi using pip:
 
 The first time it runs, it will download the required model weights from the internet.
 
+It is recommended that you also install `Tesseract <https://tesseract-ocr.github.io/tessdoc/Home.html>`_ so that this can be used in the text recognition part of the pipeline.
 
 Usage
 ==================================
