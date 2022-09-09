@@ -139,7 +139,7 @@
     <p id="t85" class="pln"><span class="n"><a href="#t85">85</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p id="t86" class="pln"><span class="n"><a href="#t86">86</a></span><span class="t">    <span class="com"># Check if gpu is available</span>&nbsp;</span><span class="r"></span></p>
     <p id="t87" class="mis show_mis"><span class="n"><a href="#t87">87</a></span><span class="t">    <span class="nam">gpu</span> <span class="op">=</span> <span class="nam">gpu</span> <span class="key">and</span> <span class="nam">torch</span><span class="op">.</span><span class="nam">cuda</span><span class="op">.</span><span class="nam">is_available</span><span class="op">(</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p id="t88" class="mis show_mis"><span class="n"><a href="#t88">88</a></span><span class="t">    <span class="nam">device</span> <span class="op">=</span> <span class="str">"gpu"</span> <span class="key">if</span> <span class="nam">gpu</span> <span class="key">else</span> <span class="str">"cpu"</span>&nbsp;</span><span class="r"></span></p>
+    <p id="t88" class="mis show_mis"><span class="n"><a href="#t88">88</a></span><span class="t">    <span class="nam">device</span> <span class="op">=</span> <span class="str">"cuda:0"</span> <span class="key">if</span> <span class="nam">gpu</span> <span class="key">else</span> <span class="str">"cpu"</span>&nbsp;</span><span class="r"></span></p>
     <p id="t89" class="pln"><span class="n"><a href="#t89">89</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p id="t90" class="pln"><span class="n"><a href="#t90">90</a></span><span class="t">    <span class="com"># Sheet-Components Detection Model</span>&nbsp;</span><span class="r"></span></p>
     <p id="t91" class="mis show_mis"><span class="n"><a href="#t91">91</a></span><span class="t">    <span class="nam">sheet_component_weights</span> <span class="op">=</span> <span class="nam">get_weights</span><span class="op">(</span><span class="nam">sheet_component_weights</span><span class="op">,</span> <span class="nam">force</span><span class="op">=</span><span class="nam">force_download</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
@@ -312,7 +312,7 @@
     <div class="content">
         <p>
             <a class="nav" href="index.html">&#xab; index</a> &nbsp; &nbsp; <a class="nav" href="https://coverage.readthedocs.io">coverage.py v5.5</a>,
-            created at 2022-09-09 09:11 +0000
+            created at 2022-09-09 09:56 +0000
         </p>
     </div>
 </div>
