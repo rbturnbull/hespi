@@ -85,7 +85,7 @@ def detect(
 
     # Check if gpu is available
     gpu = gpu and torch.cuda.is_available()
-    device = "gpu" if gpu else "cpu"
+    device = "cuda:0" if gpu else "cpu"
 
     # Sheet-Components Detection Model
     sheet_component_weights = get_weights(sheet_component_weights, force=force_download)
