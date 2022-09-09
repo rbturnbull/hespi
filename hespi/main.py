@@ -2,7 +2,7 @@ from typing import List
 import typer
 from pathlib import Path
 import pandas as pd
-from difflib import get_close_matches, SequenceMatcher
+from difflib import get_close_matches
 import torch
 from yolov5 import YOLOv5
 from torchapp.examples.image_classifier import ImageClassifier
@@ -174,9 +174,7 @@ def detect(
                                 )
 
                                 row[f"{field}_TrOCR"] = htr_text
-                                # recognised_text = htr_text
-                                text_adjusted_htr = adjust_case(field, htr_text)
-
+                                recognised_text = htr_text
 
                         # OCR
                         tesseract_text = tesseract.get_text(field_file)
@@ -185,63 +183,35 @@ def detect(
                             console.print(
                                 f"Optical Character Recognition (Tesseract): [red]'{tesseract_text}'[/red]"
                             )
-                            text_adjusted_tesseract = adjust_case(field, tesseract_text)
-                            # if (
-                            #     classification
-                            #     and classification in ["printed", "typewriter"]
-                            # ) or not recognised_text:
-                            #     recognised_text = tesseract_text
 
-                        # # Adjust text if necessary
-                        # if recognised_text:
-                        #     # Adjust case
-                        #     text_adjusted_tesseract = adjust_case(field, recognised_text)
+                            if (
+                                classification
+                                and classification in ["printed", "typewriter"]
+                            ) or not recognised_text:
+                                recognised_text = tesseract_text
+
+                        # Adjust text if necessary
+                        if recognised_text:
+                            # Adjust case
+                            text_adjusted = adjust_case(field, recognised_text)
 
                             # Match with database
                             if fuzzy and field in reference:
-                                if tesseract_text:
-                                    close_matches_tesseract = get_close_matches(
-                                        text_adjusted_tesseract,
-                                        reference[field],
-                                        cutoff=fuzzy_cutoff,
-                                        n=1,
-                                    )
-                                    match_result_tesseract = close_matches_tesseract[0]
-                                    score_tesseract = SequenceMatcher(None, text_adjusted_tesseract, match_result_tesseract).ratio()
-                                    row[f"{field}_tesseract_match"] = match_result_tesseract
-                                    row[f"{field}_tesseract_match_score"] = score_tesseract
+                                close_matches = get_close_matches(
+                                    text_adjusted,
+                                    reference[field],
+                                    cutoff=fuzzy_cutoff,
+                                    n=1,
+                                )
+                                if close_matches:
+                                    text_adjusted = close_matches[0]
 
+                            if recognised_text != text_adjusted:
+                                console.print(
+                                    f"Recognized text [red]'{recognised_text}'[/red] adjusted to [purple]'{text_adjusted}'[/purple]"
+                                )
 
-                                if htr:  
-                                    if text_adjusted_htr == text_adjusted_tesseract: 
-                                        row[f"{field}_htr_match"] = 'Match with Tesseract'
-                                    else: 
-                                        close_matches_htr = get_close_matches(
-                                            text_adjusted_htr,
-                                            reference[field],
-                                            cutoff=fuzzy_cutoff,
-                                            n=1,
-                                        )
-                                        match_result_htr = close_matches_htr[0]
-                                        score_htr = SequenceMatcher(None, text_adjusted_htr, match_result_htr).ratio()
-                                        row[f"{field}_htr_match"] = match_result_htr
-                                        row[f"{field}_htr_match_score"] = score_htr
-                               
-                               
-                                # if close_matches:
-                                #     text_adjusted = close_matches[0]
-
-                                
-                                
-
-
-
-                            # if recognised_text != text_adjusted:
-                            #     console.print(
-                            #         f"Recognized text [red]'{recognised_text}'[/red] adjusted to [purple]'{text_adjusted}'[/purple]"
-                            #     )
-
-                            # row[field] = text_adjusted
+                            row[field] = text_adjusted
 
                 ocr_data[str(component)] = row
 
