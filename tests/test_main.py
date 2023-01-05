@@ -1,5 +1,7 @@
+import tempfile
 import pytest
 from typer.testing import CliRunner
+from pathlib import Path
 
 from hespi import main
 
@@ -74,20 +76,25 @@ def test_ocr_data_df():
     assert len(df) == 1
 
 
-    df = main.ocr_data_df(
-        {
-            "institutional label 1": {
-                "family":"family",
-                "id":"id",
-                "extra1":"extra1",
+    with tempfile.TemporaryDirectory() as tmpdir:
+        output_path = Path(tmpdir)/"out.csv"
+        df = main.ocr_data_df(
+            {
+                "institutional label 1": {
+                    "family":"family",
+                    "id":"id",
+                    "extra1":"extra1",
+                },
+                "institutional label 2": {
+                    "family":"family",
+                    "id":"id",
+                    "extra2":"extra2",
+                }
             },
-            "institutional label 2": {
-                "family":"family",
-                "id":"id",
-                "extra2":"extra2",
-            }
-        }
-    )
-    assert (df.columns == required_columns + ["extra1", "extra2"]).all()
-    assert len(df) == 2
+            output_path = output_path,
+        )
+        assert (df.columns == required_columns + ["extra1", "extra2"]).all()
+        assert len(df) == 2
+        assert output_path.exists()
+
 

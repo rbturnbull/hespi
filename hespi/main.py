@@ -262,10 +262,11 @@ def ocr_data_df(data: dict, output_path: Path=None) -> pd.DataFrame:
     extra_cols = [col for col in df.columns if col not in col_options]
     cols = col_options + extra_cols
     df = df[cols]
-
     
     # CSV output
     if output_path:
+        output_path = Path(output_path)
+        output_path.parent.mkdir(exist_ok=True, parents=True)
         df.to_csv(output_path, index=False)
 
     return df
