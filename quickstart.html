@@ -66,8 +66,8 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
-      <li>Quickstart</li>
+      <li><a href="index.html" class="icon icon-home"></a></li>
+      <li class="breadcrumb-item active">Quickstart</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/quickstart.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -112,7 +112,7 @@
 <section id="installation">
 <h2>Installation<a class="headerlink" href="#installation" title="Permalink to this headline"></a></h2>
 <p>Install hespi using pip:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip install hespi
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>hespi
 </pre></div>
 </div>
 <p>The first time it runs, it will download the required model weights from the internet.</p>
@@ -121,11 +121,11 @@
 <section id="usage">
 <h2>Usage<a class="headerlink" href="#usage" title="Permalink to this headline"></a></h2>
 <p>To run the pipeline, use the executable <code class="docutils literal notranslate"><span class="pre">hespi</span></code> and give it any number of images:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>hespi image1.jpg image2.jpg
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>hespi<span class="w"> </span>image1.jpg<span class="w"> </span>image2.jpg
 </pre></div>
 </div>
 <p>This will prompt you to specify an output directory. You can set the output directory with the command with the <code class="docutils literal notranslate"><span class="pre">--output-dir</span></code> argument:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>hespi images/*.tif --output-dir ./hespi-output
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>hespi<span class="w"> </span>images/*.tif<span class="w"> </span>--output-dir<span class="w"> </span>./hespi-output
 </pre></div>
 </div>
 <p>The detected components and text fields will be cropped and stored in the output directory. There will also be a CSV file with the text recognition results for any institutional labels found.</p>
