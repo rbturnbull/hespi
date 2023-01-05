@@ -51,7 +51,7 @@ def get_weights(location:Union[str,Path], force:bool=False) -> Path:
     if location.startswith("http"):
         name = location.split("/")[-1]
         extension_location = name.rfind(".")
-        if extension_location:
+        if extension_location > 0:
             name_stem = name[:extension_location]
             extension = name[extension_location:]
         else:
