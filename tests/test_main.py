@@ -42,3 +42,52 @@ def test_read_reference_species():
 def test_read_reference_unknown():
     with pytest.raises(FileNotFoundError):
         main.read_reference("location")
+
+
+def test_ocr_data_df():
+    required_columns = [
+        "institutional label",
+        "id",
+        "family",
+        "genus",
+        "species",
+        "infrasp taxon",
+        "authority",
+        "collector_number",
+        "collector",
+        "locality",
+        "geolocation",
+        "year",
+        "month",
+        "day",
+    ]
+
+    df = main.ocr_data_df(
+        {
+            "institutional label": {
+                "family":"family",
+                "id":"id",
+            }
+        }
+    )
+    assert (df.columns == required_columns).all()
+    assert len(df) == 1
+
+
+    df = main.ocr_data_df(
+        {
+            "institutional label 1": {
+                "family":"family",
+                "id":"id",
+                "extra1":"extra1",
+            },
+            "institutional label 2": {
+                "family":"family",
+                "id":"id",
+                "extra2":"extra2",
+            }
+        }
+    )
+    assert (df.columns == required_columns + ["extra1", "extra2"]).all()
+    assert len(df) == 2
+

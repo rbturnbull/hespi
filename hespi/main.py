@@ -71,7 +71,7 @@ def detect(
         help="The path to the institutional label classifier weights.",
     ),
     force_download:bool = typer.Option(False, help="Whether or not to force download model weights even if a weights file is present."),
-):
+) -> pd.DataFrame:
     """
     HErbarium Specimen sheet PIpeline
 
@@ -97,7 +97,8 @@ def detect(
     # Institutional-Label-Fields Detection Model
     institutional_label_fields_weights = get_weights(institutional_label_fields_weights, force=force_download)
     institutional_label_fields_model = YOLOv5(
-        institutional_label_fields_weights, device
+        institutional_label_fields_weights, 
+        device
     )
 
     # ImageClassifier
@@ -218,16 +219,25 @@ def detect(
 
                 ocr_data[str(component)] = row
 
-    csv_creation(ocr_data, output_dir)
+    return ocr_data_df(ocr_data, output_path=output_dir/"ocr_results.csv")
 
 
-def csv_creation(data: dict, output_dir: Path):
-    """
+def ocr_data_df(data: dict, output_path: Path=None) -> pd.DataFrame:
+    """    
     Creates a DataFrame of data, sorts columns and outputs a CSV with OCR values.
+
+    Args:
+        data (dict): The data coming from the text recognition models. 
+            The keys are the institutional labels.
+            The values are dictionaries with the fields as keys and the values as the recognised text.
+        output_path (Path, optional): Where to save a CSV file if given. Defaults to None.
+
+    Returns:
+        pd.DataFrame: The text recognition data as a Pandas dataframe
     """
     df = pd.DataFrame.from_dict(data, orient="index")
     df = df.reset_index().rename(columns={"index": "institutional label"})
-
+    
     # insert columns not included in dataframe, and re-order
     # including any columns not included in col_options to account for any updates
     col_options = [
@@ -253,6 +263,9 @@ def csv_creation(data: dict, output_dir: Path):
     cols = col_options + extra_cols
     df = df[cols]
 
+    
     # CSV output
-    df.to_csv(str(output_dir) + "/ocr_results.csv", index=False)
+    if output_path:
+        df.to_csv(output_path, index=False)
+
     return df
