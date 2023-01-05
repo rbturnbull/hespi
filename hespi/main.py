@@ -20,15 +20,18 @@ app = typer.Typer()
 def adjust_case(field, value):
     if field in ["genus", "family"]:
         return value.title()
-    if field == "species":
+    elif field == "species":
         return value.lower()
+    
     return value
 
 
 def read_reference(field):
     DATA_DIR = Path(__file__).parent / "data"
     path = DATA_DIR / f"{field}.txt"
-    return path.read_text().split("\n")
+    if not path.exists():
+        raise FileNotFoundError(f"No reference file for field '{field}'.")
+    return path.read_text().strip().split("\n")
 
 
 @app.command()
