@@ -1,5 +1,6 @@
 import pytest
 from unittest.mock import patch
+from pathlib import Path
 
 from hespi import ocr
 
@@ -31,3 +32,28 @@ def test_tesseract_fail():
     assert t.no_tesseract == False
     assert t.get_text('path') is None
     assert t.no_tesseract == True
+
+
+class MockProcessor():
+    def __call__(self, *args, **kwargs):
+        class PixelValues():
+            pass
+        obj = PixelValues()
+        obj.pixel_values = "pixel_values"
+        return obj
+
+    def batch_decode(self, *args, **kwargs):
+        return ["recognized text"]
+    
+
+class MockModel():
+    def generate(self, pixel_values, **kwargs):
+        assert pixel_values == "pixel_values"
+
+
+@patch('transformers.TrOCRProcessor.from_pretrained', lambda *args: MockProcessor() )
+@patch('transformers.VisionEncoderDecoderModel.from_pretrained', lambda *args: MockModel() )
+def test_trocr():
+    t = ocr.TrOCR()
+    path = Path(__file__).parent/"testdata/test.jpg"
+    assert t.get_text(path)  == "recognized text"
