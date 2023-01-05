@@ -20,18 +20,22 @@ def test_tesseract(mock_image_to_string):
     assert t.no_tesseract == False
     assert t.get_text('path') == "recognized text"
     assert t.no_tesseract == False
+    mock_image_to_string.assert_called_once()
 
 
 def raise_exception(*args):
     raise Exception("error")
 
 
-@patch('pytesseract.image_to_string', raise_exception)
-def test_tesseract_fail():
+@patch('pytesseract.image_to_string', return_value=raise_exception)
+def test_tesseract_fail(mock_image_to_string):
     t = ocr.Tesseract()
     assert t.no_tesseract == False
     assert t.get_text('path') is None
     assert t.no_tesseract == True
+    assert t.get_text('path') is None
+    mock_image_to_string.assert_called_once()
+
 
 
 class MockProcessor():
