@@ -1,4 +1,3 @@
-import tempfile
 import pytest
 from unittest.mock import patch
 from pathlib import Path
