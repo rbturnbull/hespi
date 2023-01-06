@@ -1,0 +1,73 @@
+from pathlib import Path
+import pandas as pd
+from rich.console import Console
+
+
+console = Console()
+
+
+def adjust_case(field, value):
+    if field in ["genus", "family"]:
+        return value.title()
+    elif field == "species":
+        return value.lower()
+    
+    return value
+
+
+def read_reference(field):
+    DATA_DIR = Path(__file__).parent / "data"
+    path = DATA_DIR / f"{field}.txt"
+    if not path.exists():
+        raise FileNotFoundError(f"No reference file for field '{field}'.")
+    return path.read_text().strip().split("\n")
+
+
+def ocr_data_df(data: dict, output_path: Path=None) -> pd.DataFrame:
+    """    
+    Creates a DataFrame of data, sorts columns and outputs a CSV with OCR values.
+
+    Args:
+        data (dict): The data coming from the text recognition models. 
+            The keys are the institutional labels.
+            The values are dictionaries with the fields as keys and the values as the recognised text.
+        output_path (Path, optional): Where to save a CSV file if given. Defaults to None.
+
+    Returns:
+        pd.DataFrame: The text recognition data as a Pandas dataframe
+    """
+    df = pd.DataFrame.from_dict(data, orient="index")
+    df = df.reset_index().rename(columns={"index": "institutional label"})
+    
+    # insert columns not included in dataframe, and re-order
+    # including any columns not included in col_options to account for any updates
+    col_options = [
+        "institutional label",
+        "id",
+        "family",
+        "genus",
+        "species",
+        "infrasp taxon",
+        "authority",
+        "collector_number",
+        "collector",
+        "locality",
+        "geolocation",
+        "year",
+        "month",
+        "day",
+    ]
+
+    missing_cols = [col for col in col_options if col not in df.columns]
+    df[missing_cols] = ""
+    extra_cols = [col for col in df.columns if col not in col_options]
+    cols = col_options + extra_cols
+    df = df[cols]
+    
+    # CSV output
+    if output_path:
+        output_path = Path(output_path)
+        output_path.parent.mkdir(exist_ok=True, parents=True)
+        df.to_csv(output_path, index=False)
+
+    return df
