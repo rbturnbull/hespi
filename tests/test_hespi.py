@@ -63,13 +63,24 @@ def test_trocr():
     assert isinstance(hespi.trocr, TrOCR)
 
 
-@patch('hespi.hespi.yolo_output')
 @patch('hespi.hespi.YOLOv5', return_value="sheet_component_model")
+@patch('hespi.hespi.yolo_output')
 def test_sheet_component_detect(mock_yolo_output, mock_yolo):
     weights = test_data_dir/"test-no-extension-ebaa296923904111a3972b54eba5cf5f.dat"
     hespi = Hespi(
         sheet_component_weights=weights
     )
     hespi.sheet_component_detect("images", "output_dir")
-    mock_yolo.assert_called_once_with("sheet_component_model", "images", output_dir="output_dir")
+    mock_yolo_output.assert_called_once_with("sheet_component_model", "images", output_dir="output_dir")
     
+
+
+@patch('hespi.hespi.YOLOv5', return_value="institutional_label_fields_model")
+@patch('hespi.hespi.yolo_output')
+def test_institutional_label_fields_model_detect(mock_yolo_output, mock_yolo):
+    weights = test_data_dir/"test-no-extension-ebaa296923904111a3972b54eba5cf5f.dat"
+    hespi = Hespi(
+        institutional_label_fields_weights=weights
+    )
+    hespi.institutional_label_fields_model_detect("images", "output_dir")
+    mock_yolo_output.assert_called_once_with("institutional_label_fields_model", "images", output_dir="output_dir")
