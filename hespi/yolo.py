@@ -12,6 +12,9 @@ def yolo_output(model, images, output_dir):
     results = model.predict(images)
     tmp_dir = tempfile.TemporaryDirectory()
     tmp_dir_path = Path(tmp_dir.name)
+    output_dir = Path(output_dir)
+    output_dir.mkdir(exist_ok=True, parents=True)
+
     # TODO check that all images have unique names
     # TODO download from internet if it is given a URL
 
