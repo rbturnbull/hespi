@@ -2,6 +2,9 @@ from pathlib import Path
 from hespi import Hespi
 from unittest.mock import patch
 from torchapp.examples.image_classifier import ImageClassifier
+from hespi.ocr import Tesseract, TrOCR, TrOCRSize
+
+from .test_ocr import MockProcessor, MockModel
 
 test_data_dir = Path(__file__).parent/"testdata"
 
@@ -42,3 +45,31 @@ def test_institutional_label_classifier():
     assert isinstance(model, ImageClassifier)
     assert model.pretrained == weights
 
+
+def test_reference():
+    hespi = Hespi()
+    assert list(hespi.reference.keys()) == ["family", "genus", "species", "authority"]
+
+
+def test_tesseract():
+    hespi = Hespi()
+    assert isinstance(hespi.tesseract, Tesseract)
+
+
+@patch('transformers.TrOCRProcessor.from_pretrained', lambda *args: MockProcessor() )
+@patch('transformers.VisionEncoderDecoderModel.from_pretrained', lambda *args: MockModel() )
+def test_trocr():
+    hespi = Hespi()
+    assert isinstance(hespi.trocr, TrOCR)
+
+
+@patch('hespi.hespi.yolo_output')
+@patch('hespi.hespi.YOLOv5', return_value="sheet_component_model")
+def test_sheet_component_detect(mock_yolo_output, mock_yolo):
+    weights = test_data_dir/"test-no-extension-ebaa296923904111a3972b54eba5cf5f.dat"
+    hespi = Hespi(
+        sheet_component_weights=weights
+    )
+    hespi.sheet_component_detect("images", "output_dir")
+    mock_yolo.assert_called_once_with("sheet_component_model", "images", output_dir="output_dir")
+    
