@@ -1,8 +1,9 @@
 from pathlib import Path
+from typing import Dict
 from hespi import Hespi
 from unittest.mock import patch
 from torchapp.examples.image_classifier import ImageClassifier
-from hespi.ocr import Tesseract, TrOCR, TrOCRSize
+from hespi.ocr import Tesseract, TrOCR, TrOCRSize, OCR
 
 from .test_ocr import MockProcessor, MockModel
 
@@ -84,3 +85,53 @@ def test_institutional_label_fields_model_detect(mock_yolo_output, mock_yolo):
     )
     hespi.institutional_label_fields_model_detect("images", "output_dir")
     mock_yolo_output.assert_called_once_with("institutional_label_fields_model", "images", output_dir="output_dir")
+
+
+class MockOCR(OCR):
+    def __init__(self, dictionary:Dict):
+        self.dictionary = {Path(key):value for key, value in dictionary.items()}
+        self.get_text_called_args = []
+
+    def get_text(self, image_path: Path) -> str:
+        self.get_text_called_args.append(image_path)
+        return self.dictionary.get(Path(image_path), "")
+
+
+def test_read_field_file_tesseract_only():
+    hespi = Hespi(htr=False, fuzzy=True)
+    image = Path("species.jpg")
+    hespi.trocr = MockOCR({"species.jpg":"zostericolaX"})
+    hespi.tesseract = MockOCR({"species.jpg":"zOstericolaXX"})
+    
+    result = hespi.read_field_file(image)
+
+    assert len(result.keys()) == 2
+    assert result["species_Tesseract"] == "zOstericolaXX"
+    assert result["species"] == "zostericola"
+
+def test_read_field_file_htr():
+    hespi = Hespi(htr=True, fuzzy=False)
+    image = Path("species.jpg")
+    hespi.trocr = MockOCR({"species.jpg":"zostericolaX"})
+    hespi.tesseract = MockOCR({"species.jpg":"zOstericolaXX"})
+    
+    result = hespi.read_field_file(image)
+
+    assert len(result.keys()) == 3
+    assert result["species_TrOCR"] == "zostericolaX"
+    assert result["species_Tesseract"] == "zOstericolaXX"
+    assert result["species"] == "zostericolax"    
+
+
+def test_read_field_file_fuzzy():
+    hespi = Hespi(htr=True, fuzzy=True)
+    image = Path("species.jpg")
+    hespi.trocr = MockOCR({"species.jpg":"zostericolaX"})
+    hespi.tesseract = MockOCR({"species.jpg":"zOstericolaXX"})
+    
+    result = hespi.read_field_file(image)
+
+    assert len(result.keys()) == 3
+    assert result["species_TrOCR"] == "zostericolaX"
+    assert result["species_Tesseract"] == "zOstericolaXX"
+    assert result["species"] == "zostericola"        

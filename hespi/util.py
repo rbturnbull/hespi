@@ -1,7 +1,8 @@
 from pathlib import Path
+from typing import Dict
 import pandas as pd
 from rich.console import Console
-
+from difflib import get_close_matches
 
 console = Console()
 
@@ -71,3 +72,24 @@ def ocr_data_df(data: dict, output_path: Path=None) -> pd.DataFrame:
         df.to_csv(output_path, index=False)
 
     return df
+
+
+def adjust_text(field:str, recognised_text:str, fuzzy:bool, fuzzy_cutoff:float, reference:Dict):
+    text_adjusted = adjust_case(field, recognised_text)
+
+    # Match with database
+    if fuzzy and field in reference:
+        close_matches = get_close_matches(
+            text_adjusted,
+            reference[field],
+            cutoff=fuzzy_cutoff,
+            n=1,
+        )
+        if close_matches:
+            text_adjusted = close_matches[0]
+
+    if recognised_text != text_adjusted:
+        console.print(
+            f"Recognized text [red]'{recognised_text}'[/red] adjusted to [purple]'{text_adjusted}'[/purple]"
+        )    
+    return text_adjusted

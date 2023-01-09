@@ -2,7 +2,6 @@ from typing import List, Dict
 from pathlib import Path
 import pandas as pd
 from functools import cached_property
-from difflib import get_close_matches
 import torch
 from yolov5 import YOLOv5
 from torchapp.examples.image_classifier import ImageClassifier
@@ -11,7 +10,7 @@ from rich.console import Console
 from .yolo import yolo_output
 from .ocr import Tesseract, TrOCR, TrOCRSize
 from .download import get_weights
-from .util import read_reference, ocr_data_df, adjust_case
+from .util import read_reference, ocr_data_df, adjust_text
 from .ocr import TrOCRSize
 
 console = Console()
@@ -173,11 +172,27 @@ class Hespi():
     def read_field_file(
         self,
         field_file:Path,
-        classification:str,
+        classification:str = None,
     ) -> Dict:
+        """Reads the text of an image of a field from an institutional label.
+
+        Args:
+            field_file (Path): The path to an image file of a text field. 
+                The type of field needs to be in the second last component of the filename when split by periods.
+                e.g. XXXXX.FIELD_NAME.jpg
+                           ^^^^^^^^^^
+            classification (str, optional): The classification of the institutional label from the institutional_label_classifier model.
+                If it is 'printed' or 'typewriter' then the Tesseract OCR result will be favoured.
+                Otherwise the TrOCR model result will be favoured.
+
+        Returns:
+            Dict: A dictionary with the results from TrOCR (if the `htr` flag is on), Tesseract and an adjusted form of the text,
+                which changes the case depending on the field type and fuzzy matched with the reference database if `fuzzy` is requested.
+        """
+        field_file = Path(field_file)
         console.print("field_file:", field_file)
         field_file_components = field_file.name.split(".")
-        assert len(field_file_components) >= 5
+        assert len(field_file_components) >= 2
         field = field_file_components[-2]
         classification = classification or ""
 
@@ -199,7 +214,7 @@ class Hespi():
         # OCR
         tesseract_text = self.tesseract.get_text(field_file)
         if tesseract_text:
-            detection_results[f"{field}_tesseract"] = tesseract_text
+            detection_results[f"{field}_Tesseract"] = tesseract_text
             console.print(
                 f"Optical Character Recognition (Tesseract): [red]'{tesseract_text}'[/red]"
             )
@@ -209,26 +224,13 @@ class Hespi():
 
         # Adjust text if necessary
         if recognised_text:
-            # Adjust case
-            text_adjusted = adjust_case(field, recognised_text)
-
-            # Match with database
-            if self.fuzzy and field in self.reference:
-                close_matches = get_close_matches(
-                    text_adjusted,
-                    self.reference[field],
-                    cutoff=self.fuzzy_cutoff,
-                    n=1,
-                )
-                if close_matches:
-                    text_adjusted = close_matches[0]
-
-            if recognised_text != text_adjusted:
-                console.print(
-                    f"Recognized text [red]'{recognised_text}'[/red] adjusted to [purple]'{text_adjusted}'[/purple]"
-                )    
-    
-            detection_results[field] = text_adjusted
+            detection_results[field] = adjust_text(
+                field, 
+                recognised_text, 
+                fuzzy=self.fuzzy, 
+                fuzzy_cutoff=self.fuzzy_cutoff, 
+                reference=self.reference,
+            )
 
         return detection_results
 

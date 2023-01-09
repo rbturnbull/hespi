@@ -44,12 +44,12 @@ def yolo_output(model, images, output_dir):
             # open image
             im = Image.open(image)
             im_crop = im.crop((x0, y0, x1, y1))
-            output_filename = (
+            output_path = (
                 image_output_dir / f"{stub}.{prediction_index}.{category}.jpg"
             )
-            console.print(f"Saving {category} to '{output_filename}'")
-            im_crop.save(output_filename)
-            output_files[stub].append(output_filename)
+            console.print(f"Saving {category} to '{output_path}'")
+            im_crop.save(output_path)
+            output_files[stub].append(output_path)
 
     tmp_dir.cleanup()
 
