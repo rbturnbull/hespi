@@ -1,6 +1,7 @@
 from pathlib import Path
 from typing import Dict
 from hespi import Hespi
+import pandas as pd
 from unittest.mock import patch
 from torchapp.examples.image_classifier import ImageClassifier
 from hespi.ocr import Tesseract, TrOCR, TrOCRSize, OCR
@@ -8,6 +9,30 @@ from hespi.ocr import Tesseract, TrOCR, TrOCRSize, OCR
 from .test_ocr import MockProcessor, MockModel
 
 test_data_dir = Path(__file__).parent/"testdata"
+
+
+class DictionaryPathMocker():
+    def __init__(self, dictionary:Dict=None):
+        dictionary = dictionary or {}
+        self.dictionary = {Path(key):value for key, value in dictionary.items()}
+        self.get_text_called_args = []
+        
+    def get_value(self, path: Path) -> str:
+        self.get_text_called_args.append(path)
+        return self.dictionary.get(Path(path), "")
+
+
+class MockOCR(DictionaryPathMocker, OCR):
+    def get_text(self, image_path: Path) -> str:
+        return self.get_value(image_path)
+
+
+class MockClassifier(DictionaryPathMocker, OCR):
+    pretrained = ""
+
+    def __call__(self, items, **kwargs) -> str:
+        return self.get_value(items)
+
 
 @patch('hespi.hespi.YOLOv5')
 def test_get_yolo(mock):
@@ -87,16 +112,6 @@ def test_institutional_label_fields_model_detect(mock_yolo_output, mock_yolo):
     mock_yolo_output.assert_called_once_with("institutional_label_fields_model", "images", output_dir="output_dir", tmp_dir_prefix=None)
 
 
-class MockOCR(OCR):
-    def __init__(self, dictionary:Dict):
-        self.dictionary = {Path(key):value for key, value in dictionary.items()}
-        self.get_text_called_args = []
-
-    def get_text(self, image_path: Path) -> str:
-        self.get_text_called_args.append(image_path)
-        return self.dictionary.get(Path(image_path), "")
-
-
 def test_read_field_file_tesseract_only():
     hespi = Hespi(htr=False, fuzzy=True)
     image = Path("species.jpg")
@@ -135,3 +150,19 @@ def test_read_field_file_fuzzy():
     assert result["species_TrOCR"] == "zostericolaX"
     assert result["species_Tesseract"] == "zOstericolaXX"
     assert result["species"] == "zostericola"        
+
+
+def test_institutional_label_classify():
+    hespi = Hespi()
+    targets = ["typewritten", "printed", "handwritten", ""]
+    mapper = {}
+    for t in targets:
+        if t:
+            mapper[f"{t}.jpg"] = pd.DataFrame([dict(prediction=t)])
+
+    hespi.institutional_label_classifier = MockClassifier(mapper)
+    for path in mapper.keys():
+        result = hespi.institutional_label_classify(path, "csv_output") 
+        assert result == path.split('.')[0]
+
+
