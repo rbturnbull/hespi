@@ -50,6 +50,7 @@ def detect(
     ),
     force_download:bool = typer.Option(False, help="Whether or not to force download model weights even if a weights file is present."),
     tmp_dir:str = None,
+    batch_size:int = typer.Option(4, min=1, help="The maximum batch size from run the sheet component model."),
 ) -> pd.DataFrame:
     """
     HErbarium Specimen sheet PIpeline
@@ -68,7 +69,8 @@ def detect(
         fuzzy=fuzzy,
         fuzzy_cutoff=fuzzy_cutoff,
         htr=htr,
-        tmp_dir=tmp_dir
+        tmp_dir=tmp_dir,
+        batch_size=batch_size,
     )
     return hespi.detect(images, output_dir)
     

@@ -8,7 +8,7 @@ from rich.console import Console
 console = Console()
 
 
-def yolo_output(model, images, output_dir, tmp_dir_prefix=None):
+def yolo_output_batch(model, images, output_dir, tmp_dir_prefix=None):
     results = model.predict(images)
     tmp_dir = tempfile.TemporaryDirectory(prefix=tmp_dir_prefix)
     tmp_dir_path = Path(tmp_dir.name)
@@ -53,4 +53,15 @@ def yolo_output(model, images, output_dir, tmp_dir_prefix=None):
 
     tmp_dir.cleanup()
 
+    return output_files
+
+
+def yolo_output(model, images, output_dir, tmp_dir_prefix=None, batch_size=4):
+    output_files = defaultdict(list)
+    images_count = len(images)
+    # based on https://stackoverflow.com/a/8290508
+    for start in range(0, images_count, batch_size):
+        batch = images[start:min(start+batch_size, images_count)]
+        batch_result = yolo_output_batch(model, batch, output_dir=output_dir, tmp_dir_prefix=tmp_dir_prefix)
+        output_files.update(batch_result)
     return output_files

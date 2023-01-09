@@ -33,7 +33,8 @@ class Hespi():
         fuzzy: bool = True,
         fuzzy_cutoff: float = 0.8,
         htr: bool = True,
-        tmp_dir:str = None
+        tmp_dir:str = None,
+        batch_size:int = 4,
     ):
         self.trocr_size = trocr_size
         self.sheet_component_weights = sheet_component_weights or DEFAULT_SHEET_COMPONENT_WEIGHTS
