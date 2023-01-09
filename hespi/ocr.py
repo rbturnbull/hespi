@@ -63,8 +63,8 @@ class Tesseract(OCR):
 
         try:
             return pytesseract.image_to_string(str(image_path)).strip()
-        except Exception:
-            print("No tesseract available.")
+        except Exception as err:
+            print(f"No tesseract available: {err}")
             self.no_tesseract = True
         
         return None

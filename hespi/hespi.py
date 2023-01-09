@@ -33,6 +33,7 @@ class Hespi():
         fuzzy: bool = True,
         fuzzy_cutoff: float = 0.8,
         htr: bool = True,
+        tmp_dir:str = None
     ):
         self.trocr_size = trocr_size
         self.sheet_component_weights = sheet_component_weights or DEFAULT_SHEET_COMPONENT_WEIGHTS
@@ -42,6 +43,7 @@ class Hespi():
         self.fuzzy = fuzzy
         self.fuzzy_cutoff = fuzzy_cutoff
         self.htr = htr
+        self.tmp_dir = tmp_dir
         
         # Check if gpu is available
         self.gpu = gpu and torch.cuda.is_available()
@@ -86,14 +88,14 @@ class Hespi():
         images:List[Path],
         output_dir:Path,
     ):
-        return yolo_output(self.sheet_component_model, images, output_dir=output_dir)
+        return yolo_output(self.sheet_component_model, images, output_dir=output_dir, tmp_dir_prefix=self.tmp_dir)
 
     def institutional_label_fields_model_detect(
         self,
         images:List[Path],
         output_dir:Path,
     ):
-        return yolo_output(self.institutional_label_fields_model, images, output_dir=output_dir)
+        return yolo_output(self.institutional_label_fields_model, images, output_dir=output_dir, tmp_dir_prefix=self.tmp_dir)
 
     def detect(
         self,

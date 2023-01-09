@@ -49,6 +49,7 @@ def detect(
         help="The path to the institutional label classifier weights.",
     ),
     force_download:bool = typer.Option(False, help="Whether or not to force download model weights even if a weights file is present."),
+    tmp_dir:str = None,
 ) -> pd.DataFrame:
     """
     HErbarium Specimen sheet PIpeline
@@ -67,6 +68,7 @@ def detect(
         fuzzy=fuzzy,
         fuzzy_cutoff=fuzzy_cutoff,
         htr=htr,
+        tmp_dir=tmp_dir
     )
     return hespi.detect(images, output_dir)
     
