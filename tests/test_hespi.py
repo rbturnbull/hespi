@@ -157,8 +157,7 @@ def test_institutional_label_classify():
     targets = ["typewritten", "printed", "handwritten", ""]
     mapper = {}
     for t in targets:
-        if t:
-            mapper[f"{t}.jpg"] = pd.DataFrame([dict(prediction=t)])
+        mapper[f"{t}.jpg"] = pd.DataFrame([dict(prediction=t)]) if t else ""
 
     hespi.institutional_label_classifier = MockClassifier(mapper)
     for path in mapper.keys():
@@ -166,3 +165,17 @@ def test_institutional_label_classify():
         assert result == path.split('.')[0]
 
 
+@patch('hespi.hespi.YOLOv5', return_value="institutional_label_fields_model")
+@patch('hespi.hespi.yolo_output', return_value={"species":["species.jpg"]})
+def test_institutional_label_detect(mock_yolo_output, mock_yolo):
+    weights = test_data_dir/"test-no-extension-ebaa296923904111a3972b54eba5cf5f.dat"
+    hespi = Hespi(
+        institutional_label_fields_weights=weights
+    )
+    hespi.trocr = MockOCR({"species.jpg":"zostericolaX"})
+    hespi.tesseract = MockOCR({"species.jpg":"zOstericolaXX"})
+    filename = "institution_label.jpg"
+    hespi.institutional_label_classifier = MockClassifier({filename:"printed"})
+
+    hespi.institutional_label_detect(Path(filename), "stub", "output_dir")
+    mock_yolo_output.assert_called_once_with("institutional_label_fields_model", [Path(filename)], output_dir="output_dir", tmp_dir_prefix=None)
