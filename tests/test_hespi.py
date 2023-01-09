@@ -179,3 +179,19 @@ def test_institutional_label_detect(mock_yolo_output, mock_yolo):
 
     hespi.institutional_label_detect(Path(filename), "stub", "output_dir")
     mock_yolo_output.assert_called_once_with("institutional_label_fields_model", [Path(filename)], output_dir="output_dir", tmp_dir_prefix=None)
+
+
+@patch.object(Hespi, 'sheet_component_detect', return_value={
+    "stub": [Path("stub.institutional_label.jpg"), Path("stub.swatch.jpg"), ]
+})
+@patch.object(Hespi, 'institutional_label_detect')
+@patch('hespi.hespi.ocr_data_df')
+def test_detect(mock_ocr_data_df, mock_institutional_label_detect, mock_sheet_component_detect):
+    hespi = Hespi()
+    hespi.detect("images", Path("output_dir"))
+    mock_sheet_component_detect.assert_called_once_with("images", output_dir=Path("output_dir"))
+    mock_institutional_label_detect.assert_called_once_with(
+        Path("stub.institutional_label.jpg"), 
+        stub="stub",
+        output_dir=Path("output_dir")/"stub")
+    mock_ocr_data_df.assert_called_once()
