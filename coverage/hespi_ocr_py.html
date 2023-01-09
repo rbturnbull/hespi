@@ -117,8 +117,8 @@
     <p id="t63" class="pln"><span class="n"><a href="#t63">63</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p id="t64" class="run"><span class="n"><a href="#t64">64</a></span><span class="t">        <span class="key">try</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
     <p id="t65" class="run"><span class="n"><a href="#t65">65</a></span><span class="t">            <span class="key">return</span> <span class="nam">pytesseract</span><span class="op">.</span><span class="nam">image_to_string</span><span class="op">(</span><span class="nam">str</span><span class="op">(</span><span class="nam">image_path</span><span class="op">)</span><span class="op">)</span><span class="op">.</span><span class="nam">strip</span><span class="op">(</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p id="t66" class="run"><span class="n"><a href="#t66">66</a></span><span class="t">        <span class="key">except</span> <span class="nam">Exception</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p id="t67" class="run"><span class="n"><a href="#t67">67</a></span><span class="t">            <span class="nam">print</span><span class="op">(</span><span class="str">"No tesseract available."</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p id="t66" class="run"><span class="n"><a href="#t66">66</a></span><span class="t">        <span class="key">except</span> <span class="nam">Exception</span> <span class="key">as</span> <span class="nam">err</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
+    <p id="t67" class="run"><span class="n"><a href="#t67">67</a></span><span class="t">            <span class="nam">print</span><span class="op">(</span><span class="str">f"No tesseract available: {err}"</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p id="t68" class="run"><span class="n"><a href="#t68">68</a></span><span class="t">            <span class="nam">self</span><span class="op">.</span><span class="nam">no_tesseract</span> <span class="op">=</span> <span class="key">True</span>&nbsp;</span><span class="r"></span></p>
     <p id="t69" class="pln"><span class="n"><a href="#t69">69</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p id="t70" class="run"><span class="n"><a href="#t70">70</a></span><span class="t">        <span class="key">return</span> <span class="key">None</span>&nbsp;</span><span class="r"></span></p>
@@ -128,7 +128,7 @@
     <div class="content">
         <p>
             <a class="nav" href="index.html">&#xab; index</a> &nbsp; &nbsp; <a class="nav" href="https://coverage.readthedocs.io">coverage.py v5.5</a>,
-            created at 2023-01-09 01:11 +0000
+            created at 2023-01-09 02:46 +0000
         </p>
     </div>
 </div>
