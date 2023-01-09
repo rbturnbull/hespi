@@ -72,7 +72,7 @@ def test_sheet_component_detect(mock_yolo_output, mock_yolo):
         sheet_component_weights=weights
     )
     hespi.sheet_component_detect("images", "output_dir")
-    mock_yolo_output.assert_called_once_with("sheet_component_model", "images", output_dir="output_dir")
+    mock_yolo_output.assert_called_once_with("sheet_component_model", "images", output_dir="output_dir", tmp_dir_prefix=None)
     
 
 
@@ -84,7 +84,7 @@ def test_institutional_label_fields_model_detect(mock_yolo_output, mock_yolo):
         institutional_label_fields_weights=weights
     )
     hespi.institutional_label_fields_model_detect("images", "output_dir")
-    mock_yolo_output.assert_called_once_with("institutional_label_fields_model", "images", output_dir="output_dir")
+    mock_yolo_output.assert_called_once_with("institutional_label_fields_model", "images", output_dir="output_dir", tmp_dir_prefix=None)
 
 
 class MockOCR(OCR):
