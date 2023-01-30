@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "hespi"
-version = "0.2.2"
+version = "0.2.3"
 description = "HErbarium Specimen sheet PIpeline"
 authors = ["Robert Turnbull <robert.turnbull@unimelb.edu.au>"]
 license = "Apache-2.0"

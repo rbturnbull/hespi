@@ -21,7 +21,7 @@ def test_yolo_output():
                 [[10,10,20,20,-1,2],[10,0,20,10,-1,3]],
             ])
         
-        def save(self, save_dir:Path, exist_ok=False):
+        def save(self, save_dir:Path, **kwargs):
             for image in images:
                 shutil.copy(image, save_dir/image.name )
 

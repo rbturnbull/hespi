@@ -18,7 +18,7 @@ def yolo_output_batch(model, images, output_dir, tmp_dir_prefix=None):
 
     # TODO check that all images have unique names
     # TODO download from internet if it is given a URL
-    results.save(save_dir=tmp_dir_path, exist_ok=True)
+    results.save(save_dir=tmp_dir_path)
 
     output_files = defaultdict(list)
 
@@ -48,7 +48,7 @@ def yolo_output_batch(model, images, output_dir, tmp_dir_prefix=None):
                 image_output_dir / f"{stub}.{prediction_index}.{category}.jpg"
             )
             console.print(f"Saving {category} to '{output_path}'")
-            im_crop.save(output_path)
+            im_crop.convert('RGB').save(output_path)
             output_files[stub].append(output_path)
 
     tmp_dir.cleanup()
