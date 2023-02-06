@@ -33,9 +33,6 @@ def yolo_output_batch(model, images, output_dir, tmp_dir_prefix=None):
             f"Saving sheet component predicitons with bounding boxes to '{prediction_path}'"
         )
         prediction_path_tmp_location = tmp_dir_path / f"{stub}.jpg"
-        if not prediction_path_tmp_location.exists():
-            raise FileNotFoundError(f"File {prediction_path_tmp_location.name} is not found in {prediction_path_tmp_location.parent}")
-
         move(prediction_path_tmp_location, prediction_path)
 
         for prediction_index, prediction in enumerate(predictions):
