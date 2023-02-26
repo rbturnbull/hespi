@@ -12,6 +12,7 @@ from .ocr import Tesseract, TrOCR, TrOCRSize
 from .download import get_weights
 from .util import read_reference, ocr_data_df, adjust_text
 from .ocr import TrOCRSize
+from .report import write_report
 
 console = Console()
 
@@ -103,7 +104,7 @@ class Hespi():
         images:List[Path],
         output_dir:Path,
     ):
-        console.print(f"Processing {images}")
+        console.print(f"Processing {len(images)} image(s)")
 
         # Sheet-Components predictions
         component_files = self.sheet_component_detect(images, output_dir=output_dir)
@@ -120,7 +121,12 @@ class Hespi():
                         output_dir=output_dir / stub,
                     )
 
-        return ocr_data_df(ocr_data, output_path=output_dir/"ocr_results.csv")
+        df = ocr_data_df(ocr_data, output_path=output_dir/"ocr_results.csv")
+
+        # Write report
+        write_report(output_dir/"report.html", component_files)
+
+        return df
 
     def institutional_label_classify(self, component:Path, classification_csv:Path) -> str:
         console.print(f"Classifying institution label: '{component}'")

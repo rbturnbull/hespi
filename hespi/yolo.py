@@ -13,12 +13,13 @@ def yolo_output_batch(model, images, output_dir, tmp_dir_prefix=None):
     tmp_dir = tempfile.TemporaryDirectory(prefix=tmp_dir_prefix)
     tmp_dir_path = Path(tmp_dir.name)
     console.print(f"Using temporary directory '{tmp_dir_path}'")
+
     output_dir = Path(output_dir)
     output_dir.mkdir(exist_ok=True, parents=True)
 
     # TODO check that all images have unique names
     # TODO download from internet if it is given a URL
-    results.save(save_dir=tmp_dir_path)
+    results.save(save_dir=tmp_dir_path, exist_ok=True)
 
     output_files = defaultdict(list)
 
@@ -31,7 +32,8 @@ def yolo_output_batch(model, images, output_dir, tmp_dir_prefix=None):
         console.print(
             f"Saving sheet component predicitons with bounding boxes to '{prediction_path}'"
         )
-        move(tmp_dir_path / f"{stub}.jpg", prediction_path)
+        prediction_path_tmp_location = tmp_dir_path / f"{stub}.jpg"
+        move(prediction_path_tmp_location, prediction_path)
 
         for prediction_index, prediction in enumerate(predictions):
             category_index = int(prediction[5].int().cpu().numpy())
