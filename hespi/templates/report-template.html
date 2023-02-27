@@ -237,24 +237,33 @@ H2 {
 
               <h2>Sheet Components</h2>
               
-              {% for file in files %}
-                <div class="row">
-                  <div class="col-2">
-                    {{ get_classification(file) }}
-                  </div>
-                  <div class="col-10">
-                    <a href='{{ relative_to_output(file) }}'><img src='{{ relative_to_output(file) }}' style="max-width: 400px;"/></a>
-                  </div>
-                </div>              
-              {% endfor %}
+              <table class="table table-hover table-striped ">
+                <thead>
+                  <tr>
+                    <th scope="col">Component</th>
+                    <th scope="col">Image</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for file in files %}
+                    <tr>
+                      <th scope="row">{{ get_classification(file) }}</th>
+                      <td><a href='{{ relative_to_output(file) }}'><img src='{{ relative_to_output(file) }}' style="max-width: 400px;"/></a></td>
+                    </tr>
+                  {% endfor %}  
+                </tbody>
+              </table>
+
 
               {% set my_ocr_df = ocr_df[ocr_df["id"] == stub] %}
               {% if len(my_ocr_df) %}
                 <h2>Institutional Labels</h2>
           
                 {% for _, row in my_ocr_df.iterrows() %}
-                  <a href='{{ relative_to_output(row["predictions"]) }}'><img src='{{ relative_to_output(row["predictions"]) }}' style="max-width: 400px;"/></a>
-                  <p>Classification: {{ row["label_classification"] }}</p>
+                  <center>
+                    <a href='{{ relative_to_output(row["predictions"]) }}'><img src='{{ relative_to_output(row["predictions"]) }}' style="max-width: 400px;"/></a>
+                    <p>Classification: {{ row["label_classification"] }}</p>
+                  </center>
 
                   <table class="table table-hover table-striped ">
                     <thead>
