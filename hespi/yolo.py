@@ -7,6 +7,10 @@ from rich.console import Console
 
 console = Console()
 
+from .util import get_stub
+
+def predictions_filename(stub):
+    return f"{stub}-predictions.jpg"
 
 def yolo_output_batch(model, images, output_dir, tmp_dir_prefix=None):
     results = model.predict(images)
@@ -24,11 +28,10 @@ def yolo_output_batch(model, images, output_dir, tmp_dir_prefix=None):
     output_files = defaultdict(list)
 
     for image, predictions in zip(images, results.pred):
-        last_period = image.name.rfind(".")
-        stub = image.name[:last_period] if last_period else image.name
+        stub = get_stub(image)
         image_output_dir = output_dir / stub
         image_output_dir.mkdir(exist_ok=True, parents=True)
-        prediction_path = image_output_dir / f"{stub}-predictions.jpg"
+        prediction_path = image_output_dir / predictions_filename(stub)
         console.print(
             f"Saving sheet component predicitons with bounding boxes to '{prediction_path}'"
         )

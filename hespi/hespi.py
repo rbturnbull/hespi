@@ -7,10 +7,10 @@ from yolov5 import YOLOv5
 from torchapp.examples.image_classifier import ImageClassifier
 from rich.console import Console
 
-from .yolo import yolo_output
+from .yolo import yolo_output, predictions_filename
 from .ocr import Tesseract, TrOCR, TrOCRSize
 from .download import get_weights
-from .util import read_reference, ocr_data_df, adjust_text
+from .util import read_reference, ocr_data_df, adjust_text, get_stub
 from .ocr import TrOCRSize
 from .report import write_report
 
@@ -124,7 +124,7 @@ class Hespi():
         df = ocr_data_df(ocr_data, output_path=output_dir/"ocr_results.csv")
 
         # Write report
-        write_report(output_dir/"report.html", component_files)
+        write_report(output_dir/"report.html", component_files, ocr_data, df)
 
         return df
 
@@ -158,7 +158,7 @@ class Hespi():
         # Institutional Label Classification
         classification = self.institutional_label_classify(
             component=component,
-            classification_csv = component.parent / f"{component.name[:3]}.classification.csv", # hack
+            classification_csv = component.parent / f"label_classification.txt",
         )
         detection_results["label_classification"] = classification
 
@@ -166,6 +166,11 @@ class Hespi():
             [component],
             output_dir=output_dir,
         )
+
+        institutional_label_stub = get_stub(component)
+        institutional_label_dir = component.parent/institutional_label_stub
+        predictions_path = institutional_label_dir/predictions_filename(institutional_label_stub)
+        detection_results["predictions"] = predictions_path
 
         # Text Recognition on bounding boxes found by YOLO
         for fields in field_files.values():
@@ -206,6 +211,8 @@ class Hespi():
         classification = classification or ""
 
         detection_results = {}        
+
+        detection_results[f"{field}_image"] = field_file
 
         # HTR
         recognised_text = ""

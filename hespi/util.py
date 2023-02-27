@@ -7,6 +7,21 @@ from difflib import get_close_matches
 console = Console()
 
 
+institutional_label_fields = [
+    "family",
+    "genus",
+    "species",
+    "infrasp_taxon",
+    "authority",
+    "collector_number",
+    "collector",
+    "locality",
+    "geolocation",
+    "year",
+    "month",
+    "day",
+]
+
 def adjust_case(field, value):
     if field in ["genus", "family"]:
         return value.title()
@@ -42,22 +57,7 @@ def ocr_data_df(data: dict, output_path: Path=None) -> pd.DataFrame:
     
     # insert columns not included in dataframe, and re-order
     # including any columns not included in col_options to account for any updates
-    col_options = [
-        "institutional label",
-        "id",
-        "family",
-        "genus",
-        "species",
-        "infrasp taxon",
-        "authority",
-        "collector_number",
-        "collector",
-        "locality",
-        "geolocation",
-        "year",
-        "month",
-        "day",
-    ]
+    col_options = [ "institutional label", "id" ] + institutional_label_fields
 
     missing_cols = [col for col in col_options if col not in df.columns]
     df[missing_cols] = ""
@@ -93,3 +93,18 @@ def adjust_text(field:str, recognised_text:str, fuzzy:bool, fuzzy_cutoff:float, 
             f"Recognized text [red]'{recognised_text}'[/red] adjusted to [purple]'{text_adjusted}'[/purple]"
         )    
     return text_adjusted
+
+
+def get_stub(path:Path) -> str:
+    """
+    Gets the part of the filename before the last extension
+
+    Args:
+        path (Path): The path to the file
+
+    Returns:
+        str: the part of the filename before the last extension
+    """
+    last_period = path.name.rfind(".")
+    stub = path.name[:last_period] if last_period else path.name
+    return stub

@@ -32,7 +32,7 @@
 
   <style>
 
-    {% include 'assets/css/bootstrap.cosmo.min.css' %}
+    {% include 'assets/css/bootstrap.hespi.min.css' %}
 
     .bd-placeholder-img {
       font-size: 1.125rem;
@@ -231,10 +231,11 @@ H2 {
           {% for stub, files in component_files.items() %}
             <div class="tab-pane fade show {% if loop.first %}active{% endif %}" id="{{ stub }}" role="tabpanel" aria-labelledby="{{ stub }}-tab">
               <h1>{{ stub }}</h1>
+              <center>
               <a href='{{ stub }}/{{ stub }}-predictions.jpg'><img src='{{ stub }}/{{ stub }}-predictions.jpg' style="max-width: 400px;"/></a>
+              </center>
 
               <h2>Sheet Components</h2>
-                
               
               {% for file in files %}
                 <div class="row">
@@ -246,6 +247,49 @@ H2 {
                   </div>
                 </div>              
               {% endfor %}
+
+              {% set my_ocr_df = ocr_df[ocr_df["id"] == stub] %}
+              {% if len(my_ocr_df) %}
+                <h2>Institutional Labels</h2>
+          
+                {% for _, row in my_ocr_df.iterrows() %}
+                  <a href='{{ relative_to_output(row["predictions"]) }}'><img src='{{ relative_to_output(row["predictions"]) }}' style="max-width: 400px;"/></a>
+                  <p>Classification: {{ row["label_classification"] }}</p>
+
+                  <table class="table table-hover table-striped ">
+                    <thead>
+                      <tr>
+                        <th scope="col">Field</th>
+                        <th scope="col">Image</th>
+                        <th scope="col">Recognized Text</th>
+                        <th scope="col">OCR</th>
+                        <th scope="col">HTR</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {% for field in institutional_label_fields %}
+                        {% if field in row  %}
+                          <tr>
+                            <th scope="row">{{ field }}</th>
+                            <td>
+                              {% if row[field+"_image"] %}
+                                <a href='{{ relative_to_output(row[field+"_image"]) }}'><img src='{{ relative_to_output(row[field+"_image"]) }}' style="max-width: 400px;"/></a>
+                              {% endif %}
+                            </td>
+                            <td>{{ row[field] }}</td>
+                            <td>{{ row[field+"_Tesseract"] }}</td>
+                            <td>{{ row[field+"_TrOCR"] }}</td>
+                          </div>
+                        {% endif %}
+                      {% endfor %}
+                    </tbody>
+                  </table>
+
+
+                {% endfor %}
+              {% endif %}
+
+
             </div>
           {% endfor %}
         </div>        
@@ -253,15 +297,10 @@ H2 {
     </div>
   </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
-    integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
-    crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.min.js" integrity="sha384-cuYeSxntonz0PPNlHhBs68uyIAVpIIOZZ5JqeqvYYIcEL727kskC66kF92t6Xl2V" crossorigin="anonymous"></script>
 
   <script src="https://cdn.jsdelivr.net/npm/feather-icons@4.28.0/dist/feather.min.js"
     integrity="sha384-uO3SXW5IuS1ZpFPKugNNWqTZRRglnUJK6UAZ/gxOX80nxEkN9NcGZTftn6RzhGWE"
-    crossorigin="anonymous"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4/dist/Chart.min.js"
-    integrity="sha384-zNy6FEbO50N+Cg5wap8IKA4M/ZnLJgzc6w2NqACZaK0u0FXfOWRRJOnQtpZun8ha"
     crossorigin="anonymous"></script>
   <script>
 (function () {
@@ -269,51 +308,6 @@ H2 {
 
   feather.replace({ 'aria-hidden': 'true' })
 
-  // Graphs
-  var ctx = document.getElementById('myChart')
-  // eslint-disable-next-line no-unused-vars
-  var myChart = new Chart(ctx, {
-    type: 'line',
-    data: {
-      labels: [
-        'Sunday',
-        'Monday',
-        'Tuesday',
-        'Wednesday',
-        'Thursday',
-        'Friday',
-        'Saturday'
-      ],
-      datasets: [{
-        data: [
-          15339,
-          21345,
-          18483,
-          24003,
-          23489,
-          24092,
-          12034
-        ],
-        lineTension: 0,
-        backgroundColor: 'transparent',
-        borderColor: '#007bff',
-        borderWidth: 4,
-        pointBackgroundColor: '#007bff'
-      }]
-    },
-    options: {
-      scales: {
-        yAxes: [{
-          ticks: {
-            beginAtZero: false
-          }
-        }]
-      },
-      legend: {
-        display: false
-      }
-    }
-  })
 })()    
   </script>
 </body>
