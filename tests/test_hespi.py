@@ -1,3 +1,4 @@
+import tempfile
 from pathlib import Path
 from typing import Dict
 from hespi import Hespi
@@ -184,17 +185,44 @@ def test_institutional_label_detect(mock_yolo_output, mock_yolo):
     mock_yolo_output.assert_called_once_with("institutional_label_fields_model", [Path(filename)], output_dir="output_dir", tmp_dir_prefix=None)
 
 
+
 @patch.object(Hespi, 'sheet_component_detect', return_value={
-    "stub": [Path("stub.institutional_label.jpg"), Path("stub.swatch.jpg"), ]
+    "stub": [Path("stub.institutional_label.jpg"), Path("stub.swatch.jpg"), ],
 })
 @patch.object(Hespi, 'institutional_label_detect')
 @patch('hespi.hespi.ocr_data_df')
 def test_detect(mock_ocr_data_df, mock_institutional_label_detect, mock_sheet_component_detect):
     hespi = Hespi()
-    hespi.detect("images", Path("output_dir"))
-    mock_sheet_component_detect.assert_called_once_with("images", output_dir=Path("output_dir"))
-    mock_institutional_label_detect.assert_called_once_with(
-        Path("stub.institutional_label.jpg"), 
-        stub="stub",
-        output_dir=Path("output_dir")/"stub")
-    mock_ocr_data_df.assert_called_once()
+    with tempfile.TemporaryDirectory() as tmpdir:        
+        output_dir = Path(tmpdir)
+        hespi.detect("images", output_dir)
+        mock_sheet_component_detect.assert_called_once_with("images", output_dir=output_dir)
+        mock_institutional_label_detect.assert_called_once_with(
+            Path("stub.institutional_label.jpg"), 
+            stub="stub",
+            output_dir=output_dir/"stub")
+        mock_ocr_data_df.assert_called_once()
+        report_file = output_dir/"report.html"
+        assert report_file.exists()
+        assert "<head>" in report_file.read_text()
+
+
+@patch.object(Hespi, 'sheet_component_detect', return_value={
+    "long-name-that-needs-to-be-truncated": [Path("long-name-that-needs-to-be-truncated.institutional_label.jpg"), Path("long-name-that-needs-to-be-truncated.swatch.jpg"), ],    
+})
+@patch.object(Hespi, 'institutional_label_detect')
+@patch('hespi.hespi.ocr_data_df')
+def test_detect_truncated(mock_ocr_data_df, mock_institutional_label_detect, mock_sheet_component_detect):
+    hespi = Hespi()
+    with tempfile.TemporaryDirectory() as tmpdir:        
+        output_dir = Path(tmpdir)
+        hespi.detect("images", output_dir)
+        mock_sheet_component_detect.assert_called_once_with("images", output_dir=output_dir)
+        mock_institutional_label_detect.assert_called_once_with(
+            Path("long-name-that-needs-to-be-truncated.institutional_label.jpg"), 
+            stub="long-name-that-needs-to-be-truncated",
+            output_dir=output_dir/"long-name-that-needs-to-be-truncated")
+        mock_ocr_data_df.assert_called_once()
+        report_file = output_dir/"report.html"
+        assert report_file.exists()
+        assert "long-name-that-needs-to-be-tru..." in report_file.read_text()

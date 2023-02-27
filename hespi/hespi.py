@@ -103,6 +103,7 @@ class Hespi():
         self,
         images:List[Path],
         output_dir:Path,
+        report:bool = True,
     ):
         console.print(f"Processing {len(images)} image(s)")
 
@@ -124,7 +125,8 @@ class Hespi():
         df = ocr_data_df(ocr_data, output_path=output_dir/"ocr_results.csv")
 
         # Write report
-        write_report(output_dir/"report.html", component_files, ocr_data, df)
+        if report:
+            write_report(output_dir/"report.html", component_files, df)
 
         return df
 
