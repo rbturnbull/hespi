@@ -120,7 +120,8 @@ def test_read_field_file_tesseract_only():
     
     result = hespi.read_field_file(image)
 
-    assert len(result.keys()) == 2
+    assert len(result.keys()) == 3
+    assert result["species_image"] == image
     assert result["species_Tesseract"] == "zOstericolaXX"
     assert result["species"] == "zostericola"
 
@@ -132,10 +133,11 @@ def test_read_field_file_htr():
     
     result = hespi.read_field_file(image)
 
-    assert len(result.keys()) == 3
+    assert len(result.keys()) == 4
     assert result["species_TrOCR"] == "zostericolaX"
     assert result["species_Tesseract"] == "zOstericolaXX"
     assert result["species"] == "zostericolax"    
+    assert result["species_image"] == image
 
 
 def test_read_field_file_fuzzy():
@@ -146,10 +148,11 @@ def test_read_field_file_fuzzy():
     
     result = hespi.read_field_file(image)
 
-    assert len(result.keys()) == 3
+    assert len(result.keys()) == 4
     assert result["species_TrOCR"] == "zostericolaX"
     assert result["species_Tesseract"] == "zOstericolaXX"
     assert result["species"] == "zostericola"        
+    assert result["species_image"] == image
 
 
 def test_institutional_label_classify():

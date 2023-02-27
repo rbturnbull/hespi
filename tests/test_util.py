@@ -45,7 +45,7 @@ def test_ocr_data_df():
         "family",
         "genus",
         "species",
-        "infrasp taxon",
+        "infrasp_taxon",
         "authority",
         "collector_number",
         "collector",
