@@ -5437,6 +5437,42 @@ files = [
 ]
 
 [[package]]
+name = "ultralytics"
+version = "8.0.48"
+description = "Ultralytics YOLOv8"
+category = "main"
+optional = false
+python-versions = ">=3.7"
+files = [
+    {file = "ultralytics-8.0.48-py3-none-any.whl", hash = "sha256:aa169864c4c77e5f66d56f564a7a423f58bf2d25b95ec405cba1974f9172bf21"},
+    {file = "ultralytics-8.0.48.tar.gz", hash = "sha256:fd07f55a7ffa825bd62256ec6643c84e6d39dd7863f87b680333b12a95ae4e94"},
+]
+
+[package.dependencies]
+certifi = ">=2022.12.7"
+matplotlib = ">=3.2.2"
+numpy = ">=1.18.5"
+opencv-python = ">=4.6.0"
+pandas = ">=1.1.4"
+Pillow = ">=7.1.2"
+psutil = "*"
+PyYAML = ">=5.3.1"
+requests = ">=2.23.0"
+scipy = ">=1.4.1"
+seaborn = ">=0.11.0"
+sentry-sdk = "*"
+tensorboard = ">=2.4.1"
+thop = ">=0.1.1"
+torch = ">=1.7.0"
+torchvision = ">=0.8.1"
+tqdm = ">=4.64.0"
+
+[package.extras]
+dev = ["check-manifest", "coverage", "mkdocs-material", "mkdocstrings[python]", "pytest", "pytest-cov"]
+export = ["coremltools (>=6.0)", "onnx", "onnxruntime", "onnxsim", "openvino-dev (>=2022.3)"]
+tf = ["onnx2tf", "sng4onnx", "tensorflow", "tflite-support"]
+
+[[package]]
 name = "urllib3"
 version = "1.26.14"
 description = "HTTP library with thread-safe connection pooling, file post, and more."
@@ -5672,4 +5708,4 @@ testing = ["big-O", "flake8 (<5)", "jaraco.functools", "jaraco.itertools", "more
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.8,<3.12"
-content-hash = "62cba0bc8c57b012d1513b50fd9948ea46d715bfc3b1e64e840cf5ec9cfcbefa"
+content-hash = "78726a633b424ec8b74266b62a84d6fadccff9a69995ac10e37023ef84e44eb2"
