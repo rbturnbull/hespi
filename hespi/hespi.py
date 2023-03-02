@@ -3,9 +3,9 @@ from pathlib import Path
 import pandas as pd
 from functools import cached_property
 import torch
-from yolov5 import YOLOv5
 from torchapp.examples.image_classifier import ImageClassifier
 from rich.console import Console
+from ultralytics import YOLO
 
 from .yolo import yolo_output, predictions_filename
 from .ocr import Tesseract, TrOCR, TrOCRSize
@@ -16,10 +16,10 @@ from .report import write_report
 
 console = Console()
 
-DEFAULT_RELEASE_PREFIX = "https://github.com/rbturnbull/hespi/releases/download/v0.1.0-alpha"
-DEFAULT_SHEET_COMPONENT_WEIGHTS = f"{DEFAULT_RELEASE_PREFIX}/sheet-component-weights.pt"
-DEFAULT_INSTITUTIONAL_LABEL_FIELDS_WEIGHTS = f"{DEFAULT_RELEASE_PREFIX}/institutional-label-fields.pt"
-DEFAULT_INSTITUTIONAL_LABEL_CLASSIFIER_WEIGHTS = f"{DEFAULT_RELEASE_PREFIX}/institutional-label-classifier.pkl"
+DEFAULT_RELEASE_PREFIX = "https://github.com/rbturnbull/hespi/releases/download/v0.2.5"
+DEFAULT_SHEET_COMPONENT_WEIGHTS = f"{DEFAULT_RELEASE_PREFIX}/sheet-component-medium.pt.gz"
+DEFAULT_INSTITUTIONAL_LABEL_FIELDS_WEIGHTS = f"{DEFAULT_RELEASE_PREFIX}/institutional-label-field.pt.gz"
+DEFAULT_INSTITUTIONAL_LABEL_CLASSIFIER_WEIGHTS = f"https://github.com/rbturnbull/hespi/releases/download/v0.1.0-alpha/institutional-label-classifier.pkl"
 
 
 class Hespi():
@@ -51,8 +51,9 @@ class Hespi():
         self.gpu = gpu and torch.cuda.is_available()
         self.device = "cuda:0" if self.gpu else "cpu"
 
-    def get_yolo(self, weights_url:str) -> YOLOv5:
+    def get_yolo(self, weights_url:str) -> YOLO:
         weights = get_weights(weights_url, force=self.force_download)
+        return YOLO(weights)
         return YOLOv5(weights, self.device)
 
     @cached_property
@@ -214,6 +215,7 @@ class Hespi():
 
         detection_results = {}        
 
+            
         detection_results[f"{field}_image"] = field_file
 
         # HTR

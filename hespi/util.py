@@ -64,6 +64,7 @@ def ocr_data_df(data: dict, output_path: Path=None) -> pd.DataFrame:
     extra_cols = [col for col in df.columns if col not in col_options]
     cols = col_options + extra_cols
     df = df[cols]
+    df = df.fillna('')
     
     # CSV output
     if output_path:

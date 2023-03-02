@@ -21,7 +21,7 @@ def write_report(output:Path, component_files:Dict, ocr_df:pd.DataFrame):
     def relative_to_output(path):
         try:
             return Path(path).relative_to(output.parent)
-        except ValueError:
+        except Exception:
             return path
 
     def get_classification(path):

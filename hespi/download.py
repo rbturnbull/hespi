@@ -3,6 +3,7 @@ from appdirs import user_cache_dir
 from typing import Union
 import hashlib
 import urllib.request
+import gzip, shutil
 
 class DownloadError(Exception):
     pass
@@ -46,20 +47,43 @@ def cached_download(url: str, local_path: Union[str, Path], force: bool = False)
         raise IOError(f"Error reading {local_path}")
 
 
+def get_stem_extension(name):
+    extension_location = name.rfind(".")
+    if extension_location > 0:
+        name_stem = name[:extension_location]
+        extension = name[extension_location:]
+    else:
+        name_stem = name
+        extension = ".dat"
+
+    return name_stem, extension
+
+
 def get_weights(location:Union[str,Path], force:bool=False) -> Path:
     location = str(location)
     if location.startswith("http"):
-        name = location.split("/")[-1]
-        extension_location = name.rfind(".")
-        if extension_location > 0:
-            name_stem = name[:extension_location]
-            extension = name[extension_location:]
-        else:
-            name_stem = name
-            extension = ".dat"
+        name_stem, extension = get_stem_extension(location.split("/")[-1])
         url_hash = hashlib.md5(location.encode()).hexdigest()
+
         local_path = get_cached_path(f"{name_stem}-{url_hash}{extension}")
-        cached_download(location, local_path, force=force)
+
+        # gunzip if necessary
+        if extension == ".gz":
+            local_path_gz = local_path
+            name_stem, extension = get_stem_extension(name_stem)
+            local_path = get_cached_path(f"{name_stem}-{url_hash}{extension}")
+
+            if not local_path.exists() or force:
+                cached_download(location, local_path_gz, force=force)
+                
+                #https://stackoverflow.com/a/48466691
+                with gzip.open(local_path_gz, 'r') as f_in, open(local_path, 'wb') as f_out:
+                    shutil.copyfileobj(f_in, f_out)
+                
+                assert local_path.exists()
+                local_path_gz.unlink()
+        else:
+            cached_download(location, local_path, force=force)
     else:
         local_path = Path(location)
     
