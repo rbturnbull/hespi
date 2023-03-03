@@ -42,18 +42,18 @@ Hespi takes images of specimen sheets from herbaria and first detects the variou
 
 Then it takes any `institutional label` and detects the following fields from it:
 
-- 'genus',
-- 'species',
-- 'year',
-- 'month',
-- 'day',
-- 'family',
-- 'collector',
-- 'authority',
-- 'locality',
-- 'geolocation',
-- 'collector_number',
-- 'infrasp taxon'
+- family,
+- genus,
+- species,
+- infrasp_taxon,
+- authority,
+- collector_number,
+- collector,
+- locality,
+- geolocation,
+- year,
+- month,
+- day,
 
 These text fields are then run through the OCR program Tesseract.
 
