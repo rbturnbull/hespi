@@ -133,7 +133,18 @@ class Hespi():
 
         # Write report
         if report:
-            write_report(output_dir/"report.html", component_files, df)
+            if len(images) == 1:
+                # If report is for a single image, include in report name
+                report_path = output_dir/f"hespi-report-{images[0].name}.html"
+            else:
+                # If report is for multiple images, make sure it is unique
+                report_path = output_dir/"hespi-report.html"
+                index = 1
+                while report_path.exists():
+                    index += 1
+                    report_path = output_dir/f"hespi-report-{index}.html"
+            
+            write_report(report_path, component_files, df)
 
         return df
 

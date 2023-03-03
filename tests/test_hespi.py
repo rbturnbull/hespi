@@ -210,7 +210,7 @@ def test_detect(mock_ocr_data_df, mock_institutional_label_detect, mock_sheet_co
             stub="stub",
             output_dir=output_dir/"stub")
         mock_ocr_data_df.assert_called_once()
-        report_file = output_dir/"report.html"
+        report_file = output_dir/"hespi-report-test2.jpg.html"
         assert report_file.exists()
         assert "<head>" in report_file.read_text()
 
@@ -231,6 +231,54 @@ def test_detect_truncated(mock_ocr_data_df, mock_institutional_label_detect, moc
             stub="long-name-that-needs-to-be-truncated",
             output_dir=output_dir/"long-name-that-needs-to-be-truncated")
         mock_ocr_data_df.assert_called_once()
-        report_file = output_dir/"report.html"
+        report_file = output_dir/"hespi-report-test2.jpg.html"
         assert report_file.exists()
         assert "long-name-that-needs-to-be-tru..." in report_file.read_text()
+
+
+@patch.object(Hespi, 'sheet_component_detect', return_value={
+    "stub": [Path("stub.institutional_label.jpg"), Path("stub.swatch.jpg"), ],
+})
+@patch.object(Hespi, 'institutional_label_detect')
+@patch('hespi.hespi.ocr_data_df')
+def test_detect_multi(mock_ocr_data_df, mock_institutional_label_detect, mock_sheet_component_detect):
+    hespi = Hespi()
+    with tempfile.TemporaryDirectory() as tmpdir:        
+        output_dir = Path(tmpdir)
+        hespi.detect([test_data_dir/"test2.jpg", test_data_dir/"test.jpg"], output_dir)
+        mock_sheet_component_detect.assert_called_once_with([test_data_dir/"test2.jpg", test_data_dir/"test.jpg"], output_dir=output_dir)
+        mock_institutional_label_detect.assert_called_with(
+            Path("stub.institutional_label.jpg"), 
+            stub="stub",
+            output_dir=output_dir/"stub")
+        mock_ocr_data_df.assert_called_once()
+        report_file = output_dir/"hespi-report.html"
+        assert report_file.exists()
+        assert "<head>" in report_file.read_text()
+
+
+@patch.object(Hespi, 'sheet_component_detect', return_value={
+    "stub": [Path("stub.institutional_label.jpg"), Path("stub.swatch.jpg"), ],
+})
+@patch.object(Hespi, 'institutional_label_detect')
+@patch('hespi.hespi.ocr_data_df')
+def test_detect_multi_report_exists(mock_ocr_data_df, mock_institutional_label_detect, mock_sheet_component_detect):
+    hespi = Hespi()
+    with tempfile.TemporaryDirectory() as tmpdir:        
+        output_dir = Path(tmpdir)
+        first_report_file = output_dir/"hespi-report.html"
+        first_report_file.write_text("DUMMY REPORT")
+
+        hespi.detect([test_data_dir/"test2.jpg", test_data_dir/"test.jpg"], output_dir)
+        mock_sheet_component_detect.assert_called_once_with([test_data_dir/"test2.jpg", test_data_dir/"test.jpg"], output_dir=output_dir)
+        mock_institutional_label_detect.assert_called_with(
+            Path("stub.institutional_label.jpg"), 
+            stub="stub",
+            output_dir=output_dir/"stub")
+        mock_ocr_data_df.assert_called_once()
+        
+        report_file = output_dir/"hespi-report-2.html"
+        assert report_file.exists()
+        assert "<head>" in report_file.read_text()
+
+
