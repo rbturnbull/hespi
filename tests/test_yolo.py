@@ -2,6 +2,7 @@ import tempfile
 from pathlib import Path
 import shutil
 import torch
+from unittest.mock import patch
 
 from hespi import yolo
     
@@ -40,9 +41,14 @@ class MockYoloOutput():
 class MockYoloPredictor():
     save_dir = ""
 
+    def __init__(self, *args):
+        pass
+
+    def setup_model(self, model):
+        pass
 
 class MockYoloModel():
-    predictor = MockYoloPredictor()
+    predictor = None
     model = None
     names = [str(x) for x in range(4)]
     
@@ -56,7 +62,9 @@ class MockYoloModel():
         self.device = device
 
 
-def test_yolo_output():
+
+@patch('hespi.yolo.DetectionPredictor', return_value=MockYoloPredictor())
+def test_yolo_output(mock_detection_predictor):
     base_dir = Path(__file__).parent/"testdata"
     images = [
         base_dir/"test.jpg",

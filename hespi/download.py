@@ -65,12 +65,10 @@ def get_weights(location:Union[str,Path], force:bool=False) -> Path:
         name_stem, extension = get_stem_extension(location.split("/")[-1])
         url_hash = hashlib.md5(location.encode()).hexdigest()
 
-        local_path = get_cached_path(f"{name_stem}-{url_hash}{extension}")
-
         # gunzip if necessary
         if extension == ".gz":
-            local_path_gz = local_path
             name_stem, extension = get_stem_extension(name_stem)
+            local_path_gz = get_cached_path(f"{name_stem}-{url_hash}{extension}.gz")
             local_path = get_cached_path(f"{name_stem}-{url_hash}{extension}")
 
             if not local_path.exists() or force:
@@ -83,6 +81,7 @@ def get_weights(location:Union[str,Path], force:bool=False) -> Path:
                 assert local_path.exists()
                 local_path_gz.unlink()
         else:
+            local_path = get_cached_path(f"{name_stem}-{url_hash}{extension}")
             cached_download(location, local_path, force=force)
     else:
         local_path = Path(location)

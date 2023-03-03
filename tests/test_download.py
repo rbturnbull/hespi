@@ -1,6 +1,8 @@
+import tempfile
 import pytest
 from unittest.mock import patch
 from pathlib import Path
+import shutil
 
 from hespi import download
 
@@ -65,3 +67,23 @@ def test_get_weights_no_extension(mock_cached_download):
         assert path.name == filename
         mock_cached_download.assert_called_once()
         mock_get_cached_path.assert_called_once_with(filename)
+
+
+def test_get_weights_gz():
+    filename = "test-bfc763ba3bb28a80dcdec989b06f055c.txt.gz"
+    testdata_path = Path(__file__).parent / "testdata" / filename
+
+    with tempfile.TemporaryDirectory() as tmpdir:        
+        tmpdir = Path(tmpdir)
+        local_path = tmpdir / filename
+        shutil.copy(testdata_path, local_path)
+        assert local_path.exists()
+
+        with patch("hespi.download.user_cache_dir", return_value=tmpdir) as mock_user_cache_dir:
+            path = download.get_weights("https://raw.githubusercontent.com/rbturnbull/hespi/main/tests/testdata/test.txt.gz")
+            assert path.name == "test-bfc763ba3bb28a80dcdec989b06f055c.txt"
+            assert path.read_text().strip() == "Test Text File"
+            mock_user_cache_dir.assert_called_with("hespi")
+
+
+
