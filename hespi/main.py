@@ -14,7 +14,7 @@ app = typer.Typer()
 
 @app.command()
 def detect(
-    images: List[Path] = typer.Argument(..., help="A list of images to process."),
+    images: List[str] = typer.Argument(..., help="A list of images to process."),
     output_dir: Path = typer.Option(
         ...,
         help="A directory to output the results.",

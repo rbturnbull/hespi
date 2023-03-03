@@ -9,7 +9,7 @@ from ultralytics import YOLO
 
 from .yolo import yolo_output, predictions_filename
 from .ocr import Tesseract, TrOCR, TrOCRSize
-from .download import get_weights
+from .download import get_location
 from .util import read_reference, ocr_data_df, adjust_text, get_stub
 from .ocr import TrOCRSize
 from .report import write_report
@@ -52,7 +52,7 @@ class Hespi():
         self.device = "cuda:0" if self.gpu else "cpu"
 
     def get_yolo(self, weights_url:str) -> YOLO:
-        weights = get_weights(weights_url, force=self.force_download)
+        weights = get_location(weights_url, force=self.force_download)
         model = YOLO(weights)
         model.to(self.device)
         return model
@@ -68,7 +68,7 @@ class Hespi():
     @cached_property
     def institutional_label_classifier(self):
         model = ImageClassifier()
-        model.pretrained = get_weights(self.institutional_label_classifier_weights, force=self.force_download)
+        model.pretrained = get_location(self.institutional_label_classifier_weights, force=self.force_download)
         return model
 
     @cached_property
@@ -108,6 +108,9 @@ class Hespi():
         report:bool = True,
     ):
         console.print(f"Processing {len(images)} image(s)")
+
+        # Download images if necessary
+        images = [get_location(image) for image in images]
 
         # Sheet-Components predictions
         component_files = self.sheet_component_detect(images, output_dir=output_dir)

@@ -59,7 +59,7 @@ def get_stem_extension(name):
     return name_stem, extension
 
 
-def get_weights(location:Union[str,Path], force:bool=False) -> Path:
+def get_location(location:Union[str,Path], force:bool=False) -> Path:
     location = str(location)
     if location.startswith("http"):
         name_stem, extension = get_stem_extension(location.split("/")[-1])
