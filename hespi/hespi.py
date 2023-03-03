@@ -53,8 +53,9 @@ class Hespi():
 
     def get_yolo(self, weights_url:str) -> YOLO:
         weights = get_weights(weights_url, force=self.force_download)
-        return YOLO(weights)
-        return YOLOv5(weights, self.device)
+        model = YOLO(weights)
+        model.to(self.device)
+        return model
 
     @cached_property
     def sheet_component_model(self):

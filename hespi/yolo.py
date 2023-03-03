@@ -88,6 +88,8 @@ def yolo_output(model, images, output_dir, tmp_dir_prefix=None, batch_size=4):
     results = model.predict(source=images, show=False, save=True)
     output_files = defaultdict(list)
 
+    output_dir = Path(output_dir)
+
     for index, (image, predictions) in enumerate(zip(images, results)):
         stub = get_stub(image)
         image_output_dir = output_dir / stub
