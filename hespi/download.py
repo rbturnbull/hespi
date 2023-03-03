@@ -9,13 +9,13 @@ class DownloadError(Exception):
     pass
 
 
-def get_cached_path(filename: str) -> Path:
+def get_cached_path(filename: str, cache_dir:Path=None) -> Path:
     """
     Returns a path in the ausdex directory in the user's cache.
 
     File may or may not exist.
     """
-    cache_dir = Path(user_cache_dir("hespi"))
+    cache_dir = cache_dir or Path(user_cache_dir("hespi"))
     cache_dir.mkdir(exist_ok=True, parents=True)
     return cache_dir / filename
 
@@ -59,7 +59,7 @@ def get_stem_extension(name):
     return name_stem, extension
 
 
-def get_location(location:Union[str,Path], force:bool=False) -> Path:
+def get_location(location:Union[str,Path], force:bool=False, cache_dir=None) -> Path:
     location = str(location)
     if location.startswith("http"):
         name_stem, extension = get_stem_extension(location.split("/")[-1])
@@ -68,8 +68,8 @@ def get_location(location:Union[str,Path], force:bool=False) -> Path:
         # gunzip if necessary
         if extension == ".gz":
             name_stem, extension = get_stem_extension(name_stem)
-            local_path_gz = get_cached_path(f"{name_stem}-{url_hash}{extension}.gz")
-            local_path = get_cached_path(f"{name_stem}-{url_hash}{extension}")
+            local_path_gz = get_cached_path(f"{name_stem}-{url_hash}{extension}.gz", cache_dir=cache_dir)
+            local_path = get_cached_path(f"{name_stem}-{url_hash}{extension}", cache_dir=cache_dir)
 
             if not local_path.exists() or force:
                 cached_download(location, local_path_gz, force=force)
@@ -81,12 +81,12 @@ def get_location(location:Union[str,Path], force:bool=False) -> Path:
                 assert local_path.exists()
                 local_path_gz.unlink()
         else:
-            local_path = get_cached_path(f"{name_stem}-{url_hash}{extension}")
+            local_path = get_cached_path(f"{name_stem}-{url_hash}{extension}", cache_dir=cache_dir)
             cached_download(location, local_path, force=force)
     else:
         local_path = Path(location)
     
     if not local_path.exists() or local_path.stat().st_size == 0:
-        raise IOError(f"Cannot read weights file {local_path}")
+        raise IOError(f"Cannot read file {local_path}")
 
     return local_path

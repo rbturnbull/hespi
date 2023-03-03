@@ -203,8 +203,8 @@ def test_detect(mock_ocr_data_df, mock_institutional_label_detect, mock_sheet_co
     hespi = Hespi()
     with tempfile.TemporaryDirectory() as tmpdir:        
         output_dir = Path(tmpdir)
-        hespi.detect("images", output_dir)
-        mock_sheet_component_detect.assert_called_once_with("images", output_dir=output_dir)
+        hespi.detect(test_data_dir/"test2.jpg", output_dir)
+        mock_sheet_component_detect.assert_called_once_with([test_data_dir/"test2.jpg"], output_dir=output_dir)
         mock_institutional_label_detect.assert_called_once_with(
             Path("stub.institutional_label.jpg"), 
             stub="stub",
@@ -224,8 +224,8 @@ def test_detect_truncated(mock_ocr_data_df, mock_institutional_label_detect, moc
     hespi = Hespi()
     with tempfile.TemporaryDirectory() as tmpdir:        
         output_dir = Path(tmpdir)
-        hespi.detect("images", output_dir)
-        mock_sheet_component_detect.assert_called_once_with("images", output_dir=output_dir)
+        hespi.detect(test_data_dir/"test2.jpg", output_dir)
+        mock_sheet_component_detect.assert_called_once_with([test_data_dir/"test2.jpg"], output_dir=output_dir)
         mock_institutional_label_detect.assert_called_once_with(
             Path("long-name-that-needs-to-be-truncated.institutional_label.jpg"), 
             stub="long-name-that-needs-to-be-truncated",

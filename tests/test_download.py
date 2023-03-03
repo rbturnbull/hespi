@@ -54,7 +54,7 @@ def test_get_location_has_extension(mock_cached_download):
         path = download.get_location("https://raw.githubusercontent.com/rbturnbull/hespi/main/tests/testdata/test.jpg")
         assert path.name == filename
         mock_cached_download.assert_called_once()
-        mock_get_cached_path.assert_called_once_with(filename)
+        mock_get_cached_path.assert_called_once_with(filename, cache_dir=None)
 
 
 
@@ -66,7 +66,7 @@ def test_get_location_no_extension(mock_cached_download):
         path = download.get_location("https://raw.githubusercontent.com/rbturnbull/hespi/main/tests/testdata/test-no-extension")
         assert path.name == filename
         mock_cached_download.assert_called_once()
-        mock_get_cached_path.assert_called_once_with(filename)
+        mock_get_cached_path.assert_called_once_with(filename, cache_dir=None)
 
 
 def test_get_location_gz():

@@ -18,5 +18,5 @@ def test_help():
 def test_detect_command(mock_detect):
     runner.invoke(main.app, ["image1.tif", "image2.jpg", "--output-dir", "output"])
 
-    mock_detect.assert_called_once_with([Path("image1.tif"), Path("image2.jpg")], Path("output"))
+    mock_detect.assert_called_once_with(["image1.tif", "image2.jpg"], Path("output"))
 

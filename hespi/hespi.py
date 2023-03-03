@@ -107,10 +107,12 @@ class Hespi():
         output_dir:Path,
         report:bool = True,
     ):
-        console.print(f"Processing {len(images)} image(s)")
 
-        # Download images if necessary
-        images = [get_location(image) for image in images]
+        # Clean up images input
+        if isinstance(images, (Path, str)):
+            images = [images]
+        images = [get_location(image, cache_dir=output_dir/"downloads") for image in images]
+        console.print(f"Processing {len(images)} image(s)")
 
         # Sheet-Components predictions
         component_files = self.sheet_component_detect(images, output_dir=output_dir)
