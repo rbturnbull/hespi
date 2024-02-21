@@ -17,8 +17,9 @@ Hespi
    :caption: Contents:
 
    quickstart
+   pipeline
+   training
    cli
-   development
    contributing
    credits
 

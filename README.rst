@@ -26,36 +26,25 @@ HErbarium Specimen sheet PIpeline
 
 .. start-quickstart
 
-Hespi takes images of specimen sheets from herbaria and first detects the various components of the sheet. These components include:
+Hespi takes images of specimen sheets from herbaria and first detects the various components of the sheet. 
 
-- small database label
-- handwritten data
-- stamp
-- annotation label
-- scale
-- swing tag
-- full database label
-- database label
-- swatch
-- institutional label
-- number
 
-Then it takes any `institutional label` and detects the following fields from it:
+.. image:: https://raw.githubusercontent.com/rbturnbull/hespi/main/docs/images/HespiDiagram.jpg
+    :alt: Hespi pipeline
+    :align: center
 
-- family,
-- genus,
-- species,
-- infrasp_taxon,
-- authority,
-- collector_number,
-- collector,
-- locality,
-- geolocation,
-- year,
-- month,
-- day,
 
-These text fields are then run through the OCR program Tesseract.
+Hespi first takes a specimen sheet and detects the various components of it using the Sheet-Component Model. 
+Then any full database label detected is cropped and this is given to the Label-Field Model 
+which detects different textual fields written on the label. 
+A Label Classifier is also used to determine the type of text written on the label. 
+If it is printed or typewritten, then the text of each field is given to an Optical Character Recognition (OCR) engine 
+and if there is handwriting, then each field is given to the Handwritten Text Recognition (HTR) engine. 
+Finally, the result of the fields is post-processed before being written into 
+an HTML report, a CSV file and text files. 
+
+The stages of the pipeline are explained in the documentation for the pipeline.
+
 
 Installation
 ==================================
@@ -69,6 +58,7 @@ Install hespi using pip:
 The first time it runs, it will download the required model weights from the internet.
 
 It is recommended that you also install `Tesseract <https://tesseract-ocr.github.io/tessdoc/Home.html>`_ so that this can be used in the text recognition part of the pipeline.
+
 
 Usage
 ==================================
@@ -87,6 +77,16 @@ This will prompt you to specify an output directory. You can set the output dire
 
 The detected components and text fields will be cropped and stored in the output directory. There will also be a CSV file with the text recognition results for any institutional labels found.
 
+More information on the command line arguments can be found in the documentation.
+
+There is another command line utility called ``hespi-tools`` which provides additional functionality.
+See the documentation for more information.
+
+Training with custom data
+==================================
+
+To train the model with custom data, see the documention.
+
 .. end-quickstart
 
 Credits
@@ -94,11 +94,14 @@ Credits
 
 .. start-credits
 
-Robert Turnbull, Karen Thompson, Emily Fitzgerald, Jo Birch.
+Robert Turnbull, Emily Fitzgerald, Karen Thompson and Jo Birch from the University of Melbourne.
 
-Publication and citation details to follow.
+If you use this pipeline, please cite the following:
 
-This pipeline depends on `YOLOv5 <https://github.com/ultralytics/yolov5>`_, 
+.. literalinclude :: ../hespi/data/references.bib
+   :language: bibtex
+
+This pipeline depends on `YOLOv8 <https://github.com/ultralytics/ultralytics>`_, 
 `torchapp <https://github.com/rbturnbull/torchapp>`_,
 Microsoft's `TrOCR <https://www.microsoft.com/en-us/research/publication/trocr-transformer-based-optical-character-recognition-with-pre-trained-models/>`_.
 
