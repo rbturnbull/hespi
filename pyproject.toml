@@ -57,3 +57,4 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.poetry.scripts]
 hespi = "hespi.main:app"
+hespi-tools = "hespi.tools:app"
