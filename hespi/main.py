@@ -5,7 +5,7 @@ import pandas as pd
 from rich.console import Console
 
 from .hespi import Hespi
-from .hespi import DEFAULT_INSTITUTIONAL_LABEL_CLASSIFIER_WEIGHTS, DEFAULT_SHEET_COMPONENT_WEIGHTS, DEFAULT_INSTITUTIONAL_LABEL_FIELDS_WEIGHTS
+from .hespi import DEFAULT_INSTITUTIONAL_LABEL_CLASSIFIER_WEIGHTS, DEFAULT_SHEET_COMPONENT_WEIGHTS, DEFAULT_LABEL_FIELD_WEIGHTS
 from .ocr import TrOCRSize
 
 console = Console()
@@ -39,10 +39,12 @@ def detect(
     sheet_component_weights: str = typer.Option(
         DEFAULT_SHEET_COMPONENT_WEIGHTS, 
         help="The path to the sheet component model weights.",
+        envvar="HESPI_SHEET_COMPONENT_WEIGHTS",
     ),
-    institutional_label_fields_weights: str = typer.Option(
-        DEFAULT_INSTITUTIONAL_LABEL_FIELDS_WEIGHTS,
-        help="The path to the institutional label field model weights.",
+    label_field_weights: str = typer.Option(
+        DEFAULT_LABEL_FIELD_WEIGHTS,
+        help="The path to the Label-Field model weights.",
+        envvar="HESPI_LABEL_FIELD_WEIGHTS",
     ),
     institutional_label_classifier_weights: str = typer.Option(
         DEFAULT_INSTITUTIONAL_LABEL_CLASSIFIER_WEIGHTS,
@@ -62,7 +64,7 @@ def detect(
     hespi = Hespi(
         trocr_size=trocr_size,
         sheet_component_weights=sheet_component_weights,
-        institutional_label_fields_weights=institutional_label_fields_weights,
+        label_field_weights=label_field_weights,
         institutional_label_classifier_weights=institutional_label_classifier_weights,
         force_download=force_download,
         gpu=gpu,

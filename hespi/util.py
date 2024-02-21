@@ -6,8 +6,9 @@ from difflib import get_close_matches
 
 console = Console()
 
+DATA_DIR = Path(__file__).parent / "data"
 
-institutional_label_fields = [
+label_fields = [
     "family",
     "genus",
     "species",
@@ -32,7 +33,6 @@ def adjust_case(field, value):
 
 
 def read_reference(field):
-    DATA_DIR = Path(__file__).parent / "data"
     path = DATA_DIR / f"{field}.txt"
     if not path.exists():
         raise FileNotFoundError(f"No reference file for field '{field}'.")
@@ -57,7 +57,7 @@ def ocr_data_df(data: dict, output_path: Path=None) -> pd.DataFrame:
     
     # insert columns not included in dataframe, and re-order
     # including any columns not included in col_options to account for any updates
-    col_options = [ "institutional label", "id" ] + institutional_label_fields
+    col_options = [ "institutional label", "id" ] + label_fields
 
     missing_cols = [col for col in col_options if col not in df.columns]
     df[missing_cols] = ""

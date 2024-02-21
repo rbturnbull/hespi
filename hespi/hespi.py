@@ -18,7 +18,7 @@ console = Console()
 
 DEFAULT_RELEASE_PREFIX = "https://github.com/rbturnbull/hespi/releases/download/v0.2.5"
 DEFAULT_SHEET_COMPONENT_WEIGHTS = f"{DEFAULT_RELEASE_PREFIX}/sheet-component-medium.pt.gz"
-DEFAULT_INSTITUTIONAL_LABEL_FIELDS_WEIGHTS = f"{DEFAULT_RELEASE_PREFIX}/institutional-label-field.pt.gz"
+DEFAULT_LABEL_FIELD_WEIGHTS = f"{DEFAULT_RELEASE_PREFIX}/institutional-label-field.pt.gz"
 DEFAULT_INSTITUTIONAL_LABEL_CLASSIFIER_WEIGHTS = f"https://github.com/rbturnbull/hespi/releases/download/v0.1.0-alpha/institutional-label-classifier.pkl"
 
 
@@ -27,7 +27,7 @@ class Hespi():
         self,
         trocr_size: TrOCRSize = TrOCRSize.BASE.value,
         sheet_component_weights: str = "",
-        institutional_label_fields_weights: str = "",
+        label_field_weights: str = "",
         institutional_label_classifier_weights: str = "",
         force_download:bool = False,
         gpu: bool = True,
@@ -39,7 +39,7 @@ class Hespi():
     ):
         self.trocr_size = trocr_size
         self.sheet_component_weights = sheet_component_weights or DEFAULT_SHEET_COMPONENT_WEIGHTS
-        self.institutional_label_fields_weights = institutional_label_fields_weights or DEFAULT_INSTITUTIONAL_LABEL_FIELDS_WEIGHTS
+        self.label_field_weights = label_field_weights or DEFAULT_LABEL_FIELD_WEIGHTS
         self.institutional_label_classifier_weights = institutional_label_classifier_weights or DEFAULT_INSTITUTIONAL_LABEL_CLASSIFIER_WEIGHTS
         self.force_download = force_download
         self.fuzzy = fuzzy
@@ -62,8 +62,8 @@ class Hespi():
         return self.get_yolo(self.sheet_component_weights)
 
     @cached_property
-    def institutional_label_fields_model(self):
-        return self.get_yolo(self.institutional_label_fields_weights)
+    def label_field_model(self):
+        return self.get_yolo(self.label_field_weights)
 
     @cached_property
     def institutional_label_classifier(self):
@@ -94,12 +94,12 @@ class Hespi():
     ):
         return yolo_output(self.sheet_component_model, images, output_dir=output_dir, tmp_dir_prefix=self.tmp_dir)
 
-    def institutional_label_fields_model_detect(
+    def label_field_model_detect(
         self,
         images:List[Path],
         output_dir:Path,
     ):
-        return yolo_output(self.institutional_label_fields_model, images, output_dir=output_dir, tmp_dir_prefix=self.tmp_dir)
+        return yolo_output(self.label_field_model, images, output_dir=output_dir, tmp_dir_prefix=self.tmp_dir)
 
     def detect(
         self,
@@ -182,7 +182,7 @@ class Hespi():
         )
         detection_results["label_classification"] = classification
 
-        field_files = self.institutional_label_fields_model_detect(
+        field_files = self.label_field_model_detect(
             [component],
             output_dir=output_dir,
         )

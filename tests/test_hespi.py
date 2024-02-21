@@ -55,12 +55,12 @@ def test_sheet_component_model(mock):
 
 
 @patch('hespi.hespi.YOLO')
-def test_institutional_label_fields_model(mock):
+def test_label_field_model(mock):
     weights = test_data_dir/"test-no-extension-ebaa296923904111a3972b54eba5cf5f.dat"
     hespi = Hespi(
-        institutional_label_fields_weights=weights
+        label_field_weights=weights
     )
-    _ = hespi.institutional_label_fields_model
+    _ = hespi.label_field_model
     mock.assert_called_once_with(weights)
 
 
@@ -107,14 +107,14 @@ def test_sheet_component_detect(mock_yolo_output):
 
 
 @patch('hespi.hespi.yolo_output')
-def test_institutional_label_fields_model_detect(mock_yolo_output):
+def test_label_field_model_detect(mock_yolo_output):
     weights = test_data_dir/"test-no-extension-ebaa296923904111a3972b54eba5cf5f.dat"
     mock_yolo_model = MockYoloModel()
     with patch('hespi.hespi.YOLO', return_value=mock_yolo_model) as mock_yolo_class:
         hespi = Hespi(
-            institutional_label_fields_weights=weights
+            label_field_weights=weights
         )
-        hespi.institutional_label_fields_model_detect("images", "output_dir")
+        hespi.label_field_model_detect("images", "output_dir")
         mock_yolo_class.assert_called_once()
         mock_yolo_output.assert_called_once_with(mock_yolo_model, "images", output_dir="output_dir", tmp_dir_prefix=None)
 
@@ -181,7 +181,7 @@ def test_institutional_label_detect(mock_yolo_output):
     mock_yolo_model = MockYoloModel()
     with patch('hespi.hespi.YOLO', return_value=mock_yolo_model) as mock_yolo_class:
         hespi = Hespi(
-            institutional_label_fields_weights=weights
+            label_field_weights=weights
         )
         hespi.trocr = MockOCR({"species.jpg":"zostericolaX"})
         hespi.tesseract = MockOCR({"species.jpg":"zOstericolaXX"})

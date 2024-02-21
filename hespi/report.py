@@ -3,7 +3,7 @@ from pathlib import Path
 import pandas as pd
 from typing import Dict
 
-from .util import institutional_label_fields
+from .util import label_fields
 
 
 def write_report(output:Path, component_files:Dict, ocr_df:pd.DataFrame):
@@ -44,7 +44,7 @@ def write_report(output:Path, component_files:Dict, ocr_df:pd.DataFrame):
 
     result = template.render(
         component_files=component_files,
-        institutional_label_fields=institutional_label_fields,
+        label_fields=label_fields,
         ocr_df=ocr_df,
     )
     with open(str(output), 'w') as f:
