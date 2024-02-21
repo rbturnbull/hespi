@@ -46,8 +46,9 @@
               <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="quickstart.html">Quickstart</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pipeline.html">Pipeline</a></li>
+<li class="toctree-l1"><a class="reference internal" href="training.html">Training with custom data</a></li>
 <li class="toctree-l1"><a class="reference internal" href="cli.html">Command Line Interface Reference</a></li>
-<li class="toctree-l1"><a class="reference internal" href="development.html">Development</a></li>
 <li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Credits</a></li>
 </ul>
@@ -78,9 +79,32 @@
              
   <section id="credits">
 <h1>Credits<a class="headerlink" href="#credits" title="Permalink to this headline"></a></h1>
-<p>Robert Turnbull, Karen Thompson, Emily Fitzgerald, Jo Birch.</p>
-<p>Publication and citation details to follow.</p>
-<p>This pipeline depends on <a class="reference external" href="https://github.com/ultralytics/yolov5">YOLOv5</a>,
+<p>Robert Turnbull, Emily Fitzgerald, Karen Thompson and Jo Birch from the University of Melbourne.</p>
+<p>If you use this pipeline, please cite the following:</p>
+<div class="highlight-bibtex notranslate"><div class="highlight"><pre><span></span><span class="nc">@article</span><span class="p">{</span><span class="nl">thompson2023_identification</span><span class="p">,</span>
+<span class="w">    </span><span class="na">author</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">{Thompson, Karen M. and Turnbull, Robert and Fitzgerald, Emily and Birch, Joanne L.}</span><span class="p">,</span>
+<span class="w">    </span><span class="na">title</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">{{Identification of Herbarium Specimen Sheet Components From High-resolution Images using Deep Learning}}</span><span class="p">,</span>
+<span class="w">    </span><span class="na">journal</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">{Ecology and Evolution}</span><span class="p">,</span>
+<span class="w">    </span><span class="na">volume</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">{13}</span><span class="p">,</span>
+<span class="w">    </span><span class="na">number</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">{8}</span><span class="p">,</span>
+<span class="w">    </span><span class="na">pages</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">{e10395}</span><span class="p">,</span>
+<span class="w">    </span><span class="na">doi</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">{https://doi.org/10.1002/ece3.10395}</span><span class="p">,</span>
+<span class="w">    </span><span class="na">url</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">{https://onlinelibrary.wiley.com/doi/abs/10.1002/ece3.10395}</span><span class="p">,</span>
+<span class="w">    </span><span class="na">note</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">{e10395 ECE-2023-05-00833.R1}</span><span class="p">,</span>
+<span class="w">    </span><span class="na">year</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">{2023}</span>
+<span class="p">}</span>
+
+<span class="nc">@misc</span><span class="p">{</span><span class="nl">sheet_component_data</span><span class="p">,</span>
+<span class="w">    </span><span class="na">author</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">{Karen Thompson and Robert Turnbull and Emily Fitzgerald}</span><span class="p">,</span>
+<span class="w">    </span><span class="na">title</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">{{Data available for `Identification of herbarium specimen sheet components from high-resolution images using deep learning&#39;: Annotations for selected MELU specimen sheet digital images}}</span><span class="p">,</span>
+<span class="w">    </span><span class="na">year</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">{2023}</span><span class="p">,</span>
+<span class="w">    </span><span class="na">month</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">{7}</span><span class="p">,</span>
+<span class="w">    </span><span class="na">url</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">{https://melbourne.figshare.com/articles/dataset/_strong_Data_available_for_Identification_of_herbarium_specimen_sheet_components_from_high-resolution_images_using_deep_learning_Annotations_for_selected_MELU_specimen_sheet_digital_images_strong_/23597013}</span><span class="p">,</span>
+<span class="w">    </span><span class="na">doi</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">{10.26188/23597013.v2}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>This pipeline depends on <a class="reference external" href="https://github.com/ultralytics/ultralytics">YOLOv8</a>,
 <a class="reference external" href="https://github.com/rbturnbull/torchapp">torchapp</a>,
 Microsoft’s <a class="reference external" href="https://www.microsoft.com/en-us/research/publication/trocr-transformer-based-optical-character-recognition-with-pre-trained-models/">TrOCR</a>.</p>
 <p>Logo derived from artwork by <a class="reference external" href="https://thenounproject.com/icon/plant-1386076/">ka reemov</a>.</p>

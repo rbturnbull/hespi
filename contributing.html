@@ -22,7 +22,7 @@
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Credits" href="credits.html" />
-    <link rel="prev" title="Development" href="development.html" /> 
+    <link rel="prev" title="Command Line Interface Reference" href="cli.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -47,9 +47,12 @@
               <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="quickstart.html">Quickstart</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pipeline.html">Pipeline</a></li>
+<li class="toctree-l1"><a class="reference internal" href="training.html">Training with custom data</a></li>
 <li class="toctree-l1"><a class="reference internal" href="cli.html">Command Line Interface Reference</a></li>
-<li class="toctree-l1"><a class="reference internal" href="development.html">Development</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Contributing</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#poetry">Poetry</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#clone-the-repository">Clone the repository</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#testing">Testing</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#git-commits">Git Commits</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#documentation">Documentation</a></li>
@@ -90,10 +93,46 @@
 <li><p>Python code should be formatted using black with the settings in pyproject.toml. The maximum line length is 120 characters.</p></li>
 <li><p>Contributions should be commited to a new branch and will be merged with main only after tests and documentation are complete.</p></li>
 </ul>
+<section id="poetry">
+<h2>Poetry<a class="headerlink" href="#poetry" title="Permalink to this headline"></a></h2>
+<p>Poetry is the package manager used to manage the dependencies of the project. You can install it with this command on Linux and Mac:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>curl<span class="w"> </span>-sSL<span class="w"> </span>https://install.python-poetry.org<span class="w"> </span><span class="p">|</span><span class="w"> </span>python3<span class="w"> </span>-
+</pre></div>
+</div>
+<p>Or with this command on Windows:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="o">(</span>Invoke-WebRequest<span class="w"> </span>-Uri<span class="w"> </span>https://install.python-poetry.org<span class="w"> </span>-UseBasicParsing<span class="o">)</span>.Content<span class="w"> </span><span class="p">|</span><span class="w"> </span>py<span class="w"> </span>-
+</pre></div>
+</div>
+<p>More information for installing poetry can be found at <a class="reference external" href="https://python-poetry.org/docs/#installation">https://python-poetry.org/docs/#installation</a>.</p>
+</section>
+<section id="clone-the-repository">
+<h2>Clone the repository<a class="headerlink" href="#clone-the-repository" title="Permalink to this headline"></a></h2>
+<p>You can clone the repository with the following command:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/rbturnbull/hespi.git
+<span class="nb">cd</span><span class="w"> </span>hespi
+</pre></div>
+</div>
+<p>Then install the dependencies and activate the virtual environment:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>poetry<span class="w"> </span>install
+poetry<span class="w"> </span>shell
+</pre></div>
+</div>
+</section>
 <section id="testing">
 <h2>Testing<a class="headerlink" href="#testing" title="Permalink to this headline"></a></h2>
+<p>Test the code with pytest:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pytest
+</pre></div>
+</div>
+<p>To check the coverage of the tests and build the HTML report, run the following commands:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>coverage<span class="w"> </span>run<span class="w"> </span>-m<span class="w"> </span>pytest
+coverage<span class="w"> </span>html
+coverage<span class="w"> </span>report
+</pre></div>
+</div>
 <ul class="simple">
 <li><p>All tests must be passing before merging with the <code class="docutils literal notranslate"><span class="pre">main</span></code> branch.</p></li>
+<li><p>The code coverage must be at 100% before merging with the <code class="docutils literal notranslate"><span class="pre">main</span></code> branch.</p></li>
 <li><p>Tests are automatically included in the CI/CD pipeline using Github actions.</p></li>
 </ul>
 </section>
@@ -147,7 +186,7 @@ Please cite an the number of a Github issue if it relates to your commit.</p>
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="development.html" class="btn btn-neutral float-left" title="Development" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="cli.html" class="btn btn-neutral float-left" title="Command Line Interface Reference" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
         <a href="credits.html" class="btn btn-neutral float-right" title="Credits" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
