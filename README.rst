@@ -43,7 +43,7 @@ and if there is handwriting, then each field is given to the Handwritten Text Re
 Finally, the result of the fields is post-processed before being written into 
 an HTML report, a CSV file and text files. 
 
-The stages of the pipeline are explained in the documentation for the pipeline.
+The stages of the pipeline are explained in the `documentation for the pipeline <https://rbturnbull.github.io/hespi/pipeline.html>`_.
 
 
 Installation
@@ -58,6 +58,8 @@ Install hespi using pip:
 The first time it runs, it will download the required model weights from the internet.
 
 It is recommended that you also install `Tesseract <https://tesseract-ocr.github.io/tessdoc/Home.html>`_ so that this can be used in the text recognition part of the pipeline.
+
+To install the development version, see the `documentation for contributing <https://rbturnbull.github.io/hespi/contributing.html>`_.
 
 
 Usage
@@ -77,10 +79,10 @@ This will prompt you to specify an output directory. You can set the output dire
 
 The detected components and text fields will be cropped and stored in the output directory. There will also be a CSV file with the text recognition results for any institutional labels found.
 
-More information on the command line arguments can be found in the documentation.
+More information on the command line arguments can be found in the `Command Line Reference <https://rbturnbull.github.io/hespi/cli.html>`_ in the documentation.
 
 There is another command line utility called ``hespi-tools`` which provides additional functionality.
-See the documentation for more information.
+See the `documentation <https://rbturnbull.github.io/hespi/cli.html#hespi-tools>`_ for more information.
 
 Training with custom data
 ==================================
@@ -96,11 +98,6 @@ Credits
 
 Robert Turnbull, Emily Fitzgerald, Karen Thompson and Jo Birch from the University of Melbourne.
 
-If you use this pipeline, please cite the following:
-
-.. literalinclude :: ../hespi/data/references.bib
-   :language: bibtex
-
 This pipeline depends on `YOLOv8 <https://github.com/ultralytics/ultralytics>`_, 
 `torchapp <https://github.com/rbturnbull/torchapp>`_,
 Microsoft's `TrOCR <https://www.microsoft.com/en-us/research/publication/trocr-transformer-based-optical-character-recognition-with-pre-trained-models/>`_.
@@ -108,3 +105,9 @@ Microsoft's `TrOCR <https://www.microsoft.com/en-us/research/publication/trocr-t
 Logo derived from artwork by `ka reemov <https://thenounproject.com/icon/plant-1386076/>`_.
 
 .. end-credits
+
+See the documentation for more information for references in BibTeX format or use the command:
+
+.. code-block:: bash
+
+    hespi-tools bibtex
