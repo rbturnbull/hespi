@@ -98,6 +98,9 @@ Credits
 
 Robert Turnbull, Emily Fitzgerald, Karen Thompson and Jo Birch from the University of Melbourne.
 
+This research was supported by The University of Melbourne’s Research Computing Services and the Petascale Campus Initiative. 
+The authors thank collaborators Niels Klazenga, Heroen Verbruggen, Nunzio Knerr, Noel Faux, Simon Mutch, Babak Shaban, Andrew Drinnan, Michael Bayly and Hannah Turnbull.
+
 This pipeline depends on `YOLOv8 <https://github.com/ultralytics/ultralytics>`_, 
 `torchapp <https://github.com/rbturnbull/torchapp>`_,
 Microsoft's `TrOCR <https://www.microsoft.com/en-us/research/publication/trocr-transformer-based-optical-character-recognition-with-pre-trained-models/>`_.

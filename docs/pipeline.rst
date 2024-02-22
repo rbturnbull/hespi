@@ -57,14 +57,18 @@ and detects bounding boxes for the following fields:
 Label Classifier
 ================
 
-We have trained a classifier using `torchapp <https://github.com/rbturnbull/torchapp>`_ to detect the following types of writing on the institutional label:
+We have trained a classifier to detect the following types of writing on the institutional label:
 
 #. typewriter
 #. printed
 #. handwritten
-#. mixed
+#. combination
 
-These were annotated to the XXX images in the MELU dataset. An image classifier based on a pretrained ResNet-18 was used \citep{resnet}. This achieved an accuracy of XXX\% on the validation set.
+.. These were annotated to the 3,152 images from the MELU dataset. 
+.. This was partitioned into 2521 training images and 631 validation images. 
+.. The pretrained `ResNet-101 model <https://doi.org/10.1109/CVPR.2016.90>`_ model was trained using `torchapp <https://github.com/rbturnbull/torchapp>`_ for 20 epochs on this dataset. 
+.. It achieved an accuracy of 98.3% on the validation set.
+
 
 Text Recognition
 ================
@@ -75,8 +79,8 @@ If the text was determined to be printed or written using a typewriter,
 then the Text Recognition module uses the `Tesseract <https://github.com/tesseract-ocr/tesseract>`_ Optical Character Recognition (OCR) engine. 
 If the text was determined to be hand-written or a mixture, then the `TrOCR <https://www.microsoft.com/en-us/research/publication/trocr-transformer-based-optical-character-recognition-with-pre-trained-models/>`_ Handwritten Text Recognition (HTR) model is used.
 
-Postprocessing and Outputs
-==========================
+Post-processing and Outputs
+===========================
 
 After the text for each field is recognized, Hespi performs some postprocessing steps. 
 These involve ensuring that the family and genus are capitalized and the species is not. 
