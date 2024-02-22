@@ -52,7 +52,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#the-label-field-model">The Label-Field Model</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#label-classifier">Label Classifier</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#text-recognition">Text Recognition</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#postprocessing-and-outputs">Postprocessing and Outputs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#post-processing-and-outputs">Post-processing and Outputs</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="training.html">Training with custom data</a></li>
@@ -128,14 +128,13 @@ and detects bounding boxes for the following fields:</p>
 </section>
 <section id="label-classifier">
 <h2>Label Classifier<a class="headerlink" href="#label-classifier" title="Permalink to this headline"></a></h2>
-<p>We have trained a classifier using <a class="reference external" href="https://github.com/rbturnbull/torchapp">torchapp</a> to detect the following types of writing on the institutional label:</p>
+<p>We have trained a classifier to detect the following types of writing on the institutional label:</p>
 <ol class="arabic simple">
 <li><p>typewriter</p></li>
 <li><p>printed</p></li>
 <li><p>handwritten</p></li>
-<li><p>mixed</p></li>
+<li><p>combination</p></li>
 </ol>
-<p>These were annotated to the XXX images in the MELU dataset. An image classifier based on a pretrained ResNet-18 was used citep{resnet}. This achieved an accuracy of XXX% on the validation set.</p>
 </section>
 <section id="text-recognition">
 <h2>Text Recognition<a class="headerlink" href="#text-recognition" title="Permalink to this headline"></a></h2>
@@ -145,8 +144,8 @@ If the text was determined to be printed or written using a typewriter,
 then the Text Recognition module uses the <a class="reference external" href="https://github.com/tesseract-ocr/tesseract">Tesseract</a> Optical Character Recognition (OCR) engine.
 If the text was determined to be hand-written or a mixture, then the <a class="reference external" href="https://www.microsoft.com/en-us/research/publication/trocr-transformer-based-optical-character-recognition-with-pre-trained-models/">TrOCR</a> Handwritten Text Recognition (HTR) model is used.</p>
 </section>
-<section id="postprocessing-and-outputs">
-<h2>Postprocessing and Outputs<a class="headerlink" href="#postprocessing-and-outputs" title="Permalink to this headline"></a></h2>
+<section id="post-processing-and-outputs">
+<h2>Post-processing and Outputs<a class="headerlink" href="#post-processing-and-outputs" title="Permalink to this headline"></a></h2>
 <p>After the text for each field is recognized, Hespi performs some postprocessing steps.
 These involve ensuring that the family and genus are capitalized and the species is not.
 The family, genus and species is cross-checked again a database of known entities for each category

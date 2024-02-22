@@ -95,7 +95,7 @@ If it is printed or typewritten, then the text of each field is given to an Opti
 and if there is handwriting, then each field is given to the Handwritten Text Recognition (HTR) engine.
 Finally, the result of the fields is post-processed before being written into
 an HTML report, a CSV file and text files.</p>
-<p>The stages of the pipeline are explained in the documentation for the pipeline.</p>
+<p>The stages of the pipeline are explained in the <a class="reference external" href="https://rbturnbull.github.io/hespi/pipeline.html">documentation for the pipeline</a>.</p>
 <section id="installation">
 <h2>Installation<a class="headerlink" href="#installation" title="Permalink to this headline"></a></h2>
 <p>Install hespi using pip:</p>
@@ -104,6 +104,7 @@ an HTML report, a CSV file and text files.</p>
 </div>
 <p>The first time it runs, it will download the required model weights from the internet.</p>
 <p>It is recommended that you also install <a class="reference external" href="https://tesseract-ocr.github.io/tessdoc/Home.html">Tesseract</a> so that this can be used in the text recognition part of the pipeline.</p>
+<p>To install the development version, see the <a class="reference external" href="https://rbturnbull.github.io/hespi/contributing.html">documentation for contributing</a>.</p>
 </section>
 <section id="usage">
 <h2>Usage<a class="headerlink" href="#usage" title="Permalink to this headline"></a></h2>
@@ -116,9 +117,9 @@ an HTML report, a CSV file and text files.</p>
 </pre></div>
 </div>
 <p>The detected components and text fields will be cropped and stored in the output directory. There will also be a CSV file with the text recognition results for any institutional labels found.</p>
-<p>More information on the command line arguments can be found in the documentation.</p>
+<p>More information on the command line arguments can be found in the <a class="reference external" href="https://rbturnbull.github.io/hespi/cli.html">Command Line Reference</a> in the documentation.</p>
 <p>There is another command line utility called <code class="docutils literal notranslate"><span class="pre">hespi-tools</span></code> which provides additional functionality.
-See the documentation for more information.</p>
+See the <a class="reference external" href="https://rbturnbull.github.io/hespi/cli.html#hespi-tools">documentation</a> for more information.</p>
 </section>
 <section id="training-with-custom-data">
 <h2>Training with custom data<a class="headerlink" href="#training-with-custom-data" title="Permalink to this headline"></a></h2>
