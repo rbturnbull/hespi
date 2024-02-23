@@ -6,7 +6,11 @@ from collections import defaultdict
 from rich.console import Console
 
 
-from ultralytics.yolo.v8.detect.predict import DetectionPredictor
+try:
+    from ultralytics.models.yolo.detect.predict import DetectionPredictor
+except ImportError:
+    from ultralytics.yolo.v8.detect.predict import DetectionPredictor
+
 
 console = Console()
 
@@ -16,7 +20,7 @@ def predictions_filename(stub):
     return f"{stub}-predictions.jpg"
 
 
-def yolo_output(model, images, output_dir, tmp_dir_prefix=None, batch_size=4):
+def yolo_output(model, images, output_dir, tmp_dir_prefix=None, batch_size=4, res=640):
     if not model.predictor:
         model.predictor = DetectionPredictor()
         model.predictor.setup_model(model=model.model)
@@ -27,7 +31,7 @@ def yolo_output(model, images, output_dir, tmp_dir_prefix=None, batch_size=4):
 
     model.predictor.save_dir = tmp_dir_path
 
-    results = model.predict(source=images, show=False, save=True)
+    results = model.predict(source=images, show=False, save=True, batch_size=batch_size, imgsz=res)
     output_files = defaultdict(list)
 
     output_dir = Path(output_dir)

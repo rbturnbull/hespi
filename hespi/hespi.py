@@ -16,9 +16,9 @@ from .report import write_report
 
 console = Console()
 
-DEFAULT_RELEASE_PREFIX = "https://github.com/rbturnbull/hespi/releases/download/v0.2.5"
-DEFAULT_SHEET_COMPONENT_WEIGHTS = f"{DEFAULT_RELEASE_PREFIX}/sheet-component-medium.pt.gz"
-DEFAULT_LABEL_FIELD_WEIGHTS = f"{DEFAULT_RELEASE_PREFIX}/institutional-label-field.pt.gz"
+DEFAULT_RELEASE_PREFIX = "https://github.com/rbturnbull/hespi/releases/download/v0.4.0"
+DEFAULT_SHEET_COMPONENT_WEIGHTS = f"{DEFAULT_RELEASE_PREFIX}/sheet-component.pt.gz"
+DEFAULT_LABEL_FIELD_WEIGHTS = f"{DEFAULT_RELEASE_PREFIX}/label-field.pt.gz"
 DEFAULT_INSTITUTIONAL_LABEL_CLASSIFIER_WEIGHTS = f"https://github.com/rbturnbull/hespi/releases/download/v0.1.0-alpha/institutional-label-classifier.pkl"
 
 
@@ -36,6 +36,8 @@ class Hespi():
         htr: bool = True,
         tmp_dir:str = None,
         batch_size:int = 4,
+        sheet_component_res:int = 640,
+        label_field_res:int = 1280,
     ):
         self.trocr_size = trocr_size
         self.sheet_component_weights = sheet_component_weights or DEFAULT_SHEET_COMPONENT_WEIGHTS
@@ -46,6 +48,9 @@ class Hespi():
         self.fuzzy_cutoff = fuzzy_cutoff
         self.htr = htr
         self.tmp_dir = tmp_dir
+        self.batch_size = batch_size
+        self.sheet_component_res = sheet_component_res
+        self.label_field_res = label_field_res
         
         # Check if gpu is available
         self.gpu = gpu and torch.cuda.is_available()
@@ -92,14 +97,28 @@ class Hespi():
         images:List[Path],
         output_dir:Path,
     ):
-        return yolo_output(self.sheet_component_model, images, output_dir=output_dir, tmp_dir_prefix=self.tmp_dir)
+        return yolo_output(
+            self.sheet_component_model, 
+            images, 
+            output_dir=output_dir, 
+            tmp_dir_prefix=self.tmp_dir, 
+            res=self.sheet_component_res,
+            batch_size=self.batch_size,
+        )
 
     def label_field_model_detect(
         self,
         images:List[Path],
         output_dir:Path,
     ):
-        return yolo_output(self.label_field_model, images, output_dir=output_dir, tmp_dir_prefix=self.tmp_dir)
+        return yolo_output(
+            self.label_field_model, 
+            images, 
+            output_dir=output_dir, 
+            tmp_dir_prefix=self.tmp_dir, 
+            res=self.label_field_res,
+            batch_size=self.batch_size,
+        )
 
     def detect(
         self,

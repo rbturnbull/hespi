@@ -52,7 +52,7 @@ class MockYoloModel():
     model = None
     names = [str(x) for x in range(4)]
     
-    def predict(self, source, show=False, save=True):
+    def predict(self, source, show=False, save=True, batch_size=4, imgsz=640):
         for index, image in enumerate(source):
             shutil.copy(image, self.predictor.save_dir/f"image{index}.jpg" )
 

@@ -53,6 +53,8 @@ def detect(
     force_download:bool = typer.Option(False, help="Whether or not to force download model weights even if a weights file is present."),
     tmp_dir:str = None,
     batch_size:int = typer.Option(4, min=1, help="The maximum batch size from run the sheet component model."),
+    sheet_component_res:int = typer.Option(640, min=640, help="The resolution of images to use for the Sheet-Component model."),
+    label_field_res:int = typer.Option(1280, min=640, help="The resolution of images to use for the Label-Field model."),
 ) -> pd.DataFrame:
     """
     HErbarium Specimen sheet PIpeline
@@ -73,6 +75,8 @@ def detect(
         htr=htr,
         tmp_dir=tmp_dir,
         batch_size=batch_size,
+        sheet_component_res=sheet_component_res,
+        label_field_res=label_field_res,
     )
     return hespi.detect(images, output_dir)
     
