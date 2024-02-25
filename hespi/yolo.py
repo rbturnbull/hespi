@@ -42,7 +42,7 @@ def yolo_output(model, images, output_dir, tmp_dir_prefix=None, batch_size=4, re
         image_output_dir.mkdir(exist_ok=True, parents=True)
         prediction_path = image_output_dir / predictions_filename(stub)
 
-        prediction_path_tmp_location = Path(model.predictor.save_dir)/f"image{index}.jpg"
+        prediction_path_tmp_location = Path(model.predictor.save_dir)/image.name
         assert prediction_path_tmp_location.exists()
 
         console.print(
@@ -50,13 +50,14 @@ def yolo_output(model, images, output_dir, tmp_dir_prefix=None, batch_size=4, re
         )
         move(prediction_path_tmp_location, prediction_path)
 
-        for prediction_index, boxes in enumerate(predictions.boxes.boxes):
-            category_index = int(boxes[5].int().cpu().numpy())
+        for prediction_index, boxes in enumerate(predictions.boxes):
+            category_index = int(boxes.cls.cpu().item())
             category = (
                 model.names[category_index].replace(" ", "_").replace(":", "").strip()
             )
 
-            x0, y0, x1, y1 = boxes[:4].cpu().numpy()
+            assert len(boxes.xyxy) == 1
+            x0, y0, x1, y1 = boxes.xyxy.cpu().numpy()[0]
 
             # open image
             im = Image.open(image)
