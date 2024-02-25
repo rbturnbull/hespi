@@ -8,12 +8,13 @@ from hespi import yolo
     
 class MockBoxes():
     def __init__(self, boxes):
-        self.boxes = torch.tensor(boxes)
+        self.xyxy = torch.tensor([boxes[0:4]])
+        self.cls = torch.tensor(boxes[-1])
 
 
 class MockImageResult():
     def __init__(self, boxes):
-        self.boxes = MockBoxes(boxes)
+        self.boxes = [MockBoxes(box) for box in boxes]
 
 
 class MockYoloOutput():
@@ -47,6 +48,7 @@ class MockYoloPredictor():
     def setup_model(self, model):
         pass
 
+
 class MockYoloModel():
     predictor = None
     model = None
@@ -54,13 +56,12 @@ class MockYoloModel():
     
     def predict(self, source, show=False, save=True, batch=4, imgsz=1280):
         for index, image in enumerate(source):
-            shutil.copy(image, self.predictor.save_dir/f"image{index}.jpg" )
+            shutil.copy(image, self.predictor.save_dir/image.name )
 
         return MockYoloOutput(source)
 
     def to(self, device):
         self.device = device
-
 
 
 @patch('hespi.yolo.DetectionPredictor', return_value=MockYoloPredictor())
