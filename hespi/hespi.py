@@ -36,7 +36,7 @@ class Hespi():
         htr: bool = True,
         tmp_dir:str = None,
         batch_size:int = 4,
-        sheet_component_res:int = 640,
+        sheet_component_res:int = 1280,
         label_field_res:int = 1280,
     ):
         self.trocr_size = trocr_size

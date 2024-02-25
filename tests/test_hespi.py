@@ -102,7 +102,7 @@ def test_sheet_component_detect(mock_yolo_output):
         )
         hespi.sheet_component_detect("images", "output_dir")
         mock_yolo_class.assert_called_once()
-        mock_yolo_output.assert_called_once_with(mock_yolo_model, "images", output_dir="output_dir", tmp_dir_prefix=None, res=640, batch_size=4)
+        mock_yolo_output.assert_called_once_with(mock_yolo_model, "images", output_dir="output_dir", tmp_dir_prefix=None, res=1280, batch_size=4)
     
 
 
