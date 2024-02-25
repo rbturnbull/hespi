@@ -20,7 +20,7 @@ def predictions_filename(stub):
     return f"{stub}-predictions.jpg"
 
 
-def yolo_output(model, images, output_dir, tmp_dir_prefix=None, batch_size=4, res=640):
+def yolo_output(model, images, output_dir, tmp_dir_prefix=None, batch_size=4, res=1280):
     if not model.predictor:
         model.predictor = DetectionPredictor()
         model.predictor.setup_model(model=model.model)
