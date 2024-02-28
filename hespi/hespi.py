@@ -148,7 +148,7 @@ class Hespi():
                         output_dir=output_dir / stub,
                     )
 
-        df = ocr_data_df(ocr_data, output_path=output_dir/"ocr_results.csv")
+        df = ocr_data_df(ocr_data, output_path=output_dir/"hespi-results.csv")
 
         # Write report
         if report:

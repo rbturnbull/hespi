@@ -48,6 +48,7 @@ def detect(
     ),
     institutional_label_classifier_weights: str = typer.Option(
         DEFAULT_INSTITUTIONAL_LABEL_CLASSIFIER_WEIGHTS,
+        envvar="HESPI_INSTITUTIONAL_LABEL_CLASSIFIER_WEIGHTS",
         help="The path to the institutional label classifier weights.",
     ),
     force_download:bool = typer.Option(False, help="Whether or not to force download model weights even if a weights file is present."),

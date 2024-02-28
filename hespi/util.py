@@ -70,6 +70,15 @@ def ocr_data_df(data: dict, output_path: Path=None) -> pd.DataFrame:
     if output_path:
         output_path = Path(output_path)
         output_path.parent.mkdir(exist_ok=True, parents=True)
+        
+        # If the file already exists, then concatenate it
+        if output_path.exists():
+            old_df = pd.read_csv(output_path)
+            df = pd.concat([old_df, df])
+            console.print(f"Appending Hespi results to: '{output_path}'")
+        else:
+            console.print(f"Writing Hespi results to: '{output_path}'")
+        
         df.to_csv(output_path, index=False)
 
     return df
