@@ -89,4 +89,24 @@ def test_ocr_data_df():
         assert len(df) == 2
         assert output_path.exists()
 
+        # Test appending to existing file
+        df = util.ocr_data_df(
+            {
+                "institutional label 3": {
+                    "family":"family",
+                    "id":"id",
+                    "extra1":"extra3",
+                },
+                "institutional label 2": {
+                    "family":"family",
+                    "id":"id",
+                    "extra2":"extra3",
+                }
+            },
+            output_path = output_path,
+        )
+        assert (df.columns == required_columns + ["extra1", "extra2"]).all()
+        assert len(df) == 4
+        assert output_path.exists()
+
 
