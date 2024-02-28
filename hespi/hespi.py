@@ -14,6 +14,8 @@ from .util import read_reference, ocr_data_df, adjust_text, get_stub
 from .ocr import TrOCRSize
 from .report import write_report
 
+from difflib import SequenceMatcher
+
 console = Console()
 
 DEFAULT_RELEASE_PREFIX = "https://github.com/rbturnbull/hespi/releases/download/v0.4.0"
@@ -280,13 +282,17 @@ class Hespi():
 
         # Adjust text if necessary
         if recognised_text:
-            detection_results[field] = adjust_text(
+            text_and_score = adjust_text(
                 field, 
                 recognised_text, 
                 fuzzy=self.fuzzy, 
                 fuzzy_cutoff=self.fuzzy_cutoff, 
                 reference=self.reference,
             )
+            detection_results[field] = text_and_score[0]
+            if text_and_score[1] != '':
+                detection_results[f"{field}_match_score"] = text_and_score[1]
+           
 
         return detection_results
 

@@ -2,7 +2,7 @@ from pathlib import Path
 from typing import Dict
 import pandas as pd
 from rich.console import Console
-from difflib import get_close_matches
+from difflib import get_close_matches, SequenceMatcher
 
 console = Console()
 
@@ -23,6 +23,7 @@ label_fields = [
     "day",
 ]
 
+
 def adjust_case(field, value):
     if field in ["genus", "family"]:
         return value.title()
@@ -38,6 +39,35 @@ def read_reference(field):
         raise FileNotFoundError(f"No reference file for field '{field}'.")
     return path.read_text().strip().split("\n")
 
+
+def label_sort_key(s):
+    if 'family' in s:
+        return 0
+    elif 'genus' in s:
+        return 1
+    elif 'species' in s:
+        return 2
+    elif 'infrasp_taxon' in s:
+        return 3
+    elif 'authority' in s:
+        return 4
+    elif 'collector_number' in s:
+        return 5
+    elif 'collector' in s:
+        return 6
+    elif 'locality' in s:
+        return 7
+    elif 'geolocation' in s:
+        return 8
+    elif 'year' in s:
+        return 9
+    elif 'month' in s:
+        return 10
+    elif 'day' in s:
+        return 11
+    else:
+        return 12
+    
 
 def ocr_data_df(data: dict, output_path: Path=None) -> pd.DataFrame:
     """    
@@ -61,10 +91,22 @@ def ocr_data_df(data: dict, output_path: Path=None) -> pd.DataFrame:
 
     missing_cols = [col for col in col_options if col not in df.columns]
     df[missing_cols] = ""
-    extra_cols = [col for col in df.columns if col not in col_options]
-    cols = col_options + extra_cols
+
+    score_cols = sorted([col for col in df.columns if '_match_score' in col], key=label_sort_key)
+    ocr_text_cols = sorted([col for col in df.columns if '_Tesseract' in col or '_TrOCR' in col], key=label_sort_key)
+    image_files_cols = sorted([col for col in df.columns if '_image' in col or 'predictions' in col], key=label_sort_key)
+
+    cols = col_options + score_cols + ['label_classification'] + ocr_text_cols + image_files_cols
+
+    extra_cols = [col for col in df.columns if col not in cols]
+
+    cols = cols + extra_cols
     df = df[cols]
     df = df.fillna('')
+
+    new_column_names = {col: col.replace('_Tesseract', '_Tesseract_result').replace('_TrOCR', '_Handwritten_text_recognition_result') for col in df.columns}
+
+    df.rename(columns=new_column_names, inplace=True)
     
     # CSV output
     if output_path:
@@ -86,6 +128,7 @@ def ocr_data_df(data: dict, output_path: Path=None) -> pd.DataFrame:
 
 def adjust_text(field:str, recognised_text:str, fuzzy:bool, fuzzy_cutoff:float, reference:Dict):
     text_adjusted = adjust_case(field, recognised_text)
+    match_score = ""
 
     # Match with database
     if fuzzy and field in reference:
@@ -96,13 +139,21 @@ def adjust_text(field:str, recognised_text:str, fuzzy:bool, fuzzy_cutoff:float, 
             n=1,
         )
         if close_matches:
+            match_score = round(SequenceMatcher(None, text_adjusted, close_matches[0]).ratio(), 3)
             text_adjusted = close_matches[0]
+        else:
+            match_score = f"<{fuzzy_cutoff}"
 
     if recognised_text != text_adjusted:
         console.print(
-            f"Recognized text [red]'{recognised_text}'[/red] adjusted to [purple]'{text_adjusted}'[/purple]"
-        )    
-    return text_adjusted
+            f"Recognized text [red]'{recognised_text}'[/red] adjusted to [purple]'{text_adjusted}'[/purple] (fuzzy match score: {match_score})"
+        ) 
+    else:
+        if match_score != "":
+            console.print(
+                f"Recognized text [red]'{recognised_text}'[/red] (fuzzy match score: {match_score})"
+            )    
+    return (text_adjusted, match_score)
 
 
 def get_stub(path:Path) -> str:
