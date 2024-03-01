@@ -283,6 +283,8 @@ class Hespi():
                             if field_name in self.reference.keys():
                                 results[f"{field_name}_match_score"] = match_score_TrOCR
 
+        detection_results.update(results)
+
         return detection_results
 
     
