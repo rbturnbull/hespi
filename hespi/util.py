@@ -93,10 +93,10 @@ def ocr_data_df(data: dict, output_path: Path=None) -> pd.DataFrame:
     df[missing_cols] = ""
 
     score_cols = sorted([col for col in df.columns if '_match_score' in col], key=label_sort_key)
-    ocr_text_cols = sorted([col for col in df.columns if '_Tesseract' in col or '_TrOCR' in col], key=label_sort_key)
+    ocr_cols = sorted([col for col in df.columns if '_ocr_results' in col], key=label_sort_key)
     image_files_cols = sorted([col for col in df.columns if '_image' in col or 'predictions' in col], key=label_sort_key)
 
-    cols = col_options + score_cols + ['label_classification'] + ocr_text_cols + image_files_cols
+    cols = col_options + score_cols + ['label_classification'] + ocr_cols + image_files_cols
 
     extra_cols = [col for col in df.columns if col not in cols]
 
@@ -104,9 +104,6 @@ def ocr_data_df(data: dict, output_path: Path=None) -> pd.DataFrame:
     df = df[cols]
     df = df.fillna('')
 
-    new_column_names = {col: col.replace('_Tesseract', '_Tesseract_result').replace('_TrOCR', '_Handwritten_text_recognition_result') for col in df.columns}
-
-    df.rename(columns=new_column_names, inplace=True)
     
     # CSV output
     if output_path:
@@ -142,7 +139,7 @@ def adjust_text(field:str, recognised_text:str, fuzzy:bool, fuzzy_cutoff:float, 
             match_score = round(SequenceMatcher(None, text_adjusted, close_matches[0]).ratio(), 3)
             text_adjusted = close_matches[0]
         else:
-            match_score = f"<{fuzzy_cutoff}"
+            match_score = 0
 
     if recognised_text != text_adjusted:
         console.print(

@@ -10,7 +10,7 @@ from ultralytics import YOLO
 from .yolo import yolo_output, predictions_filename
 from .ocr import Tesseract, TrOCR, TrOCRSize
 from .download import get_location
-from .util import read_reference, ocr_data_df, adjust_text, get_stub
+from .util import read_reference, ocr_data_df, adjust_text, get_stub, label_fields
 from .ocr import TrOCRSize
 from .report import write_report
 
@@ -215,15 +215,77 @@ class Hespi():
 
         # Text Recognition on bounding boxes found by YOLO
         for fields in field_files.values():
+            
             for field_file in fields:
                 field_results = self.read_field_file(
                     field_file, 
                     classification,
                 )
-                detection_results.update(field_results)
+                # detection_results.update(field_results)
+                for key, value in field_results.items():
+                    if key not in detection_results:
+                        detection_results[key] = value
+                    else:
+                        if isinstance(value, list):
+                            detection_results[key] = detection_results[key] + value
+                        else:
+                            detection_results[key] = [detection_results[key], value]
         
+        # Determining Recognised Text
+                            
+        results = {}
+        for key, value in detection_results.items():
+            if 'ocr_results' in key:
+                field_name = key.replace('_ocr_results', '')
+
+                if detection_results[key] == []:
+                    results[field_name] = ''
+                    if field_name in self.reference.keys():
+                        results[f"{field_name}_match_score"] = ''
+                
+                elif len(detection_results[key]) == 1:
+                    results[field_name] = detection_results[key][0]['adjusted_text']
+                    if field_name in self.reference.keys():    
+                        results[f"{field_name}_match_score"] = detection_results[key][0]['match_score']
+
+                else:
+                    best_result = max(detection_results[key], key=lambda x: x['match_score'])
+                    if best_result['match_score'] != '' and best_result['match_score'] >0:
+                        results[field_name] = best_result['adjusted_text']
+                        if field_name in self.reference.keys():
+                            results[f"{field_name}_match_score"] = best_result['match_score']
+                    else:
+                        adjusted_text_TrOCR = ''
+                        match_score_TrOCR = ''
+                        adjusted_text_tesseract = ''
+                        match_score_tesseract = ''
+                    
+                        for ocr_result in detection_results[key]:
+                            if ocr_result.get('ocr') == '_TrOCR' and adjusted_text_TrOCR == '':
+                                adjusted_text_TrOCR = ocr_result.get('adjusted_text')
+                                if field_name in self.reference.keys():
+                                    match_score_TrOCR = ocr_result.get('match_score') 
+                            elif ocr_result.get('ocr') == '_Tesseract' and adjusted_text_tesseract == '':
+                                adjusted_text_tesseract = ocr_result.get('adjusted_text')
+                                if field_name in self.reference.keys():
+                                    match_score_tesseract = ocr_result.get('match_score')       
+
+                        if detection_results['label_classification'] in ["printed", "typewriter"] and adjusted_text_tesseract != '':
+                            results[field_name] = adjusted_text_tesseract
+                            if field_name in self.reference.keys(): 
+                                results[f"{field_name}_match_score"] = match_score_tesseract
+                        elif adjusted_text_TrOCR == '':
+                            results[field_name] = adjusted_text_tesseract
+                            if field_name in self.reference.keys():
+                                results[f"{field_name}_match_score"] = match_score_tesseract
+                        else:
+                            results[field_name] = adjusted_text_TrOCR
+                            if field_name in self.reference.keys():
+                                results[f"{field_name}_match_score"] = match_score_TrOCR
+
         return detection_results
 
+    
     def read_field_file(
         self,
         field_file:Path,
@@ -251,48 +313,45 @@ class Hespi():
         field = field_file_components[-2]
         classification = classification or ""
 
-        detection_results = {}        
-
-            
-        detection_results[f"{field}_image"] = field_file
-
+        detection_results = {f"{field}_{i}": [] for field in label_fields for i in ['image', 'ocr_results']}
+              
+        detection_results[f"{field}_image"].append(field_file)
+        
         # HTR
-        recognised_text = ""
+        htr_text = ''
         if self.htr:
             htr_text = self.trocr.get_text(field_file)
             if htr_text:
-                print(f"HTR: {htr_text}")
                 console.print(
                     f"Handwritten Text Recognition (TrOCR): [red]'{htr_text}'[/red]"
                 )
-
-                detection_results[f"{field}_TrOCR"] = htr_text
-                recognised_text = htr_text
+                
+                htr_text_and_score = adjust_text(
+                                                field, 
+                                                htr_text, 
+                                                fuzzy=self.fuzzy, 
+                                                fuzzy_cutoff=self.fuzzy_cutoff, 
+                                                reference=self.reference,
+                                            )
+                
+                detection_results[f"{field}_ocr_results"].append({'ocr': '_TrOCR', 'original_text_detected': htr_text, 'adjusted_text': htr_text_and_score[0], 'match_score': htr_text_and_score[1]})
 
         # OCR
         tesseract_text = self.tesseract.get_text(field_file)
         if tesseract_text:
-            detection_results[f"{field}_Tesseract"] = tesseract_text
             console.print(
                 f"Optical Character Recognition (Tesseract): [red]'{tesseract_text}'[/red]"
-            )
+            )            
 
-            if classification in ["printed", "typewriter"] or not recognised_text:
-                recognised_text = tesseract_text
-
-        # Adjust text if necessary
-        if recognised_text:
-            text_and_score = adjust_text(
-                field, 
-                recognised_text, 
-                fuzzy=self.fuzzy, 
-                fuzzy_cutoff=self.fuzzy_cutoff, 
-                reference=self.reference,
-            )
-            detection_results[field] = text_and_score[0]
-            if text_and_score[1] != '':
-                detection_results[f"{field}_match_score"] = text_and_score[1]
-           
-
+            tesseract_text_and_score = adjust_text(
+                                            field, 
+                                            tesseract_text, 
+                                            fuzzy=self.fuzzy, 
+                                            fuzzy_cutoff=self.fuzzy_cutoff, 
+                                            reference=self.reference,
+                                        )
+            
+            detection_results[f"{field}_ocr_results"].append({'ocr': '_Tesseract', 'original_text_detected': tesseract_text, 'adjusted_text': tesseract_text_and_score[0], 'match_score': tesseract_text_and_score[1]})            
+        
         return detection_results
 
