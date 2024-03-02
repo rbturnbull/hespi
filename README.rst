@@ -101,13 +101,14 @@ Robert Turnbull, Emily Fitzgerald, Karen Thompson and Jo Birch from the Universi
 This research was supported by The University of Melbourne’s Research Computing Services and the Petascale Campus Initiative. 
 The authors thank collaborators Niels Klazenga, Heroen Verbruggen, Nunzio Knerr, Noel Faux, Simon Mutch, Babak Shaban, Andrew Drinnan, Michael Bayly and Hannah Turnbull.
 
-Plant refererence data obtained from the `Australian National Species List (auNSL) <https://biodiversity.org.au/nsl>`_, last updated March 2024. using the:
+Plant refererence data obtained from the `Australian National Species List (auNSL) <https://biodiversity.org.au/nsl>`_, as of March 2024, using the:
 
 - Australian Plant Name Index (APNI)
 - Australian Bryophyte Name Index (AusMoss)
 - Australian Fungi Name Index (AFNI) 
 - Australian Lichen Name Index (ALNI) 
 - Australian Algae Name Index (AANI)
+
 
 
 This pipeline depends on `YOLOv8 <https://github.com/ultralytics/ultralytics>`_, 
