@@ -1,6 +1,7 @@
 from pathlib import Path
 from typing import Dict
 import pandas as pd
+import numpy as np
 from rich.console import Console
 from difflib import get_close_matches, SequenceMatcher
 
@@ -67,7 +68,44 @@ def label_sort_key(s):
         return 11
     else:
         return 12
-    
+
+
+def process_dicts(row, field_name):
+        _TrOCR_original = []
+        _TrOCR_adjusted = []
+        _TrOCR_match_score = []
+        Tesseract_original = []
+        Tesseract_adjusted = []
+        Tesseract_match_score = []
+
+        for d in row:
+            if d['ocr'] == '_TrOCR':
+                _TrOCR_original.append(d['original_text_detected'])
+                _TrOCR_adjusted.append(d['adjusted_text'])
+                _TrOCR_match_score.append(d['match_score'])
+            elif d['ocr'] == '_Tesseract':
+                Tesseract_original.append(d['original_text_detected'])
+                Tesseract_adjusted.append(d['adjusted_text'])
+                Tesseract_match_score.append(d['match_score'])
+
+        return {
+            f"{field_name}_TrOCR_original": _TrOCR_original,
+            f"{field_name}_TrOCR_adjusted": _TrOCR_adjusted,
+            f"{field_name}_TrOCR_match_score": _TrOCR_match_score,
+            f"{field_name}_Tesseract_original": Tesseract_original,
+            f"{field_name}_Tesseract_adjusted": Tesseract_adjusted,
+            f"{field_name}_Tesseract_match_score": Tesseract_match_score
+        }
+
+
+def flatten_single_item_lists(lst):
+    if isinstance(lst, list):
+        if len(lst) == 1:
+            return lst[0]
+        elif len(lst) == 0:
+            return ''
+    return lst
+
 
 def ocr_data_df(data: dict, output_path: Path=None) -> pd.DataFrame:
     """    
@@ -85,6 +123,17 @@ def ocr_data_df(data: dict, output_path: Path=None) -> pd.DataFrame:
     df = pd.DataFrame.from_dict(data, orient="index")
     df = df.reset_index().rename(columns={"index": "institutional label"})
     
+    # Splitting the ocr_results columns into seperate original text, adjusted, and score
+    # Enables the html report to pull the data 
+
+    for col in df.columns:
+        if 'ocr_results' in col:
+            field_name = col.replace('_ocr_results', '')
+            new_columns = df[f"{field_name}_ocr_results"].apply(process_dicts, field_name=field_name).apply(pd.Series)
+
+            df = pd.concat([df, new_columns], axis=1)
+        
+    
     # insert columns not included in dataframe, and re-order
     # including any columns not included in col_options to account for any updates
     col_options = [ "institutional label", "id" ] + label_fields
@@ -92,11 +141,18 @@ def ocr_data_df(data: dict, output_path: Path=None) -> pd.DataFrame:
     missing_cols = [col for col in col_options if col not in df.columns]
     df[missing_cols] = ""
 
-    score_cols = sorted([col for col in df.columns if '_match_score' in col], key=label_sort_key)
-    ocr_cols = sorted([col for col in df.columns if '_ocr_results' in col], key=label_sort_key)
-    image_files_cols = sorted([col for col in df.columns if '_image' in col or 'predictions' in col], key=label_sort_key)
+    # creating break columns
+    df['<--results|ocr_details-->'] = '    |    '
+    df['image_links-->'] = '    |    '
+    df['ocr_results_split-->'] = '    |    '
 
-    cols = col_options + score_cols + ['label_classification'] + ocr_cols + image_files_cols
+    # grouping other columns 
+    score_cols = sorted([col for col in df.columns if '_match_score' in col and 'Tesseract' not in col and 'TrOCR' not in col], key=label_sort_key)
+    ocr_cols = ['<--results|ocr_details-->'] + sorted([col for col in df.columns if '_ocr_results' in col], key=label_sort_key)
+    image_files_cols = ['image_links-->'] + sorted([col for col in df.columns if '_image' in col or 'predictions' in col], key=label_sort_key)
+    result_cols = ['ocr_results_split-->'] + sorted([col for col in df.columns if 'Tesseract' in col or 'TrOCR' in col], key=label_sort_key)
+    
+    cols = col_options + score_cols + ['label_classification'] + ocr_cols + image_files_cols + result_cols
 
     extra_cols = [col for col in df.columns if col not in cols]
 
@@ -104,7 +160,10 @@ def ocr_data_df(data: dict, output_path: Path=None) -> pd.DataFrame:
     df = df[cols]
     df = df.fillna('')
 
-    
+    # flattening all the lists so that if only one item, the list is removed, if no items, list is replaced with an empty string
+    for col in df.columns:
+        df[col] = df[col].apply(flatten_single_item_lists)
+
     # CSV output
     if output_path:
         output_path = Path(output_path)

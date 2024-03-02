@@ -231,8 +231,8 @@ class Hespi():
                         else:
                             detection_results[key] = [detection_results[key], value]
         
-        # Determining Recognised Text
-                            
+        
+        # Determining Recognised Text                    
         results = {}
         for key, value in detection_results.items():
             if 'ocr_results' in key:
@@ -283,8 +283,16 @@ class Hespi():
                             if field_name in self.reference.keys():
                                 results[f"{field_name}_match_score"] = match_score_TrOCR
 
+        # splitting multiple image files into two columns
+            elif 'image' in key:
+                if len(value) >1:
+                    for i in value:
+                        if value.index(i) != 0:
+                            results[f"{key}_{value.index(i)}"] = i
+                    detection_results[key] = value[0]
+        
         detection_results.update(results)
-
+                
         return detection_results
 
     
