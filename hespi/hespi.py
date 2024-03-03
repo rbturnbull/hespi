@@ -6,6 +6,7 @@ import torch
 from torchapp.examples.image_classifier import ImageClassifier
 from rich.console import Console
 from ultralytics import YOLO
+from collections import defaultdict
 
 from .yolo import yolo_output, predictions_filename
 from .ocr import Tesseract, TrOCR, TrOCRSize
@@ -323,8 +324,7 @@ class Hespi():
         field = field_file_components[-2]
         classification = classification or ""
 
-        detection_results = {f"{field}_{i}": [] for field in label_fields for i in ['image', 'ocr_results']}
-              
+        detection_results = defaultdict(list)              
         detection_results[f"{field}_image"].append(field_file)
         
         # HTR
@@ -336,15 +336,22 @@ class Hespi():
                     f"Handwritten Text Recognition (TrOCR): [red]'{htr_text}'[/red]"
                 )
                 
-                htr_text_and_score = adjust_text(
-                                                field, 
-                                                htr_text, 
-                                                fuzzy=self.fuzzy, 
-                                                fuzzy_cutoff=self.fuzzy_cutoff, 
-                                                reference=self.reference,
-                                            )
+                adjusted_text, match_score = adjust_text(
+                    field, 
+                    htr_text, 
+                    fuzzy=self.fuzzy, 
+                    fuzzy_cutoff=self.fuzzy_cutoff, 
+                    reference=self.reference,
+                )
                 
-                detection_results[f"{field}_ocr_results"].append({'ocr': '_TrOCR', 'original_text_detected': htr_text, 'adjusted_text': htr_text_and_score[0], 'match_score': htr_text_and_score[1]})
+                detection_results[f"{field}_ocr_results"].append(
+                    {
+                        'ocr': '_TrOCR', 
+                        'original_text_detected': htr_text, 
+                        'adjusted_text': adjusted_text,
+                        'match_score': match_score,
+                    }
+                )
 
         # OCR
         tesseract_text = self.tesseract.get_text(field_file)
@@ -353,15 +360,22 @@ class Hespi():
                 f"Optical Character Recognition (Tesseract): [red]'{tesseract_text}'[/red]"
             )            
 
-            tesseract_text_and_score = adjust_text(
-                                            field, 
-                                            tesseract_text, 
-                                            fuzzy=self.fuzzy, 
-                                            fuzzy_cutoff=self.fuzzy_cutoff, 
-                                            reference=self.reference,
-                                        )
+            adjusted_text, match_score = adjust_text(
+                field, 
+                tesseract_text, 
+                fuzzy=self.fuzzy, 
+                fuzzy_cutoff=self.fuzzy_cutoff, 
+                reference=self.reference,
+            )
             
-            detection_results[f"{field}_ocr_results"].append({'ocr': '_Tesseract', 'original_text_detected': tesseract_text, 'adjusted_text': tesseract_text_and_score[0], 'match_score': tesseract_text_and_score[1]})            
+            detection_results[f"{field}_ocr_results"].append(
+                {
+                    'ocr': '_Tesseract', 
+                    'original_text_detected': tesseract_text, 
+                    'adjusted_text': adjusted_text, 
+                    'match_score': match_score,
+                }
+            )            
         
         return detection_results
 
