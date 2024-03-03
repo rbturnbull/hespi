@@ -17,15 +17,18 @@ def test_read_reference_authority():
     assert len(items) >= 32481
     assert "(A.A.Fisch.Waldh.) Nannf." in items
 
+
 def test_read_reference_genus():
     items = util.read_reference("genus")
     assert len(items) >= 13330
     assert "Abelia" in items
 
+
 def test_read_reference_family():
     items = util.read_reference("family")
     assert len(items) >= 2711
     assert "Acalyphaceae" in items
+
 
 def test_read_reference_species():
     items = util.read_reference("species")
