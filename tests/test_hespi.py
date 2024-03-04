@@ -211,7 +211,20 @@ def test_institutional_label_detect(mock_yolo_output):
         filename = "institution_label.jpg"
         hespi.institutional_label_classifier = MockClassifier({filename:"printed"})
 
-        hespi.institutional_label_detect(Path(filename), "stub", "output_dir")
+        result = hespi.institutional_label_detect(Path(filename), "stub", "output_dir")
+        assert result["label_classification"] == "printed"
+        assert len(result["species_image"]) == 1
+        assert len(result["species_ocr_results"]) == 2
+
+        assert result["species_ocr_results"][0]['ocr'] == '_TrOCR'
+        assert result["species_ocr_results"][0]['original_text_detected'] == 'zostericolaX'
+        assert result["species_ocr_results"][0]['adjusted_text'] == 'zostericola'
+        assert result["species_ocr_results"][0]['match_score'] == 0.957
+
+        assert result["species_ocr_results"][1]['ocr'] == '_Tesseract'
+        assert result["species_ocr_results"][1]['original_text_detected'] == 'zOstericolaXX'
+        assert result["species_ocr_results"][1]['adjusted_text'] == 'zostericola'
+        assert result["species_ocr_results"][1]['match_score'] == 0.917
         mock_yolo_class.assert_called_once()
         mock_yolo_output.assert_called_once_with(mock_yolo_model, [Path(filename)], output_dir="output_dir", tmp_dir_prefix=None, res=1280, batch_size=4)
 
@@ -305,3 +318,57 @@ def test_detect_multi_report_exists(mock_ocr_data_df, mock_institutional_label_d
         assert "<head>" in report_file.read_text()
 
 
+def test_determine_best_ocr_result_non_reference():
+    hespi = Hespi(htr=True, fuzzy=True)
+    image = Path("location.jpg")
+    hespi.trocr = MockOCR({"location.jpg":"Queenscliff"})
+    hespi.tesseract = MockOCR({"location.jpg":"Queeadfafdnljk"})
+    
+    result = hespi.read_field_file(image)
+    best_text, best_match_score, best_engine = hespi.determine_best_ocr_result(result['location_ocr_results'])
+    assert best_text == "Queeadfafdnljk"
+    assert best_match_score == ""
+    assert best_engine == ""
+
+    best_text, best_match_score, best_engine = hespi.determine_best_ocr_result(result['location_ocr_results'], preferred_engine="_TrOCR")
+    assert best_text == "Queenscliff"
+    assert best_match_score == ""
+    assert best_engine == ""
+
+
+def test_determine_best_ocr_result_reference():
+    hespi = Hespi(htr=True, fuzzy=True)
+    image = Path("species.jpg")
+    hespi.trocr = MockOCR({"species.jpg":"zostericolaX"})
+    hespi.tesseract = MockOCR({"species.jpg":"zOstericolaXX"})
+    
+    result = hespi.read_field_file(image)
+    best_text, best_match_score, best_engine = hespi.determine_best_ocr_result(result['species_ocr_results'])
+    assert best_text == "zostericola"
+    assert best_match_score == 0.957
+    assert best_engine == "_TrOCR"
+
+    best_text, best_match_score, best_engine = hespi.determine_best_ocr_result(result['species_ocr_results'], preferred_engine="_Tesseract")
+    assert best_text == "zostericola"
+    assert best_match_score == 0.957
+    assert best_engine == "_TrOCR"
+
+
+def test_determine_best_ocr_result_single():
+    hespi = Hespi(htr=False, fuzzy=True)
+    image = Path("species.jpg")
+    hespi.tesseract = MockOCR({"species.jpg":"zOstericolaXX"})
+    
+    result = hespi.read_field_file(image)
+    best_text, best_match_score, best_engine = hespi.determine_best_ocr_result(result['species_ocr_results'])
+    assert best_text == "zostericola"
+    assert best_match_score == 0.917
+    assert best_engine == ""
+
+
+def test_determine_best_ocr_result_empty():
+    hespi = Hespi(htr=False, fuzzy=True)
+    best_text, best_match_score, best_engine = hespi.determine_best_ocr_result([])
+    assert best_text == ""
+    assert best_match_score == ""
+    assert best_engine == ""

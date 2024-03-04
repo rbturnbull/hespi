@@ -1,4 +1,4 @@
-from typing import List, Dict
+from typing import List, Dict, Tuple
 from pathlib import Path
 import pandas as pd
 from functools import cached_property
@@ -183,16 +183,50 @@ class Hespi():
         # Get classification of institution label
         if isinstance(classifier_results, pd.DataFrame):
             classification = classifier_results.iloc[0]["prediction"]
-            console.print(
-                f"'{component}' classified as '[red]{classification}[/red]'."
-            )
         else:
-            console.print(
-                f"Could not get classification of institutional label '{component}'"
-            )
-            classification = ""
+            classification = str(classifier_results)
+        console.print(
+            f"'{component}' classified as '[red]{classification}[/red]'."
+        )
 
         return classification
+    
+    def determine_best_ocr_result(self, detection_result, preferred_engine:str="") -> Tuple:
+        assert isinstance(detection_result, list)
+        best_text = ''
+        best_match_score = ''
+        best_engine = ''
+
+        # If there are no results, then return empty strings
+        if len(detection_result) == 0:
+            return best_text, best_match_score, best_engine
+        
+        # If there is only one result, then return that result
+        if len(detection_result) == 1:
+            best_text = detection_result[0]['adjusted_text']
+            best_match_score = detection_result[0]['match_score']
+            # leave 'best engine' as empty if there is only one result
+            return best_text, best_match_score, best_engine
+
+        # Check if there are any results with scores
+        detection_results_with_scores = [result for result in detection_result if result['match_score'] not in ['', 0]]
+        if len(detection_results_with_scores) > 0:        
+            best_result = max(detection_results_with_scores, key=lambda x: x['match_score'])
+            best_text = best_result['adjusted_text']
+            best_engine = best_result['ocr']
+            best_match_score = best_result['match_score']
+            return best_text, best_match_score, best_engine
+
+        # check if we can use the preferred engine and if so, restrict results to that one
+        preferred_results = [result for result in detection_result if result['ocr'] == preferred_engine]
+        if len(preferred_results) > 0:
+            detection_result = preferred_results
+
+        # If there are still multiple results, then use the longest text
+        if len(detection_result) > 0:
+            best_text = max(detection_result, key=lambda x: len(x['adjusted_text']))['adjusted_text']
+
+        return best_text, best_match_score, best_engine            
 
     def institutional_label_detect(self, component, stub, output_dir) -> Dict:
         detection_results = {"id": stub}
@@ -230,65 +264,48 @@ class Hespi():
                             detection_results[key] = detection_results[key] + value
                         else:
                             detection_results[key] = [detection_results[key], value]
-        
-        # Determining Recognised Text                    
+
         results = {}
-        for key, value in detection_results.items():
+
+        # Determining Recognised Text for fields in the reference database
+        best_engine_results = []
+        for key, detection_result in detection_results.items():
             if 'ocr_results' in key:
                 field_name = key.replace('_ocr_results', '')
+                assert isinstance(detection_result, list)
+                if field_name in self.reference.keys():
+                    best_text, best_match_score, best_engine = self.determine_best_ocr_result(detection_result)
+                    results[field_name] = best_text
+                    results[f"{field_name}_match_score"] = best_match_score
+                    if best_engine:
+                        best_engine_results.append(best_engine)
 
-                if detection_results[key] == []:
-                    results[field_name] = ''
-                    if field_name in self.reference.keys():
-                        results[f"{field_name}_match_score"] = ''
-                
-                elif len(detection_results[key]) == 1:
-                    results[field_name] = detection_results[key][0]['adjusted_text']
-                    if field_name in self.reference.keys():    
-                        results[f"{field_name}_match_score"] = detection_results[key][0]['match_score']
+        # Get preferred engine from the best engine results
+        if len(best_engine_results) > 0:
+            from collections import Counter
+            counter = Counter(best_engine_results)
+            preferred_engine = counter.most_common(1)[0][0]
+        elif detection_results.get('label_classification', None) in ["printed", "typewriter"]:
+            preferred_engine = '_Tesseract'
+        else:
+            preferred_engine = '_TrOCR'
 
-                else:
-                    best_result = max(detection_results[key], key=lambda x: x['match_score'])
-                    if best_result['match_score'] != '' and best_result['match_score'] >0:
-                        results[field_name] = best_result['adjusted_text']
-                        if field_name in self.reference.keys():
-                            results[f"{field_name}_match_score"] = best_result['match_score']
-                    else:
-                        adjusted_text_TrOCR = ''
-                        match_score_TrOCR = ''
-                        adjusted_text_tesseract = ''
-                        match_score_tesseract = ''
-                    
-                        for ocr_result in detection_results[key]:
-                            if ocr_result.get('ocr') == '_TrOCR' and adjusted_text_TrOCR == '':
-                                adjusted_text_TrOCR = ocr_result.get('adjusted_text')
-                                if field_name in self.reference.keys():
-                                    match_score_TrOCR = ocr_result.get('match_score') 
-                            elif ocr_result.get('ocr') == '_Tesseract' and adjusted_text_tesseract == '':
-                                adjusted_text_tesseract = ocr_result.get('adjusted_text')
-                                if field_name in self.reference.keys():
-                                    match_score_tesseract = ocr_result.get('match_score')       
+        # Determining Recognised Text for fields not in the reference database
+        for key, detection_result in detection_results.items():
+            if 'ocr_results' in key:
+                field_name = key.replace('_ocr_results', '')
+                assert isinstance(detection_result, list)
+                if field_name not in self.reference.keys():
+                    best_text, _, _ = self.determine_best_ocr_result(detection_result, preferred_engine=preferred_engine)
+                    results[field_name] = best_text
 
-                        if detection_results['label_classification'] in ["printed", "typewriter"] and adjusted_text_tesseract != '':
-                            results[field_name] = adjusted_text_tesseract
-                            if field_name in self.reference.keys(): 
-                                results[f"{field_name}_match_score"] = match_score_tesseract
-                        elif adjusted_text_TrOCR == '':
-                            results[field_name] = adjusted_text_tesseract
-                            if field_name in self.reference.keys():
-                                results[f"{field_name}_match_score"] = match_score_tesseract
-                        else:
-                            results[field_name] = adjusted_text_TrOCR
-                            if field_name in self.reference.keys():
-                                results[f"{field_name}_match_score"] = match_score_TrOCR
-
-        # splitting multiple image files into two columns
+            # splitting multiple image files into two columns
             elif 'image' in key:
-                if len(value) >1:
-                    for i in value:
-                        if value.index(i) != 0:
-                            results[f"{key}_{value.index(i)}"] = i
-                    detection_results[key] = value[0]
+                if len(detection_result) >1:
+                    for i in detection_result:
+                        if detection_result.index(i) != 0:
+                            results[f"{key}_{detection_result.index(i)}"] = i
+                    detection_results[key] = detection_result[0]
         
         detection_results.update(results)
                 
@@ -300,7 +317,8 @@ class Hespi():
         field_file:Path,
         classification:str = None,
     ) -> Dict:
-        """Reads the text of an image of a field from an institutional label.
+        """
+        Reads the text of an image of a field from an institutional label.
 
         Args:
             field_file (Path): The path to an image file of a text field. 
