@@ -8,8 +8,8 @@ from rich.console import Console
 
 try:
     from ultralytics.models.yolo.detect.predict import DetectionPredictor
-except ImportError:
-    from ultralytics.yolo.v8.detect.predict import DetectionPredictor
+except ImportError: # pragma: no cover
+    from ultralytics.yolo.v8.detect.predict import DetectionPredictor # pragma: no cover
 
 
 console = Console()
