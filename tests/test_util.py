@@ -43,22 +43,12 @@ def test_read_reference_unknown():
 
 def test_ocr_data_df():
     required_columns = [
-        "institutional label",
-        "id",
-        "family",
-        "genus",
-        "species",
-        "infrasp_taxon",
-        "authority",
-        "collector_number",
-        "collector",
-        "locality",
-        "geolocation",
-        "year",
-        "month",
-        "day",
+        'institutional label', 
+        'id', 'family', 'genus', 'species',
+        'infrasp_taxon', 'authority', 'collector_number', 'collector',
+        'locality', 'geolocation', 'year', 'month', 'day',
+        '<--results|ocr_details-->', 'image_links-->', 'ocr_results_split-->'
     ]
-
     df = util.ocr_data_df(
         {
             "institutional label": {
@@ -69,7 +59,6 @@ def test_ocr_data_df():
     )
     assert (df.columns == required_columns).all()
     assert len(df) == 1
-
 
     with tempfile.TemporaryDirectory() as tmpdir:
         output_path = Path(tmpdir)/"out.csv"

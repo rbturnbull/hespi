@@ -216,7 +216,6 @@ class Hespi():
 
         # Text Recognition on bounding boxes found by YOLO
         for fields in field_files.values():
-            
             for field_file in fields:
                 field_results = self.read_field_file(
                     field_file, 
@@ -231,7 +230,6 @@ class Hespi():
                             detection_results[key] = detection_results[key] + value
                         else:
                             detection_results[key] = [detection_results[key], value]
-        
         
         # Determining Recognised Text                    
         results = {}
