@@ -431,3 +431,22 @@ def test_institutional_label_detect_trocr_handwritten(mock_yolo_output):
 
 
 
+@patch('hespi.hespi.yolo_output', return_value={"stub":["stub.0.location.jpg", "stub.1.location.jpg"]})
+def test_institutional_label_detect_multiple_images(mock_yolo_output):
+    weights = test_data_dir/"test-no-extension-ebaa296923904111a3972b54eba5cf5f.dat"
+    mock_yolo_model = MockYoloModel()
+    with patch('hespi.hespi.YOLO', return_value=mock_yolo_model) as mock_yolo_class:
+        hespi = Hespi(
+            label_field_weights=weights
+        )
+        hespi.trocr = MockOCR({"stub.0.location.jpg":"Queeadfafdnljk", "stub.1.location.jpg":"Queenscliff", })
+        hespi.tesseract = MockOCR({"stub.0.location.jpg":"Queenscliff", "stub.1.location.jpg":"Queenscliff"})
+        filename = "institution_label.jpg"
+        hespi.institutional_label_classifier = MockClassifier({filename:"handwritten"})
+
+        result = hespi.institutional_label_detect(Path(filename), "stub", "output_dir")
+        assert result["label_classification"] == "handwritten"
+        assert result["location"] == "Queeadfafdnljk" # takes longest one if there is are two OCR results for the same preferred engine
+
+
+

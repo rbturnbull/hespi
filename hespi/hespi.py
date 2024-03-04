@@ -260,10 +260,11 @@ class Hespi():
                     if key not in detection_results:
                         detection_results[key] = value
                     else:
-                        if isinstance(value, list):
-                            detection_results[key] = detection_results[key] + value
-                        else:
-                            detection_results[key] = [detection_results[key], value]
+                        detection_results[key] = (
+                            detection_results[key] + value 
+                            if isinstance(value, list) 
+                            else [detection_results[key], value]
+                        )
 
         results = {}
 
