@@ -41,61 +41,44 @@ def read_reference(field):
     return path.read_text().strip().split("\n")
 
 
-def label_sort_key(s):
-    if 'family' in s:
-        return 0
-    elif 'genus' in s:
-        return 1
-    elif 'species' in s:
-        return 2
-    elif 'infrasp_taxon' in s:
-        return 3
-    elif 'authority' in s:
-        return 4
-    elif 'collector_number' in s:
-        return 5
-    elif 'collector' in s:
-        return 6
-    elif 'locality' in s:
-        return 7
-    elif 'geolocation' in s:
-        return 8
-    elif 'year' in s:
-        return 9
-    elif 'month' in s:
-        return 10
-    elif 'day' in s:
-        return 11
-    else:
-        return 12
+def mk_reference() -> Dict:
+    reference_fields = ["family", "genus", "species", "authority"]
+    return {field: read_reference(field) for field in reference_fields}
 
 
-def process_dicts(row, field_name):
-        _TrOCR_original = []
-        _TrOCR_adjusted = []
-        _TrOCR_match_score = []
-        Tesseract_original = []
-        Tesseract_adjusted = []
-        Tesseract_match_score = []
+def label_sort_key(s) -> int:
+    try:
+        return label_fields.index(s)
+    except ValueError:
+        return len(label_fields)
 
-        for d in row:
-            if d['ocr'] == '_TrOCR':
-                _TrOCR_original.append(d['original_text_detected'])
-                _TrOCR_adjusted.append(d['adjusted_text'])
-                _TrOCR_match_score.append(d['match_score'])
-            elif d['ocr'] == '_Tesseract':
-                Tesseract_original.append(d['original_text_detected'])
-                Tesseract_adjusted.append(d['adjusted_text'])
-                Tesseract_match_score.append(d['match_score'])
 
-        return {
-            f"{field_name}_TrOCR_original": _TrOCR_original,
-            f"{field_name}_TrOCR_adjusted": _TrOCR_adjusted,
-            f"{field_name}_TrOCR_match_score": _TrOCR_match_score,
-            f"{field_name}_Tesseract_original": Tesseract_original,
-            f"{field_name}_Tesseract_adjusted": Tesseract_adjusted,
-            f"{field_name}_Tesseract_match_score": Tesseract_match_score
-        }
+def process_row_ocr_results(row, field_name):
+    trocr_original = []
+    trocr_adjusted = []
+    trocr_match_score = []
+    tesseract_original = []
+    tesseract_adjusted = []
+    tesseract_match_score = []
+
+    for d in row:
+        if d['ocr'] == '_TrOCR':
+            trocr_original.append(d['original_text_detected'])
+            trocr_adjusted.append(d['adjusted_text'])
+            trocr_match_score.append(d['match_score'])
+        elif d['ocr'] == '_Tesseract':
+            tesseract_original.append(d['original_text_detected'])
+            tesseract_adjusted.append(d['adjusted_text'])
+            tesseract_match_score.append(d['match_score'])
+
+    return {
+        f"{field_name}_TrOCR_original": trocr_original,
+        f"{field_name}_TrOCR_adjusted": trocr_adjusted,
+        f"{field_name}_TrOCR_match_score": trocr_match_score,
+        f"{field_name}_Tesseract_original": tesseract_original,
+        f"{field_name}_Tesseract_adjusted": tesseract_adjusted,
+        f"{field_name}_Tesseract_match_score": tesseract_match_score,
+    }
 
 
 def flatten_single_item_lists(lst):
@@ -125,11 +108,10 @@ def ocr_data_df(data: dict, output_path: Path=None) -> pd.DataFrame:
     
     # Splitting the ocr_results columns into seperate original text, adjusted, and score
     # Enables the html report to pull the data 
-
     for col in df.columns:
         if 'ocr_results' in col:
             field_name = col.replace('_ocr_results', '')
-            new_columns = df[f"{field_name}_ocr_results"].apply(process_dicts, field_name=field_name).apply(pd.Series)
+            new_columns = df[f"{field_name}_ocr_results"].apply(process_row_ocr_results, field_name=field_name).apply(pd.Series)
 
             df = pd.concat([df, new_columns], axis=1)
         

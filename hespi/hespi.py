@@ -11,7 +11,7 @@ from collections import defaultdict
 from .yolo import yolo_output, predictions_filename
 from .ocr import Tesseract, TrOCR, TrOCRSize
 from .download import get_location
-from .util import read_reference, ocr_data_df, adjust_text, get_stub, label_fields
+from .util import mk_reference, ocr_data_df, adjust_text, get_stub, label_fields
 from .ocr import TrOCRSize
 from .report import write_report
 
@@ -81,8 +81,7 @@ class Hespi():
 
     @cached_property
     def reference(self):
-        reference_fields = ["family", "genus", "species", "authority"]
-        return {field: read_reference(field) for field in reference_fields}
+        return mk_reference()
 
     @cached_property
     def tesseract(self):

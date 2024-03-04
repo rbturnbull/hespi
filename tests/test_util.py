@@ -1,3 +1,4 @@
+import numpy as np
 import tempfile
 import pytest
 from pathlib import Path
@@ -10,6 +11,24 @@ def test_adjust_case():
     assert "Abutilon" == util.adjust_case("genus", "abutilon")
     assert "zostericolum" == util.adjust_case("species", "Zostericolum")    
     assert "unTitled" == util.adjust_case("other", "unTitled")    
+
+
+def test_adjust_text():
+    reference = util.mk_reference()
+    text, score = util.adjust_text("species", "zostericolumzos", True, 0.8, reference)    
+    assert text == "zostericolum"
+    assert score == 0.889
+
+    text, score = util.adjust_text("species", "zostericolumzostericolum", True, 0.8, reference)    
+    assert text == "zostericolumzostericolum"
+    assert score == 0
+
+
+def test_label_sort_key():
+    assert util.label_sort_key("family") == 0
+    assert util.label_sort_key("genus") == 1
+    assert util.label_sort_key("species") == 2
+    assert util.label_sort_key("other") == 12
 
 
 def test_read_reference_authority():
@@ -101,4 +120,33 @@ def test_ocr_data_df():
         assert len(df) == 4
         assert output_path.exists()
 
+
+def test_ocr_data_df_ocr_results():
+    df = util.ocr_data_df(
+        {
+            "institutional label": {
+                "family":"family",
+                "id":"id",
+                "species_ocr_results": [
+                    dict(ocr="_TrOCR", original_text_detected="zostericolumXX", adjusted_text="zostericolum", match_score=0.9),
+                    dict(ocr="_TrOCR", original_text_detected="z", adjusted_text="z", match_score=0),
+                ]
+            }
+        }
+    )
+    required_columns = [
+        'institutional label', 'id', 'family', 'genus', 'species',
+       'infrasp_taxon', 'authority', 'collector_number', 'collector',
+       'locality', 'geolocation', 'year', 'month', 'day',
+       '<--results|ocr_details-->', 'species_ocr_results', 'image_links-->',
+       'ocr_results_split-->', 'species_TrOCR_original',
+       'species_TrOCR_adjusted', 'species_TrOCR_match_score',
+       'species_Tesseract_original', 'species_Tesseract_adjusted',
+       'species_Tesseract_match_score',
+    ]        
+    assert len(df) == 1
+    assert (df.columns == required_columns).all()
+    assert (df.loc[0,'species_TrOCR_original'] == np.array(["zostericolumXX", "z"])).all()
+    assert (df.loc[0,'species_TrOCR_adjusted'] == np.array(["zostericolum", "z"])).all()
+    assert (df.loc[0,'species_TrOCR_match_score'] == np.array([0.9,0])).all()
 
