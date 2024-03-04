@@ -131,7 +131,7 @@ def test_read_field_file_tesseract_only():
     assert len(result["species_image"]) == 1
     assert result["species_image"][0] == image
     assert len(result['species_ocr_results']) == 1
-    assert result["species_ocr_results"][0]['ocr'] == '_Tesseract'
+    assert result["species_ocr_results"][0]['ocr'] == 'Tesseract'
     assert result["species_ocr_results"][0]['original_text_detected'] == 'zOstericolaXX'
     assert result["species_ocr_results"][0]['adjusted_text'] == 'zostericola'
     assert result["species_ocr_results"][0]['match_score'] == 0.917
@@ -150,12 +150,12 @@ def test_read_field_file_htr():
     assert result["species_image"][0] == image
     assert len(result["species_ocr_results"]) == 2
 
-    assert result["species_ocr_results"][0]['ocr'] == '_TrOCR'
+    assert result["species_ocr_results"][0]['ocr'] == 'TrOCR'
     assert result["species_ocr_results"][0]['original_text_detected'] == 'zostericolaX'
     assert result["species_ocr_results"][0]['adjusted_text'] == 'zostericolax'
     assert result["species_ocr_results"][0]['match_score'] == ""
 
-    assert result["species_ocr_results"][1]['ocr'] == '_Tesseract'
+    assert result["species_ocr_results"][1]['ocr'] == 'Tesseract'
     assert result["species_ocr_results"][1]['original_text_detected'] == 'zOstericolaXX'
     assert result["species_ocr_results"][1]['adjusted_text'] == 'zostericolaxx'
     assert result["species_ocr_results"][1]['match_score'] == ""
@@ -174,12 +174,12 @@ def test_read_field_file_fuzzy():
     assert result["species_image"][0] == image
     assert len(result["species_ocr_results"]) == 2
 
-    assert result["species_ocr_results"][0]['ocr'] == '_TrOCR'
+    assert result["species_ocr_results"][0]['ocr'] == 'TrOCR'
     assert result["species_ocr_results"][0]['original_text_detected'] == 'zostericolaX'
     assert result["species_ocr_results"][0]['adjusted_text'] == 'zostericola'
     assert result["species_ocr_results"][0]['match_score'] == 0.957
 
-    assert result["species_ocr_results"][1]['ocr'] == '_Tesseract'
+    assert result["species_ocr_results"][1]['ocr'] == 'Tesseract'
     assert result["species_ocr_results"][1]['original_text_detected'] == 'zOstericolaXX'
     assert result["species_ocr_results"][1]['adjusted_text'] == 'zostericola'
     assert result["species_ocr_results"][1]['match_score'] == 0.917
@@ -216,12 +216,12 @@ def test_institutional_label_detect(mock_yolo_output):
         assert len(result["species_image"]) == 1
         assert len(result["species_ocr_results"]) == 2
 
-        assert result["species_ocr_results"][0]['ocr'] == '_TrOCR'
+        assert result["species_ocr_results"][0]['ocr'] == 'TrOCR'
         assert result["species_ocr_results"][0]['original_text_detected'] == 'zostericolaX'
         assert result["species_ocr_results"][0]['adjusted_text'] == 'zostericola'
         assert result["species_ocr_results"][0]['match_score'] == 0.957
 
-        assert result["species_ocr_results"][1]['ocr'] == '_Tesseract'
+        assert result["species_ocr_results"][1]['ocr'] == 'Tesseract'
         assert result["species_ocr_results"][1]['original_text_detected'] == 'zOstericolaXX'
         assert result["species_ocr_results"][1]['adjusted_text'] == 'zostericola'
         assert result["species_ocr_results"][1]['match_score'] == 0.917
@@ -329,7 +329,7 @@ def test_determine_best_ocr_result_non_reference():
     assert best_match_score == ""
     assert best_engine == ""
 
-    best_text, best_match_score, best_engine = hespi.determine_best_ocr_result(result['location_ocr_results'], preferred_engine="_TrOCR")
+    best_text, best_match_score, best_engine = hespi.determine_best_ocr_result(result['location_ocr_results'], preferred_engine="TrOCR")
     assert best_text == "Queenscliff"
     assert best_match_score == ""
     assert best_engine == ""
@@ -345,12 +345,12 @@ def test_determine_best_ocr_result_reference():
     best_text, best_match_score, best_engine = hespi.determine_best_ocr_result(result['species_ocr_results'])
     assert best_text == "zostericola"
     assert best_match_score == 0.957
-    assert best_engine == "_TrOCR"
+    assert best_engine == "TrOCR"
 
-    best_text, best_match_score, best_engine = hespi.determine_best_ocr_result(result['species_ocr_results'], preferred_engine="_Tesseract")
+    best_text, best_match_score, best_engine = hespi.determine_best_ocr_result(result['species_ocr_results'], preferred_engine="Tesseract")
     assert best_text == "zostericola"
     assert best_match_score == 0.957
-    assert best_engine == "_TrOCR"
+    assert best_engine == "TrOCR"
 
 
 def test_determine_best_ocr_result_single():

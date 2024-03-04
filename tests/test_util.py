@@ -128,9 +128,9 @@ def test_ocr_data_df_ocr_results():
                 "family":"family",
                 "id":"id",
                 "species_ocr_results": [
-                    dict(ocr="_TrOCR", original_text_detected="zostericolumXX", adjusted_text="zostericolum", match_score=0.9),
-                    dict(ocr="_TrOCR", original_text_detected="z", adjusted_text="z", match_score=0),
-                    dict(ocr="_Tesseract", original_text_detected="zasdfoppasf", adjusted_text="zasdfoppasf", match_score=''),
+                    dict(ocr="TrOCR", original_text_detected="zostericolumXX", adjusted_text="zostericolum", match_score=0.9),
+                    dict(ocr="TrOCR", original_text_detected="z", adjusted_text="z", match_score=0),
+                    dict(ocr="Tesseract", original_text_detected="zasdfoppasf", adjusted_text="zasdfoppasf", match_score=''),
                 ],
                 "extra": [],
             }

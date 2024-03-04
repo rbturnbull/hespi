@@ -286,9 +286,9 @@ class Hespi():
             counter = Counter(best_engine_results)
             preferred_engine = counter.most_common(1)[0][0]
         elif detection_results.get('label_classification', None) in ["printed", "typewriter"]:
-            preferred_engine = '_Tesseract'
+            preferred_engine = 'Tesseract'
         else:
-            preferred_engine = '_TrOCR'
+            preferred_engine = 'TrOCR'
 
         # Determining Recognised Text for fields not in the reference database
         for key, detection_result in detection_results.items():
@@ -362,7 +362,7 @@ class Hespi():
                 
                 detection_results[f"{field}_ocr_results"].append(
                     {
-                        'ocr': '_TrOCR', 
+                        'ocr': 'TrOCR', 
                         'original_text_detected': htr_text, 
                         'adjusted_text': adjusted_text,
                         'match_score': match_score,
@@ -386,7 +386,7 @@ class Hespi():
             
             detection_results[f"{field}_ocr_results"].append(
                 {
-                    'ocr': '_Tesseract', 
+                    'ocr': 'Tesseract', 
                     'original_text_detected': tesseract_text, 
                     'adjusted_text': adjusted_text, 
                     'match_score': match_score,

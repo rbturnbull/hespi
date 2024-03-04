@@ -62,11 +62,11 @@ def process_row_ocr_results(row, field_name):
     tesseract_match_score = []
 
     for d in row:
-        if d['ocr'] == '_TrOCR':
+        if d['ocr'] == 'TrOCR':
             trocr_original.append(d['original_text_detected'])
             trocr_adjusted.append(d['adjusted_text'])
             trocr_match_score.append(d['match_score'])
-        elif d['ocr'] == '_Tesseract':
+        elif d['ocr'] == 'Tesseract':
             tesseract_original.append(d['original_text_detected'])
             tesseract_adjusted.append(d['adjusted_text'])
             tesseract_match_score.append(d['match_score'])
