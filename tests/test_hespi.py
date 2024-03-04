@@ -229,7 +229,6 @@ def test_institutional_label_detect(mock_yolo_output):
         mock_yolo_output.assert_called_once_with(mock_yolo_model, [Path(filename)], output_dir="output_dir", tmp_dir_prefix=None, res=1280, batch_size=4)
 
 
-
 @patch.object(Hespi, 'sheet_component_detect', return_value={
     "stub": [Path("stub.institutional_label.jpg"), Path("stub.swatch.jpg"), ],
 })
@@ -372,3 +371,63 @@ def test_determine_best_ocr_result_empty():
     assert best_text == ""
     assert best_match_score == ""
     assert best_engine == ""
+
+
+@patch('hespi.hespi.yolo_output', return_value={"species":["species.jpg"], "location":["location.jpg"]})
+def test_institutional_label_detect_trocr_found_preferred(mock_yolo_output):
+    weights = test_data_dir/"test-no-extension-ebaa296923904111a3972b54eba5cf5f.dat"
+    mock_yolo_model = MockYoloModel()
+    with patch('hespi.hespi.YOLO', return_value=mock_yolo_model) as mock_yolo_class:
+        hespi = Hespi(
+            label_field_weights=weights
+        )
+        hespi.trocr = MockOCR({"species.jpg":"zostericolaX", "location.jpg":"Queenscliff"})
+        hespi.tesseract = MockOCR({"species.jpg":"zOstericolaXX", "location.jpg":"Queeadfafdnljk"})
+        filename = "institution_label.jpg"
+        hespi.institutional_label_classifier = MockClassifier({filename:"printed"})
+
+        result = hespi.institutional_label_detect(Path(filename), "stub", "output_dir")
+        assert result["label_classification"] == "printed"
+        assert result["location"] == "Queenscliff"
+        assert result["species"] == "zostericola"
+
+
+
+@patch('hespi.hespi.yolo_output', return_value={"location":["location.jpg"]})
+def test_institutional_label_detect_tesseract_preferred(mock_yolo_output):
+    weights = test_data_dir/"test-no-extension-ebaa296923904111a3972b54eba5cf5f.dat"
+    mock_yolo_model = MockYoloModel()
+    with patch('hespi.hespi.YOLO', return_value=mock_yolo_model) as mock_yolo_class:
+        hespi = Hespi(
+            label_field_weights=weights
+        )
+        hespi.trocr = MockOCR({"species.jpg":"zostericolaX", "location.jpg":"Queenscliff"})
+        hespi.tesseract = MockOCR({"species.jpg":"zOstericolaXX", "location.jpg":"Queeadfafdnljk"})
+        filename = "institution_label.jpg"
+        hespi.institutional_label_classifier = MockClassifier({filename:"printed"})
+
+        result = hespi.institutional_label_detect(Path(filename), "stub", "output_dir")
+        assert result["label_classification"] == "printed"
+        assert result["location"] == "Queeadfafdnljk"
+
+
+
+@patch('hespi.hespi.yolo_output', return_value={"location":["location.jpg"]})
+def test_institutional_label_detect_trocr_handwritten(mock_yolo_output):
+    weights = test_data_dir/"test-no-extension-ebaa296923904111a3972b54eba5cf5f.dat"
+    mock_yolo_model = MockYoloModel()
+    with patch('hespi.hespi.YOLO', return_value=mock_yolo_model) as mock_yolo_class:
+        hespi = Hespi(
+            label_field_weights=weights
+        )
+        hespi.trocr = MockOCR({"species.jpg":"zostericolaX", "location.jpg":"Queenscliff"})
+        hespi.tesseract = MockOCR({"species.jpg":"zOstericolaXX", "location.jpg":"Queeadfafdnljk"})
+        filename = "institution_label.jpg"
+        hespi.institutional_label_classifier = MockClassifier({filename:"handwritten"})
+
+        result = hespi.institutional_label_detect(Path(filename), "stub", "output_dir")
+        assert result["label_classification"] == "handwritten"
+        assert result["location"] == "Queenscliff"
+
+
+
