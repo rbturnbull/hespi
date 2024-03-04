@@ -130,7 +130,9 @@ def test_ocr_data_df_ocr_results():
                 "species_ocr_results": [
                     dict(ocr="_TrOCR", original_text_detected="zostericolumXX", adjusted_text="zostericolum", match_score=0.9),
                     dict(ocr="_TrOCR", original_text_detected="z", adjusted_text="z", match_score=0),
-                ]
+                    dict(ocr="_Tesseract", original_text_detected="zasdfoppasf", adjusted_text="zasdfoppasf", match_score=''),
+                ],
+                "extra": [],
             }
         }
     )
@@ -142,11 +144,15 @@ def test_ocr_data_df_ocr_results():
        'ocr_results_split-->', 'species_TrOCR_original',
        'species_TrOCR_adjusted', 'species_TrOCR_match_score',
        'species_Tesseract_original', 'species_Tesseract_adjusted',
-       'species_Tesseract_match_score',
+       'species_Tesseract_match_score','extra'
     ]        
     assert len(df) == 1
     assert (df.columns == required_columns).all()
     assert (df.loc[0,'species_TrOCR_original'] == np.array(["zostericolumXX", "z"])).all()
     assert (df.loc[0,'species_TrOCR_adjusted'] == np.array(["zostericolum", "z"])).all()
     assert (df.loc[0,'species_TrOCR_match_score'] == np.array([0.9,0])).all()
+    assert df.loc[0,'species_Tesseract_match_score'] == ''
+    assert df.loc[0,"species_Tesseract_original"] == 'zasdfoppasf'
+    assert df.loc[0,"species_Tesseract_adjusted"] == 'zasdfoppasf'
+    assert df.loc[0,"extra"] == ''
 
