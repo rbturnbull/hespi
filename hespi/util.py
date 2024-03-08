@@ -104,6 +104,7 @@ def ocr_data_df(data: dict, output_path: Path=None) -> pd.DataFrame:
         pd.DataFrame: The text recognition data as a Pandas dataframe
     """
     df = pd.DataFrame.from_dict(data, orient="index")
+    df = df.fillna(value="")
     df = df.reset_index().rename(columns={"index": "institutional label"})
     
     # Splitting the ocr_results columns into seperate original text, adjusted, and score
