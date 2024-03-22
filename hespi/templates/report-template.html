@@ -49,7 +49,7 @@
             {% for stub in component_files %}
               <li class="nav-item">
                 <a class="nav-link {% if loop.first %}active{% endif %}" aria-current="page" href="#"  id="{{ stub }}-tab" data-bs-toggle="tab" data-bs-target="#{{ stub }}" type="button" role="tab" aria-controls="{{ stub }}" aria-selected="true">
-                  <span data-feather="image"></span>
+                  {% include 'assets/img/feather-image.svg' %}
                   {{ truncate(stub) }}
                 </a>
               </li>
@@ -146,15 +146,6 @@
     {% include 'assets/js/bootstrap.min.js' %}
   </script>
 
-  <script src="https://cdn.jsdelivr.net/npm/feather-icons@4.28.0/dist/feather.min.js"
-    integrity="sha384-uO3SXW5IuS1ZpFPKugNNWqTZRRglnUJK6UAZ/gxOX80nxEkN9NcGZTftn6RzhGWE"
-    crossorigin="anonymous"></script>
-  <script>
-    (function () {
-      'use strict'
-      feather.replace({ 'aria-hidden': 'true' })
-    })()    
-  </script>
 </body>
 
 </html>
