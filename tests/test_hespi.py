@@ -36,7 +36,7 @@ class MockClassifier(DictionaryPathMocker, OCR):
         return self.get_value(items)
 
 
-@patch('hespi.hespi.YOLO')
+@patch('ultralytics.YOLO')
 def test_get_yolo(mock):
     hespi = Hespi()
     weights = test_data_dir/"test-no-extension-ebaa296923904111a3972b54eba5cf5f.dat"
@@ -44,7 +44,7 @@ def test_get_yolo(mock):
     mock.assert_called_once_with(weights)
 
 
-@patch('hespi.hespi.YOLO')
+@patch('ultralytics.YOLO')
 def test_sheet_component_model(mock):
     weights = test_data_dir/"test-no-extension-ebaa296923904111a3972b54eba5cf5f.dat"
     hespi = Hespi(
@@ -54,7 +54,7 @@ def test_sheet_component_model(mock):
     mock.assert_called_once_with(weights)
 
 
-@patch('hespi.hespi.YOLO')
+@patch('ultralytics.YOLO')
 def test_label_field_model(mock):
     weights = test_data_dir/"test-no-extension-ebaa296923904111a3972b54eba5cf5f.dat"
     hespi = Hespi(
@@ -96,7 +96,7 @@ def test_trocr():
 def test_sheet_component_detect(mock_yolo_output):
     weights = test_data_dir/"test-no-extension-ebaa296923904111a3972b54eba5cf5f.dat"
     mock_yolo_model = MockYoloModel()
-    with patch('hespi.hespi.YOLO', return_value=mock_yolo_model) as mock_yolo_class:
+    with patch('ultralytics.YOLO', return_value=mock_yolo_model) as mock_yolo_class:
         hespi = Hespi(
             sheet_component_weights=weights
         )
@@ -110,7 +110,7 @@ def test_sheet_component_detect(mock_yolo_output):
 def test_label_field_model_detect(mock_yolo_output):
     weights = test_data_dir/"test-no-extension-ebaa296923904111a3972b54eba5cf5f.dat"
     mock_yolo_model = MockYoloModel()
-    with patch('hespi.hespi.YOLO', return_value=mock_yolo_model) as mock_yolo_class:
+    with patch('ultralytics.YOLO', return_value=mock_yolo_model) as mock_yolo_class:
         hespi = Hespi(
             label_field_weights=weights
         )
@@ -202,7 +202,7 @@ def test_institutional_label_classify():
 def test_institutional_label_detect(mock_yolo_output):
     weights = test_data_dir/"test-no-extension-ebaa296923904111a3972b54eba5cf5f.dat"
     mock_yolo_model = MockYoloModel()
-    with patch('hespi.hespi.YOLO', return_value=mock_yolo_model) as mock_yolo_class:
+    with patch('ultralytics.YOLO', return_value=mock_yolo_model) as mock_yolo_class:
         hespi = Hespi(
             label_field_weights=weights
         )
@@ -377,7 +377,7 @@ def test_determine_best_ocr_result_empty():
 def test_institutional_label_detect_trocr_found_preferred(mock_yolo_output):
     weights = test_data_dir/"test-no-extension-ebaa296923904111a3972b54eba5cf5f.dat"
     mock_yolo_model = MockYoloModel()
-    with patch('hespi.hespi.YOLO', return_value=mock_yolo_model) as mock_yolo_class:
+    with patch('ultralytics.YOLO', return_value=mock_yolo_model) as mock_yolo_class:
         hespi = Hespi(
             label_field_weights=weights
         )
@@ -397,7 +397,7 @@ def test_institutional_label_detect_trocr_found_preferred(mock_yolo_output):
 def test_institutional_label_detect_tesseract_preferred(mock_yolo_output):
     weights = test_data_dir/"test-no-extension-ebaa296923904111a3972b54eba5cf5f.dat"
     mock_yolo_model = MockYoloModel()
-    with patch('hespi.hespi.YOLO', return_value=mock_yolo_model) as mock_yolo_class:
+    with patch('ultralytics.YOLO', return_value=mock_yolo_model) as mock_yolo_class:
         hespi = Hespi(
             label_field_weights=weights
         )
@@ -416,7 +416,7 @@ def test_institutional_label_detect_tesseract_preferred(mock_yolo_output):
 def test_institutional_label_detect_trocr_handwritten(mock_yolo_output):
     weights = test_data_dir/"test-no-extension-ebaa296923904111a3972b54eba5cf5f.dat"
     mock_yolo_model = MockYoloModel()
-    with patch('hespi.hespi.YOLO', return_value=mock_yolo_model) as mock_yolo_class:
+    with patch('ultralytics.YOLO', return_value=mock_yolo_model) as mock_yolo_class:
         hespi = Hespi(
             label_field_weights=weights
         )
@@ -435,7 +435,7 @@ def test_institutional_label_detect_trocr_handwritten(mock_yolo_output):
 def test_institutional_label_detect_multiple_images(mock_yolo_output):
     weights = test_data_dir/"test-no-extension-ebaa296923904111a3972b54eba5cf5f.dat"
     mock_yolo_model = MockYoloModel()
-    with patch('hespi.hespi.YOLO', return_value=mock_yolo_model) as mock_yolo_class:
+    with patch('ultralytics.YOLO', return_value=mock_yolo_model) as mock_yolo_class:
         hespi = Hespi(
             label_field_weights=weights
         )

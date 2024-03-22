@@ -5,13 +5,6 @@ from PIL import Image
 from collections import defaultdict
 from rich.console import Console
 
-
-try:
-    from ultralytics.models.yolo.detect.predict import DetectionPredictor
-except ImportError: # pragma: no cover
-    from ultralytics.yolo.v8.detect.predict import DetectionPredictor # pragma: no cover
-
-
 console = Console()
 
 from .util import get_stub
@@ -21,6 +14,11 @@ def predictions_filename(stub):
 
 
 def yolo_output(model, images, output_dir, tmp_dir_prefix=None, batch_size=4, res=1280):
+    try:
+        from ultralytics.models.yolo.detect.predict import DetectionPredictor
+    except ImportError: # pragma: no cover
+        from ultralytics.yolo.v8.detect.predict import DetectionPredictor # pragma: no cover
+
     if not model.predictor:
         model.predictor = DetectionPredictor()
         model.predictor.setup_model(model=model.model)

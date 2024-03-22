@@ -64,7 +64,7 @@ class MockYoloModel():
         self.device = device
 
 
-@patch('hespi.yolo.DetectionPredictor', return_value=MockYoloPredictor())
+@patch('ultralytics.models.yolo.detect.predict.DetectionPredictor', return_value=MockYoloPredictor())
 def test_yolo_output(mock_detection_predictor):
     base_dir = Path(__file__).parent/"testdata"
     images = [

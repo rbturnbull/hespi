@@ -2,20 +2,15 @@ from typing import List, Dict, Tuple
 from pathlib import Path
 import pandas as pd
 from functools import cached_property
-import torch
-from torchapp.examples.image_classifier import ImageClassifier
 from rich.console import Console
-from ultralytics import YOLO
 from collections import defaultdict
 
 from .yolo import yolo_output, predictions_filename
 from .ocr import Tesseract, TrOCR, TrOCRSize
 from .download import get_location
-from .util import mk_reference, ocr_data_df, adjust_text, get_stub, label_fields
+from .util import mk_reference, ocr_data_df, adjust_text, get_stub
 from .ocr import TrOCRSize
 from .report import write_report
-
-from difflib import SequenceMatcher
 
 console = Console()
 
@@ -56,10 +51,13 @@ class Hespi():
         self.label_field_res = label_field_res
         
         # Check if gpu is available
+        import torch
         self.gpu = gpu and torch.cuda.is_available()
         self.device = "cuda:0" if self.gpu else "cpu"
 
-    def get_yolo(self, weights_url:str) -> YOLO:
+    def get_yolo(self, weights_url:str) -> "YOLO":
+        from ultralytics import YOLO
+
         weights = get_location(weights_url, force=self.force_download)
         model = YOLO(weights)
         model.to(self.device)
@@ -75,6 +73,8 @@ class Hespi():
 
     @cached_property
     def institutional_label_classifier(self):
+        from torchapp.examples.image_classifier import ImageClassifier
+
         model = ImageClassifier()
         model.pretrained = get_location(self.institutional_label_classifier_weights, force=self.force_download)
         return model
