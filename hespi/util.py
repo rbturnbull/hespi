@@ -172,44 +172,39 @@ def ocr_data_df(data: dict, output_path: Path=None) -> pd.DataFrame:
     return df
 
 
+def ocr_result_str(row, field_name:str, ocr_type:str) -> str:
+    original = row.get(f"{field_name}_{ocr_type}_original", "")
+    adjusted = row.get(f"{field_name}_{ocr_type}_adjusted", "")
+    match_score = row.get(f"{field_name}_{ocr_type}_match_score", None)
+
+    text = original
+    if adjusted and adjusted != original:
+        text += f" → {adjusted}"
+        
+    if match_score:
+        text += f" ({match_score})"
+        
+    return text
+
+
 def ocr_data_print_tables(df: pd.DataFrame) -> None:
     for _, row in df.iterrows():
         filename = Path(row["institutional label"]).name
         table = Table(
             Column("Field"),
             Column("Text"),
-            Column("TrOCR"),
             Column("Tesseract"),
+            Column("TrOCR"),
             title=f"Fields in institutional label: {filename}",
         )
 
         for field in label_fields:
-            trocr_cell = ""
-            if f"{field}_TrOCR_original" in row:
-                trocr_original = row[f"{field}_TrOCR_original"]
-                trocr_adjusted = row[f"{field}_TrOCR_adjusted"]
-                if trocr_adjusted and trocr_adjusted != trocr_original:                
-                    trocr_match_score = row[f"{field}_TrOCR_match_score"]
-                    trocr_cell = f"{trocr_original} → {trocr_adjusted} ({trocr_match_score})"
-                else:
-                    trocr_cell = trocr_original
-
-            tesseract_cell = ""
-            if f"{field}_Tesseract_original" in row:
-                tesseract_original = row[f"{field}_Tesseract_original"]
-                tesseract_adjusted = row[f"{field}_Tesseract_adjusted"]
-                if tesseract_adjusted and tesseract_adjusted != tesseract_original:
-                    tesseract_match_score = row[f"{field}_Tesseract_match_score"]
-                    tesseract_cell = f"{tesseract_original} → {tesseract_adjusted} ({tesseract_match_score})"
-                else:
-                    tesseract_cell = tesseract_original
-
             if f"{field}_image" in row and row[f"{field}_image"]:
                 table.add_row(
                     field,
                     row[field],
-                    trocr_cell,
-                    tesseract_cell,
+                    ocr_result_str(row, field, ocr_type="Tesseract"),
+                    ocr_result_str(row, field, ocr_type="TrOCR"),
                 )
 
         console.print(table)

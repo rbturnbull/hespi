@@ -112,8 +112,8 @@
                               {% endif %}
                             </td>
                             <td>{{ row[field] }}</td>
-                            <td>{{ row[field+"_Tesseract_original"] }}</td>
-                            <td>{{ row[field+"_TrOCR_original"] }}</td>
+                            <td>{{ ocr_result_str(row, field, "Tesseract") }}</td>
+                            <td>{{ ocr_result_str(row, field, "TrOCR") }}</td>
                           </div>
                         {% endif %}
                       {% endfor %}

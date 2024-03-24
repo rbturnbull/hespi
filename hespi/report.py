@@ -3,8 +3,7 @@ from pathlib import Path
 import pandas as pd
 from typing import Dict
 
-from .util import label_fields
-from .util import console
+from .util import console, ocr_result_str, label_fields
 
 def write_report(output:Path, component_files:Dict, ocr_df:pd.DataFrame):
     """
@@ -38,6 +37,7 @@ def write_report(output:Path, component_files:Dict, ocr_df:pd.DataFrame):
     )
     env.globals['relative_to_output'] = relative_to_output
     env.globals['get_classification'] = get_classification
+    env.globals['ocr_result_str'] = ocr_result_str
     env.globals['len'] = len
     env.globals['truncate'] = truncate
     template = env.get_template("report-template.html")
