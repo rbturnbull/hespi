@@ -4,11 +4,12 @@ import pandas as pd
 from functools import cached_property
 from rich.console import Console
 from collections import defaultdict
+from rich.progress import track
 
 from .yolo import yolo_output, predictions_filename
 from .ocr import Tesseract, TrOCR, TrOCRSize
 from .download import get_location
-from .util import mk_reference, ocr_data_df, adjust_text, get_stub
+from .util import mk_reference, ocr_data_df, adjust_text, get_stub, ocr_data_print_tables
 from .ocr import TrOCRSize
 from .report import write_report
 
@@ -150,7 +151,9 @@ class Hespi():
                         output_dir=output_dir / stub,
                     )
 
+
         df = ocr_data_df(ocr_data, output_path=output_dir/"hespi-results.csv")
+        ocr_data_print_tables(df)
 
         # Write report
         if report:
@@ -248,8 +251,9 @@ class Hespi():
         detection_results["predictions"] = predictions_path
 
         # Text Recognition on bounding boxes found by YOLO
+        # for fields in track(field_files.values(), total=len(field_files), description=f"Reading Fields in {stub}"):
         for fields in field_files.values():
-            for field_file in fields:
+            for field_file in track(fields, description=f"Reading fields for {stub}"):
                 field_results = self.read_field_file(
                     field_file, 
                     classification,
@@ -308,7 +312,7 @@ class Hespi():
                     detection_results[key] = detection_result[0]
         
         detection_results.update(results)
-                
+
         return detection_results
 
     
@@ -334,7 +338,6 @@ class Hespi():
                 which changes the case depending on the field type and fuzzy matched with the reference database if `fuzzy` is requested.
         """
         field_file = Path(field_file)
-        console.print("field_file:", field_file)
         field_file_components = field_file.name.split(".")
         assert len(field_file_components) >= 2
         field = field_file_components[-2]
@@ -348,9 +351,9 @@ class Hespi():
         if self.htr:
             htr_text = self.trocr.get_text(field_file)
             if htr_text:
-                console.print(
-                    f"Handwritten Text Recognition (TrOCR): [red]'{htr_text}'[/red]"
-                )
+                # console.print(
+                #     f"Handwritten Text Recognition (TrOCR): [red]'{htr_text}'[/red]"
+                # )
                 
                 adjusted_text, match_score = adjust_text(
                     field, 
@@ -372,9 +375,9 @@ class Hespi():
         # OCR
         tesseract_text = self.tesseract.get_text(field_file)
         if tesseract_text:
-            console.print(
-                f"Optical Character Recognition (Tesseract): [red]'{tesseract_text}'[/red]"
-            )            
+            # console.print(
+            #     f"Optical Character Recognition (Tesseract): [red]'{tesseract_text}'[/red]"
+            # )            
 
             adjusted_text, match_score = adjust_text(
                 field, 

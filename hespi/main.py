@@ -16,9 +16,8 @@ app = typer.Typer()
 def detect(
     images: List[str] = typer.Argument(..., help="A list of images to process. The images can also be URLs."),
     output_dir: Path = typer.Option(
-        ...,
+        "hespi-output",
         help="A directory to output the results.",
-        prompt="Please specify a directory for the results",
     ),
     gpu: bool = typer.Option(True, help="Whether or not to use a GPU if available."),
     fuzzy: bool = typer.Option(

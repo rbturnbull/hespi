@@ -4,7 +4,7 @@ import pandas as pd
 from typing import Dict
 
 from .util import label_fields
-
+from .util import console
 
 def write_report(output:Path, component_files:Dict, ocr_df:pd.DataFrame):
     """
@@ -48,6 +48,6 @@ def write_report(output:Path, component_files:Dict, ocr_df:pd.DataFrame):
         ocr_df=ocr_df,
     )
     with open(str(output), 'w') as f:
-        print(f"Writing result to {output}")
+        console.print(f"Writing HTML report to '{output}'")
         f.write(result)                
 

@@ -4,6 +4,8 @@ import pandas as pd
 import numpy as np
 from rich.console import Console
 from difflib import get_close_matches, SequenceMatcher
+from rich.table import Column, Table
+
 
 console = Console()
 
@@ -159,14 +161,58 @@ def ocr_data_df(data: dict, output_path: Path=None) -> pd.DataFrame:
         # If the file already exists, then concatenate it
         if output_path.exists():
             old_df = pd.read_csv(output_path)
-            df = pd.concat([old_df, df])
-            console.print(f"Appending Hespi results to: '{output_path}'")
+            write_df = pd.concat([old_df, df])
+            console.print(f"Appending Hespi text results to: '{output_path}'")
         else:
-            console.print(f"Writing Hespi results to: '{output_path}'")
+            console.print(f"Writing Hespi text results to: '{output_path}'")
+            write_df = df
         
-        df.to_csv(output_path, index=False)
+        write_df.to_csv(output_path, index=False)
 
     return df
+
+
+def ocr_data_print_tables(df: pd.DataFrame) -> None:
+    for _, row in df.iterrows():
+        filename = Path(row["institutional label"]).name
+        table = Table(
+            Column("Field"),
+            Column("Text"),
+            Column("TrOCR"),
+            Column("Tesseract"),
+            title=f"Fields in institutional label: {filename}",
+        )
+
+        for field in label_fields:
+            trocr_cell = ""
+            if f"{field}_TrOCR_original" in row:
+                trocr_original = row[f"{field}_TrOCR_original"]
+                trocr_adjusted = row[f"{field}_TrOCR_adjusted"]
+                if trocr_adjusted and trocr_adjusted != trocr_original:                
+                    trocr_match_score = row[f"{field}_TrOCR_match_score"]
+                    trocr_cell = f"{trocr_original} → {trocr_adjusted} ({trocr_match_score})"
+                else:
+                    trocr_cell = trocr_original
+
+            tesseract_cell = ""
+            if f"{field}_Tesseract_original" in row:
+                tesseract_original = row[f"{field}_Tesseract_original"]
+                tesseract_adjusted = row[f"{field}_Tesseract_adjusted"]
+                if tesseract_adjusted and tesseract_adjusted != tesseract_original:
+                    tesseract_match_score = row[f"{field}_Tesseract_match_score"]
+                    tesseract_cell = f"{tesseract_original} → {tesseract_adjusted} ({tesseract_match_score})"
+                else:
+                    tesseract_cell = tesseract_original
+
+            if f"{field}_image" in row and row[f"{field}_image"]:
+                table.add_row(
+                    field,
+                    row[field],
+                    trocr_cell,
+                    tesseract_cell,
+                )
+
+        console.print(table)
 
 
 def adjust_text(field:str, recognised_text:str, fuzzy:bool, fuzzy_cutoff:float, reference:Dict):
@@ -187,15 +233,6 @@ def adjust_text(field:str, recognised_text:str, fuzzy:bool, fuzzy_cutoff:float, 
         else:
             match_score = 0
 
-    if recognised_text != text_adjusted:
-        console.print(
-            f"Recognized text [red]'{recognised_text}'[/red] adjusted to [purple]'{text_adjusted}'[/purple] (fuzzy match score: {match_score})"
-        ) 
-    else:
-        if match_score != "":
-            console.print(
-                f"Recognized text [red]'{recognised_text}'[/red] (fuzzy match score: {match_score})"
-            )    
     return (text_adjusted, match_score)
 
 

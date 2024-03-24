@@ -27,12 +27,10 @@ class TrOCR(OCR):
 
             from transformers import TrOCRProcessor, VisionEncoderDecoderModel
             
-            print("Getting TrOCRProcessor")
             self.processor = TrOCRProcessor.from_pretrained(
                 f"microsoft/trocr-{size}-handwritten"
             )
 
-            print("Getting VisionEncoderDecoderModel")
             self.model = VisionEncoderDecoderModel.from_pretrained(
                 f"microsoft/trocr-{size}-handwritten"
             )

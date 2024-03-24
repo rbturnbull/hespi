@@ -108,7 +108,7 @@ def test_ocr_data_df():
                     "id":"id",
                     "extra1":"extra3",
                 },
-                "institutional label 2": {
+                "institutional label 4": {
                     "family":"family",
                     "id":"id",
                     "extra2":"extra3",
@@ -117,8 +117,14 @@ def test_ocr_data_df():
             output_path = output_path,
         )
         assert (df.columns == required_columns + ["extra1", "extra2"]).all()
-        assert len(df) == 4
+        assert len(df) == 2
         assert output_path.exists()
+        output_text = output_path.read_text()
+        assert "extra1" in output_text
+        assert "extra3" in output_text
+        for i in range(1,5):
+            assert f"institutional label {i}" in output_text
+
 
 
 def test_ocr_data_df_ocr_results():
@@ -155,4 +161,5 @@ def test_ocr_data_df_ocr_results():
     assert df.loc[0,"species_Tesseract_original"] == 'zasdfoppasf'
     assert df.loc[0,"species_Tesseract_adjusted"] == 'zasdfoppasf'
     assert df.loc[0,"extra"] == ''
+
 
