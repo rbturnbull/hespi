@@ -3,8 +3,7 @@ from pathlib import Path
 import pandas as pd
 from typing import Dict
 
-from .util import label_fields
-
+from .util import console, ocr_result_str, label_fields
 
 def write_report(output:Path, component_files:Dict, ocr_df:pd.DataFrame):
     """
@@ -24,6 +23,20 @@ def write_report(output:Path, component_files:Dict, ocr_df:pd.DataFrame):
         except Exception:
             return path
 
+    def get_field_images(row, field, relative=True):
+        images = []
+        i = 1
+        while True:
+            suffix = f"_{i}" if i > 1 else ""
+            image = row.get(f"{field}_image{suffix}")
+            if image is None:
+                break
+            if relative:
+                image = relative_to_output(image)
+            images.append(image)
+            i += 1
+        return images
+
     def get_classification(path):
         return Path(path).name.split(".")[-2].replace("_", " ").title()
 
@@ -38,6 +51,8 @@ def write_report(output:Path, component_files:Dict, ocr_df:pd.DataFrame):
     )
     env.globals['relative_to_output'] = relative_to_output
     env.globals['get_classification'] = get_classification
+    env.globals['get_field_images'] = get_field_images
+    env.globals['ocr_result_str'] = ocr_result_str
     env.globals['len'] = len
     env.globals['truncate'] = truncate
     template = env.get_template("report-template.html")
@@ -48,6 +63,6 @@ def write_report(output:Path, component_files:Dict, ocr_df:pd.DataFrame):
         ocr_df=ocr_df,
     )
     with open(str(output), 'w') as f:
-        print(f"Writing result to {output}")
+        console.print(f"Writing HTML report to '{output}'")
         f.write(result)                
 

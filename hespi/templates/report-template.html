@@ -4,190 +4,17 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="">
-  <meta name="author" content="Robert Turnbull, Mark Otto, Jacob Thornton, and Bootstrap contributors">
-  <meta name="generator" content="Hugo 0.84.0">
+  <meta name="author" content="Hespi">
   <title>Hespi Report</title>
-
-  <link rel="canonical" href="https://getbootstrap.com/docs/5.0/examples/dashboard/">
-
-  <!-- Bootstrap core CSS -->
-  <!-- prism for syntax highlighting -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/themes/prism-coy.min.css" />
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/prism.min.js">
-  </script>
-  <script src="https://cdn.jsdelivr.net/npm/prismjs-bibtex@2.0.1/prism-bibtex.js"
-          integrity="sha256-+dK6uqUp/DnP6ef97s8XcoynBnGe5vM5gvBECH0EB3U=" crossorigin="anonymous">
-  </script>
     
   <!-- Favicons -->
   <link rel="shortcut icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAIAAAD8GO2jAAAFVmlUWHRYTUw6Y29tLmFkb2JlLnhtcAAAAAAAPD94cGFja2V0IGJlZ2luPSLvu78iIGlkPSJXNU0wTXBDZWhpSHpyZVN6TlRjemtjOWQiPz4KPHg6eG1wbWV0YSB4bWxuczp4PSJhZG9iZTpuczptZXRhLyIgeDp4bXB0az0iWE1QIENvcmUgNS41LjAiPgogPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4KICA8cmRmOkRlc2NyaXB0aW9uIHJkZjphYm91dD0iIgogICAgeG1sbnM6ZGM9Imh0dHA6Ly9wdXJsLm9yZy9kYy9lbGVtZW50cy8xLjEvIgogICAgeG1sbnM6ZXhpZj0iaHR0cDovL25zLmFkb2JlLmNvbS9leGlmLzEuMC8iCiAgICB4bWxuczp0aWZmPSJodHRwOi8vbnMuYWRvYmUuY29tL3RpZmYvMS4wLyIKICAgIHhtbG5zOnBob3Rvc2hvcD0iaHR0cDovL25zLmFkb2JlLmNvbS9waG90b3Nob3AvMS4wLyIKICAgIHhtbG5zOnhtcD0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wLyIKICAgIHhtbG5zOnhtcE1NPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvbW0vIgogICAgeG1sbnM6c3RFdnQ9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZUV2ZW50IyIKICAgZXhpZjpQaXhlbFhEaW1lbnNpb249IjMyIgogICBleGlmOlBpeGVsWURpbWVuc2lvbj0iMzIiCiAgIGV4aWY6Q29sb3JTcGFjZT0iMSIKICAgdGlmZjpJbWFnZVdpZHRoPSIzMiIKICAgdGlmZjpJbWFnZUxlbmd0aD0iMzIiCiAgIHRpZmY6UmVzb2x1dGlvblVuaXQ9IjIiCiAgIHRpZmY6WFJlc29sdXRpb249IjcyLzEiCiAgIHRpZmY6WVJlc29sdXRpb249IjcyLzEiCiAgIHBob3Rvc2hvcDpDb2xvck1vZGU9IjMiCiAgIHBob3Rvc2hvcDpJQ0NQcm9maWxl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" />
   <meta name="theme-color" content="#386603">
 
-
   <style>
-
     {% include 'assets/css/bootstrap.hespi.min.css' %}
-
-    .bd-placeholder-img {
-      font-size: 1.125rem;
-      text-anchor: middle;
-      -webkit-user-select: none;
-      -moz-user-select: none;
-      user-select: none;
-    }
-
-    @media (min-width: 768px) {
-      .bd-placeholder-img-lg {
-        font-size: 3.5rem;
-      }
-    }
-    body {
-  font-size: .875rem;
-}
-
-.feather {
-  width: 16px;
-  height: 16px;
-  vertical-align: text-bottom;
-}
-
-/*
- * Sidebar
- */
-
-.sidebar {
-  position: fixed;
-  top: 0;
-  /* rtl:raw:
-  right: 0;
-  */
-  bottom: 0;
-  /* rtl:remove */
-  left: 0;
-  z-index: 100; /* Behind the navbar */
-  padding: 48px 0 0; /* Height of navbar */
-  box-shadow: inset -1px 0 0 rgba(0, 0, 0, .1);
-}
-
-@media (max-width: 767.98px) {
-  .sidebar {
-    top: 5rem;
-  }
-}
-
-.sidebar-sticky {
-  position: relative;
-  top: 0;
-  height: calc(100vh - 48px);
-  padding-top: .5rem;
-  overflow-x: hidden;
-  overflow-y: auto; /* Scrollable contents if viewport is shorter than content. */
-}
-
-.sidebar .nav-link {
-  font-weight: 500;
-  color: #333;
-}
-
-.sidebar .nav-link .feather {
-  margin-right: 4px;
-  color: #727272;
-}
-
-.sidebar .nav-link.active {
-  color: #386603;
-}
-
-.sidebar .nav-link:hover .feather,
-.sidebar .nav-link.active .feather {
-  color: inherit;
-}
-
-.sidebar-heading {
-  font-size: .75rem;
-  text-transform: uppercase;
-}
-
-/*
- * Navbar
- */
-
-.navbar-brand {
-  padding-top: .75rem;
-  padding-bottom: .75rem;
-  font-size: 1rem;
-  background-color: rgba(0, 0, 0, .25);
-  box-shadow: inset -1px 0 0 rgba(0, 0, 0, .25);
-}
-
-.navbar .navbar-toggler {
-  top: .25rem;
-  right: 1rem;
-}
-
-.navbar .form-control {
-  padding: .75rem 1rem;
-  border-width: 0;
-  border-radius: 0;
-}
-
-.form-control-dark {
-  color: #fff;
-  background-color: rgba(255, 255, 255, .1);
-  border-color: rgba(255, 255, 255, .1);
-}
-
-.form-control-dark:focus {
-  border-color: transparent;
-  box-shadow: 0 0 0 3px rgba(255, 255, 255, .25);
-}    
-.table td {
-   text-align: center;   
-}
-.table th {
-   text-align: center;   
-}
-dl {
-  display: flex;
-  flex-flow: row;
-  flex-wrap: wrap;
-  width: 100%; /* set the container width*/
-  overflow: visible;
-}
-dl dt {
-  flex: 0 0 3%;
-  text-overflow: ellipsis;
-  overflow: hidden;
-}
-dl dd {
-  margin-left: auto;
-  text-align: left;
-  text-overflow: ellipsis;
-  overflow: hidden;
-  flex: 0 0 97%
-}  
-#sidebarMenu {
-  padding-top: 0px !important;
-}
-.tab-content {
-  padding-top: 15px;
-}
-H1 { 
-  text-align: center;
-  background-color: #386603;
-  color: white;
-  padding: 30px;
-  margin-top: 10px;
-  margin-left: 0px;
-  margin-right: 0px;
-  margin-bottom: 20px;
-}
-H2 { 
-  text-align: center 
-}
-
-</style>
+    {% include 'assets/css/hespi.min.css' %}
+  </style>
 </head>
 
 <body>
@@ -204,7 +31,7 @@ H2 {
 
       <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block sidebar collapse">
         <div id="brand">
-          {% include 'assets/img/hespi-logo2.svg' %}
+          <a href="https://rbturnbull.github.io/hespi/" target="_blank">{% include 'assets/img/hespi-logo2.svg' %}</a>
         </div>
   
         <div class="position-sticky">
@@ -212,7 +39,7 @@ H2 {
             {% for stub in component_files %}
               <li class="nav-item">
                 <a class="nav-link {% if loop.first %}active{% endif %}" aria-current="page" href="#"  id="{{ stub }}-tab" data-bs-toggle="tab" data-bs-target="#{{ stub }}" type="button" role="tab" aria-controls="{{ stub }}" aria-selected="true">
-                  <span data-feather="image"></span>
+                  {% include 'assets/img/feather-image.svg' %}
                   {{ truncate(stub) }}
                 </a>
               </li>
@@ -227,7 +54,7 @@ H2 {
             <div class="tab-pane fade show {% if loop.first %}active{% endif %}" id="{{ stub }}" role="tabpanel" aria-labelledby="{{ stub }}-tab">
               <h1>{{ stub }}</h1>
               <center>
-              <a href='{{ stub }}/{{ stub }}-predictions.jpg'><img src='{{ stub }}/{{ stub }}-predictions.jpg' style="max-width: 400px;"/></a>
+              <a href='{{ stub }}/{{ stub }}-predictions.jpg'><img src='{{ stub }}/{{ stub }}-predictions.jpg' class="hespi-image"/></a>
               </center>
 
               <h2>Sheet Components</h2>
@@ -243,7 +70,11 @@ H2 {
                   {% for file in files %}
                     <tr>
                       <th scope="row">{{ get_classification(file) }}</th>
-                      <td><a href='{{ relative_to_output(file) }}'><img src='{{ relative_to_output(file) }}' style="max-width: 400px;"/></a></td>
+                      <td>
+                        <a href='{{ relative_to_output(file) }}'>
+                          <img src='{{ relative_to_output(file) }}' class="hespi-image"/>
+                        </a>
+                      </td>
                     </tr>
                   {% endfor %}  
                 </tbody>
@@ -256,7 +87,7 @@ H2 {
           
                 {% for _, row in my_ocr_df.iterrows() %}
                   <center>
-                    <a href='{{ relative_to_output(row["predictions"]) }}'><img src='{{ relative_to_output(row["predictions"]) }}' style="max-width: 400px;"/></a>
+                    <a href='{{ relative_to_output(row["predictions"]) }}'><img src='{{ relative_to_output(row["predictions"]) }}' class="hespi-image"/></a>
                     <p>Classification: {{ row["label_classification"] }}</p>
                   </center>
 
@@ -276,13 +107,15 @@ H2 {
                           <tr>
                             <th scope="row">{{ field }}</th>
                             <td>
-                              {% if row[field+"_image"] %}
-                                <a href='{{ relative_to_output(row[field+"_image"]) }}'><img src='{{ relative_to_output(row[field+"_image"]) }}' style="max-width: 400px;"/></a>
-                              {% endif %}
+                              {% for image in get_field_images(row, field) %}
+                                <a href='{{ image }}'>
+                                  <img src='{{ image }}' class="hespi-image"/>
+                                </a>
+                              {% endfor %}
                             </td>
                             <td>{{ row[field] }}</td>
-                            <td>{{ row[field+"_Tesseract"] }}</td>
-                            <td>{{ row[field+"_TrOCR"] }}</td>
+                            <td>{{ ocr_result_str(row, field, "Tesseract") }}</td>
+                            <td>{{ ocr_result_str(row, field, "TrOCR") }}</td>
                           </div>
                         {% endif %}
                       {% endfor %}
@@ -301,19 +134,10 @@ H2 {
     </div>
   </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.min.js" integrity="sha384-cuYeSxntonz0PPNlHhBs68uyIAVpIIOZZ5JqeqvYYIcEL727kskC66kF92t6Xl2V" crossorigin="anonymous"></script>
-
-  <script src="https://cdn.jsdelivr.net/npm/feather-icons@4.28.0/dist/feather.min.js"
-    integrity="sha384-uO3SXW5IuS1ZpFPKugNNWqTZRRglnUJK6UAZ/gxOX80nxEkN9NcGZTftn6RzhGWE"
-    crossorigin="anonymous"></script>
   <script>
-(function () {
-  'use strict'
-
-  feather.replace({ 'aria-hidden': 'true' })
-
-})()    
+    {% include 'assets/js/bootstrap.min.js' %}
   </script>
+
 </body>
 
 </html>

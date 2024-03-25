@@ -23,7 +23,9 @@ Aconitaceae
 Acrasiaceae
 Acristaceae
 Acrobolbaceae
+Acrocalymmaceae
 Acrochaetiaceae
+Acrocladiaceae
 Acrospermaceae
 Acrostichaceae
 Acrosymphytaceae
@@ -83,6 +85,7 @@ Aloaceae
 Aloeaceae
 Alooideae
 Alopecuraceae
+Alphamycetaceae
 Alpiniaceae
 Alseuosmiaceae
 Alsinaceae
@@ -165,7 +168,6 @@ Apocineae
 Apocynaceae
 Apodanthaceae
 Aponogetonaceae
-Aponogetonales
 Aporosaceae
 Aposeridaceae
 Apostasiaceae
@@ -297,6 +299,7 @@ Begoniaceae
 Belangeraceae
 Bellerocheaceae
 Belloniaceae
+Beltraniaceae
 Belvisiaceae
 Bembiciaceae
 Bennettiaceae
@@ -317,11 +320,9 @@ Biddulphiaceae
 Bifariaceae
 Bignoniaceae
 Bignoniae
-Bignoniales
 Bionectriaceae
 Bischofiaceae
 Bixaceae
-Bixales
 Bixinae
 Blakeaceae
 Blakwelliaceae
@@ -391,11 +392,13 @@ Bryopsidaceae
 Buchneraceae
 Bucidaceae
 Bucklandiaceae
+Buckleyzymaceae
 Buddlejaceae
 Bueseraceae
 Buglossaceae
 Bulbocodiaceae
 Bulgariaceae
+Bulleraceae
 Bumeliaceae
 Bupleuraceae
 Burchardiaceae
@@ -407,7 +410,6 @@ Buxaceae
 Buxbaumiaceae
 Byblidaceae
 Byttneriaceae
-Byttneriales
 Cabombaceae
 Cacaoaceae
 Cactaceae
@@ -420,6 +422,7 @@ Calendulaceae
 Caliciaceae
 Callaceae
 Callicomaceae
+Callicostaceae
 Calliergonaceae
 Calligonaceae
 Callithamniaceae
@@ -533,6 +536,7 @@ Cestraceae
 Chaconiaceae
 Chaetangiaceae
 Chaetocerotaceae
+Chaetomellaceae
 Chaetomiaceae
 Chaetopeltidaceae
 Chaetophoraceae
@@ -580,6 +584,7 @@ Chroomonadaceae
 Chrysamoebaceae
 Chrysobalanaceae
 Chrysobalaneae
+Chrysoblastellaceae
 Chrysocapsaceae
 Chrysococcaceae
 Chrysophyceae familia incertae sedis
@@ -595,13 +600,13 @@ Cinchonaceae
 Circaeaceae
 Cissaceae
 Cistaceae
-Cistales
 Cisti
 Citraceae
 Cladochytriaceae
 Cladoniaceae
 Cladophoraceae
 Cladopyxidaceae
+Cladoriellaceae
 Cladostephaceae
 Clastodermataceae
 Claustulaceae
@@ -630,6 +635,7 @@ Coccomyxaceae
 Cocconeidaceae
 Coccotremataceae
 Cochicaceae
+Cochlearomycetaceae
 Cochlospermaceae
 Cochlospermeae
 Cocosaceae
@@ -720,6 +726,7 @@ Cucurbitariaceae
 Cunninghamellaceae
 Cunoniaceae
 Cupressaceae
+Cupuliferae
 Curcumaceae
 Cuscutaceae
 Cuspariaceae
@@ -737,6 +744,7 @@ Cyclantheraceae
 Cyclocheilaceae
 Cyclophoraceae
 Cydoniaceae
+Cylindriaceae
 Cylindrocapsaceae
 Cymatosiraceae
 Cymbellaceae
@@ -816,6 +824,7 @@ Dicksoniaceae
 Dicksonieae
 Diclidantheraceae
 Dicranaceae
+Dicranellaceae
 Dicranemataceae
 Dicrastylidaceae
 Dictamnaceae
@@ -823,6 +832,7 @@ Dictydiaethaliaceae
 Dictyoneidaceae
 Dictyonemataceae
 Dictyosphaeriaceae
+Dictyosporiaceae
 Dictyosteliaceae
 Dictyotaceae
 Didiereaceae
@@ -842,7 +852,6 @@ Dinosphaeraceae
 Dinotrichaceae
 Dionaeaceae
 Dioncophyllaceae
-Dioncophyllales
 Dioscoreaceae
 Dioscoreae
 Diosmaceae
@@ -861,6 +870,7 @@ Dipteridaceae
 Dipterocarpaceae
 Disanthaceae
 Discinaceae
+Discosiaceae
 Discosporangiaceae
 Dissoconiaceae
 Distichiaceae
@@ -965,6 +975,7 @@ Erycibaceae
 Eryngiaceae
 Erysimaceae
 Erysiphaceae
+Erythrobasidiaceae
 Erythroniaceae
 Erythropalaceae
 Erythrospermaceae
@@ -1003,6 +1014,7 @@ Fabaceae
 Fabroniaceae
 Fagaceae
 Fagineae
+Falcocladiaceae
 Faucheaceae
 Ferulaceae
 Festucaceae
@@ -1041,6 +1053,7 @@ Fungi Family
 Funkiaceae
 Furcellariaceae
 Fuscideaceae
+Fusculinaceae
 Gaiadendraceae
 Gainiaceae
 Galanthaceae
@@ -1081,6 +1094,7 @@ Gigaspermaceae
 Gigasporaceae
 Gilliesiaceae
 Ginalloaceae
+Gjaerumiaceae
 Gladiolaceae
 Glaucidiaceae
 Glaucocystaceae
@@ -1192,7 +1206,6 @@ Helianthaceae
 Helianthemaceae
 Helicobasidiaceae
 Heliconiaceae
-Helicophyllaceae
 Helicteraceae
 Heliopeltaceae
 Heliotropiaceae
@@ -1214,6 +1227,7 @@ Heppiaceae
 Herbertaceae
 Hericiaceae
 Hermanniaceae
+Hermatomycetaceae
 Hernandiaceae
 Herniariaceae
 Herpotrichiellaceae
@@ -1289,6 +1303,7 @@ Hymeneliaceae
 Hymenocardiaceae
 Hymenochaetaceae
 Hymenocladiaceae
+Hymenolomataceae
 Hymenophyllaceae
 Hymenophylleae
 Hymenophytaceae
@@ -1301,7 +1316,6 @@ Hypneaceae
 Hypnodendraceae
 Hypnomonadaceae
 Hypocreaceae
-Hypogymniaceae
 Hyponectriaceae
 Hypopterygiaceae
 Hypoxidaceae
@@ -1317,6 +1331,7 @@ Illigeraceae
 Impatientaceae
 Imperatoriaceae
 Incertae sedis
+Induratiaceae
 Inkyuleeaceae
 Inocarpaceae
 Inocybaceae
@@ -1410,8 +1425,8 @@ Lemnaceae
 Lennoaceae
 Lentariaceae
 Lentibulariaceae
-Lentinaceae
 Lentiscaceae
+Lentitheciaceae
 Leoniaceae
 Leonticaceae
 Leotiaceae
@@ -1430,7 +1445,6 @@ Leptolyngbyaceae
 Leptosiraceae
 Leptospermaceae
 Leptosphaeriaceae
-Leptostomaceae
 Leptostomataceae
 Lepturaceae
 Lepyrodontaceae
@@ -1492,7 +1506,6 @@ Lophocoleaceae
 Lophophytaceae
 Loranthaceae
 Lotaceae
-Lowiales
 Loxogrammaceae
 Lulworthiaceae
 Lunulariaceae
@@ -1534,7 +1547,6 @@ Mangiaceae
 Manicariaceae
 Mapaniaceae
 Marantaceae
-Marantales
 Marasmiaceae
 Marathraceae
 Marattiaceae
@@ -1562,6 +1574,7 @@ Megasporaceae
 Melaleucaceae
 Melampsoraceae
 Melampyraceae
+Melanascomaceae
 Melanconidaceae
 Melanommataceae
 Melanotaeniaceae
@@ -1583,7 +1596,6 @@ Melosiraceae
 Memecylaceae
 Mendonciaceae
 Menispermaceae
-Menispermales
 Menispermeae
 Menthaceae
 Menyanthaceae
@@ -1620,6 +1632,7 @@ Microsporaceae
 Microthamniaceae
 Microtheliopsidaceae
 Microthyriaceae
+Mielichhoferiaceae
 Miliaceae
 Miltideaceae
 Milulaceae
@@ -1656,6 +1669,7 @@ Mortierellaceae
 Mouriraceae
 Moutabeaceae
 Muntingiaceae
+Murramarangomycetaceae
 Musaceae
 Mutisiaceae
 Mycenaceae
@@ -1675,7 +1689,9 @@ Myriniaceae
 Myriophyllaceae
 Myristicaceae
 Myristiceae
+Myrmecridiaceae
 Myrobalanaceae
+Myrotheciomycetaceae
 Myrrhiniaceae
 Myrsinaceae
 Myrtaceae
@@ -1708,8 +1724,11 @@ Nelumbonaceae
 Nemacladaceae
 Nemastomataceae
 Neocallimastigaceae
+Neocelosporiaceae
 Neochloridaceae
+Neocrinulaceae
 Neohodgsoniaceae
+Neolauriomycetaceae
 Neoralfsiaceae
 Neotrichocoleaceae
 Neottiaceae
@@ -1739,6 +1758,7 @@ Nostochopsidaceae
 Notheiaceae
 Nothofagaceae
 Notothyladaceae
+Nowamycetaceae
 Nupharaceae
 Nuytsiaceae
 Nyctaginaceae
@@ -1747,18 +1767,19 @@ Nymphaeaceae
 Nypaceae
 Nyssaceae
 Obolariaceae
+Occultibambusaceae
 Ochnaceae
 Ochrolechiaceae
 Ochromonadaceae
 Octoblepharaceae
 Octoknemaceae
+Odontellaceae
 Odontotremataceae
 Oedogoniaceae
 Oenotheraceae
 Oftiaceae
 Olacaceae
 Olacinae
-Olacineae
 Oleaceae
 Oleandraceae
 Oleandreae
@@ -1798,8 +1819,10 @@ Orobanchaceae
 Orontiaceae
 Ortegaceae
 Orthodontiaceae
+Orthogonacladiaceae
 Orthorrhynchiaceae
 Orthoseiraceae
+Orthosticellaceae
 Orthotrichaceae
 Oryzaceae
 Oscillatoriaceae
@@ -1838,9 +1861,11 @@ Papilionaceae
 Papillionaceae
 Pappophoraceae
 Papyraceae
+Paracladophialophoraceae
 Paracryphiaceae
 Paraliaceae
 Paraphysomonadaceae
+Pararamichloridiaceae
 Parataeniellaceae
 Parianaceae
 Parietariaceae
@@ -1906,7 +1931,6 @@ Phaeophilaceae
 Phaeophyceae familia incertae sedis
 Phaeosphaeriaceae
 Phaeothamniaceae
-Phaeotrichaceae
 Phaffomycetaceae
 Phakopsoraceae
 Phalansteriaceae
@@ -1943,6 +1967,7 @@ Phyllocladaceae
 Phyllophoraceae
 Phyllopsoraceae
 Phyllosiphonaceae
+Phyllostictaceae
 Phymatocerotaceae
 Physalacriaceae
 Physaraceae
@@ -2014,6 +2039,7 @@ Podoaceae
 Podocarpaceae
 Podolampadaceae
 Podophyllaceae
+Podosporaceae
 Podostemaceae
 Podostemeae
 Polemonia
@@ -2041,6 +2067,7 @@ Poranaceae
 Porantheraceae
 Porellaceae
 Porinaceae
+Porodiplodiaceae
 Porotheleaceae
 Porphyridiaceae
 Porpidiaceae
@@ -2078,9 +2105,11 @@ Pseudanabaenaceae
 Pseudanthaceae
 Pseudocharaciopsidaceae
 Pseudocodiaceae
+Pseudodactylariaceae
 Pseudolepicoleaceae
 Pseudoperisporiaceae
 Pseudophoenicaceae
+Pseudosporidesmiaceae
 Pseudovalsaceae
 Psilotaceae
 Psiloteae
@@ -2111,6 +2140,7 @@ Pulchrinodaceae
 Punicaceae
 Puniceae
 Putranjivaceae
+Pylaisiaceae
 Pylaisiadelphaceae
 Pyraceae
 Pyramimonadaceae
@@ -2149,6 +2179,7 @@ Requienellaceae
 Resedaceae
 Restionaceae
 Rhabdodendraceae
+Rhabdodontiaceae
 Rhabdonemataceae
 Rhabdoweisiaceae
 Rhachidosoraceae
@@ -2188,10 +2219,10 @@ Rhodotypaceae
 Rhodymeniaceae
 Rhoicospheniaceae
 Rhoipteleaceae
-Rhoipteleales
 Rhopalocarpaceae
 Rhopalodiaceae
 Rhopalosolenaceae
+Rhynchogastremaceae
 Rhynchomonadidae
 Rhynchostomataceae
 Rhytismataceae
@@ -2223,6 +2254,7 @@ Sabiaceae
 Sabiceaceae
 Sabulinaceae
 Saccharaceae
+Saccharataceae
 Saccharomycetaceae
 Saccharomycodaceae
 Saccifoliaceae
@@ -2266,10 +2298,12 @@ Sarcospermataceae
 Sarcostigmataceae
 Sargassaceae
 Sargentodoxaceae
+Sarocladiaceae
 Sarraceniaceae
 Sarrameanaceae
 Saulomataceae
 Saurauiaceae
+Saururaceae
 Sauvagesiaceae
 Saxifragaceae
 Saxifragae
@@ -2398,6 +2432,7 @@ Spigeliaceae
 Spinaciaceae
 Spiraeaceae
 Spiraeanthemaceae
+Spiridentaceae
 Spirulinaceae
 Spizellomycetaceae
 Splachnaceae
@@ -2407,10 +2442,13 @@ Spondiadaceae
 Spondylomoraceae
 Spongomonadidae
 Sporastatiaceae
+Sporidesmiaceae
+Sporocadaceae
 Sporochnaceae
 Sporolithaceae
 Sporormiaceae
 Spyridiaceae
+Stachybotriaceae
 Stachydaceae
 Stackhouseae
 Stackhousiaceae
@@ -2435,7 +2473,6 @@ Stictidaceae
 Stictodiscaceae
 Stigonemataceae
 Stilaginaceae
-Stilaginales
 Stipaceae
 Stratiotaceae
 Strelitziaceae
@@ -2455,14 +2492,17 @@ Stylococcaceae
 Stylonemataceae
 Stypheliaceae
 Stypocaulaceae
+Styracaceae
 Suessiaceae
 Suillaceae
 Sumachiaceae
+Superstratomycetaceae
 Surianaceae
 Surianeae
 Surirellaceae
 Swartziaceae
 Swieteniaceae
+Symmetrosporaceae
 Symphoremataceae
 Symphyodontaceae
 Symphyonemataceae
@@ -2495,6 +2535,7 @@ Targioniaceae
 Taxodiaceae
 Tecophilaeaceae
 Tectariaceae
+Teichosporaceae
 Telephiaceae
 Teloschistaceae
 Tepuianthaceae
@@ -2553,6 +2594,7 @@ Tormentillaceae
 Tovelliaceae
 Toxariaceae
 Trachylomataceae
+Tracyllaceae
 Tradescantiaceae
 Tragiaceae
 Trapaceae
@@ -2587,6 +2629,7 @@ Trifoliaceae
 Triglochinaceae
 Trigoniaceae
 Trimeniaceae
+Trimorphomycetaceae
 Triplobaceae
 Triplostegiaceae
 Tripterellaceae
@@ -2685,11 +2728,13 @@ Xanthorhaeaceae
 Xanthorhizaceae
 Xanthorrhoeaceae
 Xenasmataceae
+Xenospadicoidaceae
 Xeranthemaceae
 Xerotaceae
 Ximeniaceae
 Xiphidiaceae
 Xiphophoraceae
+Xyladictyochaetaceae
 Xylariaceae
 Xyridaceae
 Yuccaceae
@@ -2708,4 +2753,3 @@ Zoysiaceae
 Zygnemataceae
 Zygophyllaceae
 Zygophylleae
-[Family Not Recorded]

@@ -14,11 +14,10 @@ app = typer.Typer()
 
 @app.command()
 def detect(
-    images: List[str] = typer.Argument(..., help="A list of images to process."),
+    images: List[str] = typer.Argument(..., help="A list of images to process. The images can also be URLs."),
     output_dir: Path = typer.Option(
-        ...,
+        "hespi-output",
         help="A directory to output the results.",
-        prompt="Please specify a directory for the results",
     ),
     gpu: bool = typer.Option(True, help="Whether or not to use a GPU if available."),
     fuzzy: bool = typer.Option(
@@ -32,7 +31,7 @@ def detect(
         help="Whether or not to do handwritten text recognition using Microsoft's TrOCR.",
     ),
     trocr_size: TrOCRSize = typer.Option(
-        TrOCRSize.BASE.value,
+        TrOCRSize.LARGE.value,
         help="The size of the TrOCR model to use for handwritten text recognition.",
         case_sensitive=False,
     ),

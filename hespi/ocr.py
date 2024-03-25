@@ -1,9 +1,9 @@
 import warnings
-from transformers import TrOCRProcessor, VisionEncoderDecoderModel
 from PIL import Image
 from enum import Enum
 from pathlib import Path
 import pytesseract
+
 
 
 class TrOCRSize(Enum):
@@ -22,18 +22,17 @@ class OCR:
 
 class TrOCR(OCR):
     def __init__(self, size: TrOCRSize = TrOCRSize.BASE):
-        with warnings.catch_warnings():
-            warnings.simplefilter("ignore")
+        import transformers
+        from transformers import TrOCRProcessor, VisionEncoderDecoderModel
+        transformers.utils.logging.set_verbosity_error()
 
-            print("Getting TrOCRProcessor")
-            self.processor = TrOCRProcessor.from_pretrained(
-                f"microsoft/trocr-{size}-handwritten"
-            )
+        self.processor = TrOCRProcessor.from_pretrained(
+            f"microsoft/trocr-{size}-handwritten"
+        )
 
-            print("Getting VisionEncoderDecoderModel")
-            self.model = VisionEncoderDecoderModel.from_pretrained(
-                f"microsoft/trocr-{size}-handwritten"
-            )
+        self.model = VisionEncoderDecoderModel.from_pretrained(
+            f"microsoft/trocr-{size}-handwritten",
+        )
 
     def get_text(self, image_path: Path) -> str:
         image = Image.open(image_path)

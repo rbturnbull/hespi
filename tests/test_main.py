@@ -16,7 +16,7 @@ def test_help():
 
 @patch.object(Hespi, 'detect')
 def test_detect_command(mock_detect):
-    runner.invoke(main.app, ["image1.tif", "image2.jpg", "--output-dir", "output"])
-
+    result = runner.invoke(main.app, ["image1.tif", "image2.jpg", "--output-dir", "output"])
+    assert result.exit_code == 0
     mock_detect.assert_called_once_with(["image1.tif", "image2.jpg"], Path("output"))
 
