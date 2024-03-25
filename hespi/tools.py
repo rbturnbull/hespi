@@ -26,8 +26,9 @@ def label_field_location():
     console.print(f"The location of the default Label-Field model is:\n{path}")    
 
 
+@app.command()
 def institutional_label_classifier_location():
-    """ Shows the location of the default Institutional-Label-Classifier model weights. """
+    """ Shows the location of the default Institutional Label Classifier model weights. """
     path = get_location(DEFAULT_INSTITUTIONAL_LABEL_CLASSIFIER_WEIGHTS)
     console.print(f"The location of the default Institutional Label Classifier model is:\n{path}")
 
