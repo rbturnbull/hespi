@@ -22,18 +22,17 @@ class OCR:
 
 class TrOCR(OCR):
     def __init__(self, size: TrOCRSize = TrOCRSize.BASE):
-        with warnings.catch_warnings():
-            warnings.simplefilter("ignore")
+        import transformers
+        from transformers import TrOCRProcessor, VisionEncoderDecoderModel
+        transformers.utils.logging.set_verbosity_error()
 
-            from transformers import TrOCRProcessor, VisionEncoderDecoderModel
-            
-            self.processor = TrOCRProcessor.from_pretrained(
-                f"microsoft/trocr-{size}-handwritten"
-            )
+        self.processor = TrOCRProcessor.from_pretrained(
+            f"microsoft/trocr-{size}-handwritten"
+        )
 
-            self.model = VisionEncoderDecoderModel.from_pretrained(
-                f"microsoft/trocr-{size}-handwritten"
-            )
+        self.model = VisionEncoderDecoderModel.from_pretrained(
+            f"microsoft/trocr-{size}-handwritten",
+        )
 
     def get_text(self, image_path: Path) -> str:
         image = Image.open(image_path)

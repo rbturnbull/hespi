@@ -163,3 +163,22 @@ def test_ocr_data_df_ocr_results():
     assert df.loc[0,"extra"] == ''
 
 
+def test_ocr_data_df_ocr_results(capsys):
+    df = util.ocr_data_df(
+        {
+            "institutional label": {
+                "species":"zostericolum",
+                "species_image": "species.jpg",
+                "id":"id",
+                "species_ocr_results": [
+                    dict(ocr="TrOCR", original_text_detected="zostericolumXX", adjusted_text="zostericolum", match_score=0.9),
+                    dict(ocr="Tesseract", original_text_detected="zasdfoppasf", adjusted_text="zasdfoppasf", match_score=''),
+                ],
+            }
+        }
+    )
+
+    util.ocr_data_print_tables(df)
+    captured = capsys.readouterr()
+    assert "│ species │ zostericolum │ zasdfoppasf │ zostericolumXX → zostericolum (0.9) │\n" in captured.out
+

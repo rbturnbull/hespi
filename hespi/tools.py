@@ -1,6 +1,8 @@
 import typer
 from rich.console import Console
+from pathlib import Path
 
+from .ocr import TrOCRSize
 from .hespi import DEFAULT_INSTITUTIONAL_LABEL_CLASSIFIER_WEIGHTS, DEFAULT_SHEET_COMPONENT_WEIGHTS, DEFAULT_LABEL_FIELD_WEIGHTS
 from .download import get_location
 from .util import DATA_DIR
@@ -24,8 +26,31 @@ def label_field_location():
     console.print(f"The location of the default Label-Field model is:\n{path}")    
 
 
+def institutional_label_classifier_location():
+    """ Shows the location of the default Institutional-Label-Classifier model weights. """
+    path = get_location(DEFAULT_INSTITUTIONAL_LABEL_CLASSIFIER_WEIGHTS)
+    console.print(f"The location of the default Institutional Label Classifier model is:\n{path}")
+
+
 @app.command()
 def bibtex():
     """ Shows the references in BibTeX format. """
     references = DATA_DIR / "references.bib"
     console.print(references.read_text())
+
+
+@app.command()
+def trocr(
+    image:Path,
+    size: TrOCRSize = typer.Option(
+        TrOCRSize.LARGE.value,
+        help="The size of the TrOCR model to use for handwritten text recognition.",
+        case_sensitive=False,
+    ),
+):
+    """ Run the TrOCR model on an image and print the recognized text. """
+    from .ocr import TrOCR
+
+    ocr = TrOCR(size=size)
+    text = ocr.get_text(image)
+    console.print(text)

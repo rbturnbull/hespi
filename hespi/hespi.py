@@ -92,7 +92,6 @@ class Hespi():
     def trocr(self):
         print(f"Getting TrOCR model of size '{self.trocr_size}'")
         trocr = TrOCR(size=self.trocr_size)
-        print("TrOCR model available")
         return trocr
 
     def sheet_component_detect(
@@ -173,8 +172,8 @@ class Hespi():
         return df
 
     def institutional_label_classify(self, component:Path, classification_csv:Path) -> str:
-        console.print(f"Classifying institution label: '{component}'")
-        console.print(f"Saving result to '{classification_csv}'")
+        component = Path(component)
+        console.print(f"Classifying '{component.name}':")
         classifier_results = self.institutional_label_classifier(
             items=component,
             pretrained=self.institutional_label_classifier.pretrained,
@@ -187,9 +186,17 @@ class Hespi():
             classification = classifier_results.iloc[0]["prediction"]
         else:
             classification = str(classifier_results)
-        console.print(
-            f"'{component}' classified as '[red]{classification}[/red]'."
-        )
+
+        emoji = ""
+        if classification == "handwritten":
+            emoji = "✍️"
+        elif classification == "printed":
+            emoji = "🖨️"
+        elif classification == "typewriter":
+            emoji = "⌨️"
+
+        console.print( f"[red]{classification}[/red] {emoji}")
+        console.print(f"Classification result to '{classification_csv}'")
 
         return classification
     

@@ -118,7 +118,6 @@ def ocr_data_df(data: dict, output_path: Path=None) -> pd.DataFrame:
 
             df = pd.concat([df, new_columns], axis=1)
         
-    
     # insert columns not included in dataframe, and re-order
     # including any columns not included in col_options to account for any updates
     col_options = [ "institutional label", "id" ] + label_fields
