@@ -108,7 +108,9 @@
                             <th scope="row">{{ field }}</th>
                             <td>
                               {% if row[field+"_image"] %}
-                                <a href='{{ relative_to_output(row[field+"_image"]) }}'><img src='{{ relative_to_output(row[field+"_image"]) }}' class="hespi-image"/></a>
+                                <a href='{{ relative_to_output(row[field+"_image"]) }}'>
+                                  <img src='{{ relative_to_output(row[field+"_image"]) }}' class="hespi-image"/>
+                                </a>
                               {% endif %}
                             </td>
                             <td>{{ row[field] }}</td>

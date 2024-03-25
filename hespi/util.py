@@ -172,18 +172,31 @@ def ocr_data_df(data: dict, output_path: Path=None) -> pd.DataFrame:
 
 
 def ocr_result_str(row, field_name:str, ocr_type:str) -> str:
-    original = row.get(f"{field_name}_{ocr_type}_original", "")
-    adjusted = row.get(f"{field_name}_{ocr_type}_adjusted", "")
-    match_score = row.get(f"{field_name}_{ocr_type}_match_score", None)
+    def get_list(row, key):
+        result = row.get(key, "")
+        if not isinstance(result, list):
+            result = [result]
 
-    text = original
-    if adjusted and adjusted != original:
-        text += f" → {adjusted}"
+        return result
+
+    original_list = get_list(row, f"{field_name}_{ocr_type}_original")
+    adjusted_list = get_list(row, f"{field_name}_{ocr_type}_adjusted")
+    match_score_list = get_list(row, f"{field_name}_{ocr_type}_match_score")
+
+    assert len(original_list) == len(adjusted_list) == len(match_score_list)
+
+    texts = []
+    for original, adjusted, match_score in zip(original_list, adjusted_list, match_score_list):
+        text = original
+        if adjusted and adjusted != original:
+            text += f" → {adjusted}"
+            
+        if match_score:
+            text += f" ({match_score})"
         
-    if match_score:
-        text += f" ({match_score})"
+        texts.append(text)
         
-    return text
+    return " | ".join(texts)
 
 
 def ocr_data_print_tables(df: pd.DataFrame) -> None:

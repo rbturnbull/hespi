@@ -55,7 +55,7 @@ def yolo_output(model, images, output_dir, tmp_dir_prefix=None, batch_size=4, re
 
         counter = Counter()
 
-        for prediction_index, boxes in enumerate(predictions.boxes):
+        for _, boxes in enumerate(predictions.boxes):
             category_index = int(boxes.cls.cpu().item())
             category = (
                 model.names[category_index].replace(" ", "_").replace(":", "").strip()
@@ -69,7 +69,7 @@ def yolo_output(model, images, output_dir, tmp_dir_prefix=None, batch_size=4, re
             im_crop = im.crop((x0, y0, x1, y1))
             counter.update([category])
 
-            counter_suffix = f"-{counter['category']}" if counter[category] > 1 else ""
+            counter_suffix = f"-{counter[category]}" if counter[category] > 1 else ""
             
             output_path = (
                 image_output_dir / f"{stub}.{category}{counter_suffix}.jpg"

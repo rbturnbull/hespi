@@ -258,14 +258,13 @@ class Hespi():
         detection_results["predictions"] = predictions_path
 
         # Text Recognition on bounding boxes found by YOLO
-        # for fields in track(field_files.values(), total=len(field_files), description=f"Reading Fields in {stub}"):
         for fields in field_files.values():
-            for field_file in track(fields, description=f"Reading fields for {stub}"):
+            for field_file in track(fields, description=f"Reading fields for {component.name}"):
                 field_results = self.read_field_file(
                     field_file, 
                     classification,
                 )
-                # detection_results.update(field_results)
+
                 for key, value in field_results.items():
                     if key not in detection_results:
                         detection_results[key] = value
@@ -312,11 +311,12 @@ class Hespi():
 
             # splitting multiple image files into two columns
             elif 'image' in key:
-                if len(detection_result) >1:
-                    for i in detection_result:
-                        if detection_result.index(i) != 0:
-                            results[f"{key}_{detection_result.index(i)}"] = i
-                    detection_results[key] = detection_result[0]
+                if isinstance(detection_result, list) and len(detection_result) > 1:
+                    for i, image_path in enumerate(detection_result):
+                        if i == 0:
+                            detection_results[key] = image_path
+                        else:
+                            results[f"{key}_{i+1}"] = image_path
         
         detection_results.update(results)
 
@@ -347,7 +347,7 @@ class Hespi():
         field_file = Path(field_file)
         field_file_components = field_file.name.split(".")
         assert len(field_file_components) >= 2
-        field = field_file_components[-2]
+        field = field_file_components[-2].split("-")[0]
         classification = classification or ""
 
         detection_results = defaultdict(list)              
