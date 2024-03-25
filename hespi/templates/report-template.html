@@ -107,11 +107,11 @@
                           <tr>
                             <th scope="row">{{ field }}</th>
                             <td>
-                              {% if row[field+"_image"] %}
-                                <a href='{{ relative_to_output(row[field+"_image"]) }}'>
-                                  <img src='{{ relative_to_output(row[field+"_image"]) }}' class="hespi-image"/>
+                              {% for image in get_field_images(row, field) %}
+                                <a href='{{ image }}'>
+                                  <img src='{{ image }}' class="hespi-image"/>
                                 </a>
-                              {% endif %}
+                              {% endfor %}
                             </td>
                             <td>{{ row[field] }}</td>
                             <td>{{ ocr_result_str(row, field, "Tesseract") }}</td>

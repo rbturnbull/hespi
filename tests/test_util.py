@@ -182,3 +182,10 @@ def test_ocr_data_df_ocr_results(capsys):
     captured = capsys.readouterr()
     assert "│ species │ zostericolum │ zasdfoppasf │ zostericolumXX → zostericolum (0.9) │\n" in captured.out
 
+
+def test_flatten_single_item_lists():
+    assert util.flatten_single_item_lists(['1','2','3']) == ['1','2','3']
+    assert util.flatten_single_item_lists(['1']) == '1'
+    assert util.flatten_single_item_lists([]) == ''
+
+    

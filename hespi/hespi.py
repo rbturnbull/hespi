@@ -21,6 +21,13 @@ DEFAULT_LABEL_FIELD_WEIGHTS = f"{DEFAULT_RELEASE_PREFIX}/label-field.pt.gz"
 DEFAULT_INSTITUTIONAL_LABEL_CLASSIFIER_WEIGHTS = f"https://github.com/rbturnbull/hespi/releases/download/v0.4.2/institutional-label-classifier.pkl.gz"
 
 
+CLASSIFICATION_EMOJI = {
+    "handwritten": "✍️",
+    "printed": "🖨️",
+    "typewriter": "⌨️",
+}
+
+
 class Hespi():
     def __init__(
         self,
@@ -133,7 +140,10 @@ class Hespi():
         if isinstance(images, (Path, str)):
             images = [images]
         images = [get_location(image, cache_dir=output_dir/"downloads") for image in images]
-        console.print(f"Processing {len(images)} image(s)")
+        if len(images) == 1:
+            console.print(f"Processing '{images[0]}'")
+        else:
+            console.print(f"Processing {len(images)} images")
 
         # Sheet-Components predictions
         component_files = self.sheet_component_detect(images, output_dir=output_dir)
@@ -187,13 +197,7 @@ class Hespi():
         else:
             classification = str(classifier_results)
 
-        emoji = ""
-        if classification == "handwritten":
-            emoji = "✍️"
-        elif classification == "printed":
-            emoji = "🖨️"
-        elif classification == "typewriter":
-            emoji = "⌨️"
+        emoji = CLASSIFICATION_EMOJI.get(classification, "")
 
         console.print( f"[red]{classification}[/red] {emoji}")
         console.print(f"Classification result to '{classification_csv}'")
