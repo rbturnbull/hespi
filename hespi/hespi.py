@@ -1,3 +1,4 @@
+import re
 from typing import List, Dict, Tuple
 from pathlib import Path
 import pandas as pd
@@ -153,7 +154,7 @@ class Hespi():
         # Institutional Label Field Detection Model Predictions
         for stub, components in component_files.items():
             for component in components:
-                if component.name.endswith("institutional_label.jpg"):
+                if re.match(r".*\.institutional_label-?\d*.jpg$", component.name):
                     ocr_data[str(component)] = self.institutional_label_detect(
                         component, 
                         stub=stub,
