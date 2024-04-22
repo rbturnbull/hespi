@@ -11,7 +11,7 @@ class DownloadError(Exception):
 
 def get_cached_path(filename: str, cache_dir:Path=None) -> Path:
     """
-    Returns a path in the ausdex directory in the user's cache.
+    Returns a path in the hespi directory in the user's cache.
 
     File may or may not exist.
     """
