@@ -110,7 +110,7 @@ Plant refererence data obtained from the `Australian National Species List (auNS
 - Australian Lichen Name Index (ALNI) 
 - Australian Algae Name Index (AANI)
 
-and the `World Flora Online Taxonomic Backbone v.2023.12 <https://www.worldfloraonline.org/downloadData>, accessed 13 June 2024.
+and the `World Flora Online Taxonomic Backbone v.2023.12 <https://www.worldfloraonline.org/downloadData>`_, accessed 13 June 2024.
 
 This pipeline depends on `YOLOv8 <https://github.com/ultralytics/ultralytics>`_, 
 `torchapp <https://github.com/rbturnbull/torchapp>`_,

@@ -33,25 +33,25 @@ def test_label_sort_key():
 
 def test_read_reference_authority():
     items = util.read_reference("authority")
-    assert len(items) >= 32481
+    assert len(items) >= 269999
     assert "(A.A.Fisch.Waldh.) Nannf." in items
 
 
 def test_read_reference_genus():
     items = util.read_reference("genus")
-    assert len(items) >= 13330
+    assert len(items) >= 47591
     assert "Abelia" in items
 
 
 def test_read_reference_family():
     items = util.read_reference("family")
-    assert len(items) >= 2711
+    assert len(items) >= 3182
     assert "Acalyphaceae" in items
 
 
 def test_read_reference_species():
     items = util.read_reference("species")
-    assert len(items) >= 44333
+    assert len(items) >= 225936
     assert "Martini" in items
 
 
