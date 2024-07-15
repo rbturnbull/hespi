@@ -57,8 +57,9 @@ def mk_reference() -> Dict:
 
 
 def label_sort_key(s) -> int:
+    base_name = s.split('_')[0]
     try:
-        return label_fields.index(s)
+        return label_fields.index(base_name)
     except ValueError:
         return len(label_fields)
 
