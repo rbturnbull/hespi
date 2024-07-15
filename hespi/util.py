@@ -39,7 +39,7 @@ def adjust_case(field, value):
 def strip_punctuation(field, value):
     punctuation_to_strip = string.punctuation.replace('[', '').replace(']', '').replace('(', '').replace(')', '')
     if field in ["genus", "family", "species"]:
-        return value.rstrip(punctuation_to_strip)
+        return value.strip(punctuation_to_strip).strip()
     
     return value
 
