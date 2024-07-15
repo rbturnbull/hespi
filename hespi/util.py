@@ -2,6 +2,7 @@ from pathlib import Path
 from typing import Dict
 import pandas as pd
 import numpy as np
+import string
 from rich.console import Console
 from difflib import get_close_matches, SequenceMatcher
 from rich.table import Column, Table
@@ -32,6 +33,13 @@ def adjust_case(field, value):
         return value.title()
     elif field == "species":
         return value.lower()
+    
+    return value
+
+def strip_punctuation(field, value):
+    punctuation_to_strip = string.punctuation.replace('[', '').replace(']', '').replace('(', '').replace(')', '')
+    if field in ["genus", "family", "species"]:
+        return value.rstrip(punctuation_to_strip)
     
     return value
 
@@ -223,7 +231,8 @@ def ocr_data_print_tables(df: pd.DataFrame) -> None:
 
 
 def adjust_text(field:str, recognised_text:str, fuzzy:bool, fuzzy_cutoff:float, reference:Dict):
-    text_adjusted = adjust_case(field, recognised_text)
+    text_stripped = strip_punctuation(field, recognised_text)
+    text_adjusted = adjust_case(field, text_stripped)
     match_score = ""
 
     # Match with database
