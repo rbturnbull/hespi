@@ -145,8 +145,7 @@ def ocr_data_df(data: dict, output_path: Path=None) -> pd.DataFrame:
     image_files_cols = ['image_links-->'] + sorted([col for col in df.columns if '_image' in col or 'predictions' in col], key=label_sort_key)
     result_cols = ['ocr_results_split-->'] + sorted([col for col in df.columns if 'Tesseract' in col or 'TrOCR' in col], key=label_sort_key)
     
-    cols = col_options + score_cols + ['label_classification'] + ocr_cols + image_files_cols + result_cols
-
+    cols = col_options + score_cols + ['label_classification'] + ocr_cols + result_cols + image_files_cols 
     extra_cols = [col for col in df.columns if col not in cols]
 
     cols = cols + extra_cols
