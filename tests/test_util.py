@@ -66,7 +66,7 @@ def test_ocr_data_df():
         'id', 'family', 'genus', 'species',
         'infrasp_taxon', 'authority', 'collector_number', 'collector',
         'locality', 'geolocation', 'year', 'month', 'day',
-        '<--results|ocr_details-->', 'image_links-->', 'ocr_results_split-->'
+        '<--results|ocr_details-->', 'ocr_results_split-->', 'image_links-->'
     ]
     df = util.ocr_data_df(
         {
@@ -76,6 +76,7 @@ def test_ocr_data_df():
             }
         }
     )
+    
     assert (df.columns == required_columns).all()
     assert len(df) == 1
 
