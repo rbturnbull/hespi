@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Training with custom data &mdash; hespi 0.1.0 documentation</title>
@@ -12,12 +12,13 @@
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
-        <script src="_static/jquery.js"></script>
-        <script src="_static/underscore.js"></script>
-        <script src="_static/doctools.js"></script>
-        <script src="_static/clipboard.min.js"></script>
-        <script src="_static/copybutton.js"></script>
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js?v=2389946f"></script>
+        <script src="_static/doctools.js?v=888ff710"></script>
+        <script src="_static/sphinx_highlight.js?v=4825356b"></script>
+        <script src="_static/clipboard.min.js?v=a7894cd8"></script>
+        <script src="_static/copybutton.js?v=71494f10"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -85,11 +86,11 @@
            <div itemprop="articleBody">
              
   <section id="training-with-custom-data">
-<h1>Training with custom data<a class="headerlink" href="#training-with-custom-data" title="Permalink to this headline"></a></h1>
+<h1>Training with custom data<a class="headerlink" href="#training-with-custom-data" title="Permalink to this heading"></a></h1>
 <p><code class="docutils literal notranslate"><span class="pre">hespi</span></code> comes with pretrained models, trained on the dataset provided by the authors.
 However, you can train your own model using your own dataset.</p>
 <section id="annotate-your-images">
-<h2>Annotate your images<a class="headerlink" href="#annotate-your-images" title="Permalink to this headline"></a></h2>
+<h2>Annotate your images<a class="headerlink" href="#annotate-your-images" title="Permalink to this heading"></a></h2>
 <p>Now you need to annotate your images. We recommend using <a class="reference external" href="https://www.cvat.ai/">CVAT</a> which is a free and open-source annotation tool and exports to YOLO format.
 Other annotation tools can also be used.
 Use the same class names as the ones used in the pretrained models.</p>
@@ -110,7 +111,7 @@ Use the same class names as the ones used in the pretrained models.</p>
 </div>
 </section>
 <section id="locate-pretrained-model">
-<h2>Locate pretrained model<a class="headerlink" href="#locate-pretrained-model" title="Permalink to this headline"></a></h2>
+<h2>Locate pretrained model<a class="headerlink" href="#locate-pretrained-model" title="Permalink to this heading"></a></h2>
 <p>You need to get the location of the pretrained models.</p>
 <p>To get the location of the <code class="docutils literal notranslate"><span class="pre">Sheet-Component</span></code> model, you can use the following command:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>hespi-tools<span class="w"> </span>sheet-component-location
@@ -122,7 +123,7 @@ Use the same class names as the ones used in the pretrained models.</p>
 </div>
 </section>
 <section id="train-the-model">
-<h2>Train the model<a class="headerlink" href="#train-the-model" title="Permalink to this headline"></a></h2>
+<h2>Train the model<a class="headerlink" href="#train-the-model" title="Permalink to this heading"></a></h2>
 <p>Now you can fine-tune the model using <a class="reference external" href="https://github.com/ultralytics/ultralytics">YOLOv8</a> on your using the following command:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>yolo<span class="w"> </span>detect<span class="w"> </span>train<span class="w"> </span><span class="nv">data</span><span class="o">=</span><span class="si">${</span><span class="nv">DATA</span><span class="si">}</span><span class="w"> </span><span class="nv">model</span><span class="o">=</span><span class="si">${</span><span class="nv">MODEL</span><span class="si">}</span><span class="w"> </span><span class="nv">epochs</span><span class="o">=</span><span class="m">50</span><span class="w"> </span><span class="nv">imgsz</span><span class="o">=</span><span class="m">640</span><span class="w"> </span><span class="nv">batch</span><span class="o">=</span><span class="m">4</span>
 </pre></div>
@@ -131,7 +132,7 @@ Use the same class names as the ones used in the pretrained models.</p>
 <p>Save the location of the best weights for the trained model.</p>
 </section>
 <section id="using-your-model">
-<h2>Using your model<a class="headerlink" href="#using-your-model" title="Permalink to this headline"></a></h2>
+<h2>Using your model<a class="headerlink" href="#using-your-model" title="Permalink to this heading"></a></h2>
 <p>Now that you’ve trained your model, you can use it when you use <code class="docutils literal notranslate"><span class="pre">hespi</span></code>.
 Just set the <code class="docutils literal notranslate"><span class="pre">HESPI_SHEET_COMPONENT_WEIGHTS</span></code> environment variable to the location of the new Sheet-Component model weights file.
 Or set the <code class="docutils literal notranslate"><span class="pre">HESPI_LABEL_FIELD_WEIGHTS</span></code> environment variable to the location of the Label-Field weights file.</p>

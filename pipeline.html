@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Pipeline &mdash; hespi 0.1.0 documentation</title>
@@ -12,12 +12,13 @@
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
-        <script src="_static/jquery.js"></script>
-        <script src="_static/underscore.js"></script>
-        <script src="_static/doctools.js"></script>
-        <script src="_static/clipboard.min.js"></script>
-        <script src="_static/copybutton.js"></script>
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js?v=2389946f"></script>
+        <script src="_static/doctools.js?v=888ff710"></script>
+        <script src="_static/sphinx_highlight.js?v=4825356b"></script>
+        <script src="_static/clipboard.min.js?v=a7894cd8"></script>
+        <script src="_static/copybutton.js?v=71494f10"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -86,10 +87,10 @@
            <div itemprop="articleBody">
              
   <section id="pipeline">
-<h1>Pipeline<a class="headerlink" href="#pipeline" title="Permalink to this headline"></a></h1>
+<h1>Pipeline<a class="headerlink" href="#pipeline" title="Permalink to this heading"></a></h1>
 <img alt="Hespi Pipeline Diagram" class="align-center" src="_images/HespiDiagram.jpg" />
 <section id="the-sheet-component-model">
-<h2>The Sheet-Component Model<a class="headerlink" href="#the-sheet-component-model" title="Permalink to this headline"></a></h2>
+<h2>The Sheet-Component Model<a class="headerlink" href="#the-sheet-component-model" title="Permalink to this heading"></a></h2>
 <p>This model takes specimen sheet images and outputs bounding boxes for 11 components:</p>
 <ol class="arabic simple">
 <li><p>institutional label</p></li>
@@ -107,7 +108,7 @@
 <img alt="Component Classes" class="align-center" src="_images/Sheet-Component-Classes.jpg" />
 </section>
 <section id="the-label-field-model">
-<h2>The Label-Field Model<a class="headerlink" href="#the-label-field-model" title="Permalink to this headline"></a></h2>
+<h2>The Label-Field Model<a class="headerlink" href="#the-label-field-model" title="Permalink to this heading"></a></h2>
 <p>The Label-Field Model takes any institutional label detected from the Sheet-Component Model
 and detects bounding boxes for the following fields:</p>
 <ol class="arabic simple">
@@ -127,7 +128,7 @@ and detects bounding boxes for the following fields:</p>
 <img alt="Field Classes" class="align-center" src="_images/Label-Fields-Classes.jpg" />
 </section>
 <section id="label-classifier">
-<h2>Label Classifier<a class="headerlink" href="#label-classifier" title="Permalink to this headline"></a></h2>
+<h2>Label Classifier<a class="headerlink" href="#label-classifier" title="Permalink to this heading"></a></h2>
 <p>We have trained a classifier to detect the following types of writing on the institutional label:</p>
 <ol class="arabic simple">
 <li><p>typewriter</p></li>
@@ -137,7 +138,7 @@ and detects bounding boxes for the following fields:</p>
 </ol>
 </section>
 <section id="text-recognition">
-<h2>Text Recognition<a class="headerlink" href="#text-recognition" title="Permalink to this headline"></a></h2>
+<h2>Text Recognition<a class="headerlink" href="#text-recognition" title="Permalink to this heading"></a></h2>
 <p>The text from each field detected from the Label-Field Model is recognized in the Text Recognition module.
 This uses one of two engines.
 If the text was determined to be printed or written using a typewriter,
@@ -145,7 +146,7 @@ then the Text Recognition module uses the <a class="reference external" href="ht
 If the text was determined to be hand-written or a mixture, then the <a class="reference external" href="https://www.microsoft.com/en-us/research/publication/trocr-transformer-based-optical-character-recognition-with-pre-trained-models/">TrOCR</a> Handwritten Text Recognition (HTR) model is used.</p>
 </section>
 <section id="post-processing-and-outputs">
-<h2>Post-processing and Outputs<a class="headerlink" href="#post-processing-and-outputs" title="Permalink to this headline"></a></h2>
+<h2>Post-processing and Outputs<a class="headerlink" href="#post-processing-and-outputs" title="Permalink to this heading"></a></h2>
 <p>After the text for each field is recognized, Hespi performs some postprocessing steps.
 These involve ensuring that the family and genus are capitalized and the species is not.
 The family, genus and species is cross-checked again a database of known entities for each category
