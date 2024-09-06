@@ -2,6 +2,7 @@ from pathlib import Path
 from typing import Dict
 import pandas as pd
 import numpy as np
+import string
 from rich.console import Console
 from difflib import get_close_matches, SequenceMatcher
 from rich.table import Column, Table
@@ -35,6 +36,13 @@ def adjust_case(field, value):
     
     return value
 
+def strip_punctuation(field, value):
+    punctuation_to_strip = string.punctuation.replace('[', '').replace(']', '').replace('(', '').replace(')', '')
+    if field in ["genus", "family", "species"]:
+        return value.strip(punctuation_to_strip).strip()
+    
+    return value
+
 
 def read_reference(field):
     path = DATA_DIR / f"{field}.txt"
@@ -49,8 +57,9 @@ def mk_reference() -> Dict:
 
 
 def label_sort_key(s) -> int:
+    base_name = s.split('_')[0]
     try:
-        return label_fields.index(s)
+        return label_fields.index(base_name)
     except ValueError:
         return len(label_fields)
 
@@ -136,8 +145,7 @@ def ocr_data_df(data: dict, output_path: Path=None) -> pd.DataFrame:
     image_files_cols = ['image_links-->'] + sorted([col for col in df.columns if '_image' in col or 'predictions' in col], key=label_sort_key)
     result_cols = ['ocr_results_split-->'] + sorted([col for col in df.columns if 'Tesseract' in col or 'TrOCR' in col], key=label_sort_key)
     
-    cols = col_options + score_cols + ['label_classification'] + ocr_cols + image_files_cols + result_cols
-
+    cols = col_options + score_cols + ['label_classification'] + ocr_cols + result_cols + image_files_cols 
     extra_cols = [col for col in df.columns if col not in cols]
 
     cols = cols + extra_cols
@@ -223,7 +231,8 @@ def ocr_data_print_tables(df: pd.DataFrame) -> None:
 
 
 def adjust_text(field:str, recognised_text:str, fuzzy:bool, fuzzy_cutoff:float, reference:Dict):
-    text_adjusted = adjust_case(field, recognised_text)
+    text_stripped = strip_punctuation(field, recognised_text)
+    text_adjusted = adjust_case(field, text_stripped)
     match_score = ""
 
     # Match with database
