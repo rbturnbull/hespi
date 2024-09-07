@@ -26,6 +26,25 @@ def build_template(institutional_label_image:Path, detection_results:dict) -> Ch
     value_dict = {key: value.replace('\n', ' ') for key, value in detection_results.items() if key in label_fields}
     values_string = "\n".join([f"{field}: {value}" for field, value in value_dict.items()])
 
+    # Build the OCR results string
+    ocr_results_strings = []
+    for field in label_fields:
+        ocr_results_key = f"{field}_ocr_results"
+        if ocr_results_key in detection_results:
+            for ocr_result in detection_results[ocr_results_key]:
+                engine = ocr_result['ocr']
+                original_text_detected = ocr_result['original_text_detected'].replace('\n', ' ')
+                adjusted_text = ocr_result['adjusted_text'].replace('\n', ' ')
+                
+                ocr_results_string = f"The {engine} model thought the {field} was '{original_text_detected}'"
+            
+                if adjusted_text and adjusted_text != original_text_detected:
+                    ocr_results_string += f" and it was adjusted to '{adjusted_text}'"
+
+                ocr_results_strings.append(ocr_results_string)
+
+    ocr_results = "\n".join(ocr_results_strings)
+
     system_message = SystemMessage("You are an expert curator of a herbarium with vast knowledge of plant species.")
     main_prompt = f"""
         We have a pipeline for automatically reading the institutional labels and extracting the following fields:\n{', '.join(label_fields)}.
@@ -35,13 +54,15 @@ def build_template(institutional_label_image:Path, detection_results:dict) -> Ch
         If the values provided are correct, then don't output anything for that field.
         When you are finished, print out 5 hyphens '-----' to indicate the end of the text.
 
-        For example, if the GENUS field and the SPECIES field were extracted incorrectly, then you would print:
+        For example, if the 'genus' field and the 'species' field were extracted incorrectly, then you would print:
         genus: Abies
         species: alba
         -----
 
         Here are the following fields that we have extracted from the institutional label:
         {values_string}
+
+        {ocr_results}
 
         Here is the image of the institutional label:
     """

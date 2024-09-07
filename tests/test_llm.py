@@ -33,12 +33,38 @@ def test_build_template():
         "collector": "Pips Lyndon",
         "locality": "Vieforca\nAeonpatha",
         "month": "March",
+        "family_ocr_results": [
+            {
+                "ocr": "Tesseract",
+                "original_text_detected": "Piurnosazedie",
+                "adjusted_text": "Piurnosacedie",
+                "match_score": "",
+            }
+        ],
+        "authority_ocr_results": [
+            {
+                "ocr": "TrOCR",
+                "original_text_detected": "Ffisellasdf .",
+                "adjusted_text": "Ffisell .",
+                "match_score": "",
+            }
+        ],
+        "species_ocr_results": [
+            {
+                "ocr": "TrOCR",
+                "original_text_detected": "hilli",
+                "adjusted_text": "",
+                "match_score": "",
+            }
+        ],
     }
     template = build_template(institutional_label_image, detection_results)
     template_string = template.invoke({}).to_string()
     assert template_string is not None
     assert template_string.startswith("System: You are an expert")
     assert "ata:image/jpeg;base64,/9j/4AAQSkZJRg" in template_string
+    assert "The Tesseract model thought the family was 'Piurnosazedie' and it was adjusted to 'Piurnosacedie'" in template_string
+    assert "The TrOCR model thought the species was 'hilli'" in template_string
     assert "\nAI: Certainly, here are the corrections:\n" in template_string
     assert "family: Piurnosacedie" in template_string
     assert "authority: Ffisell ." in template_string
