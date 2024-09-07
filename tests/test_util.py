@@ -182,7 +182,6 @@ def test_ocr_data_df_ocr_results(capsys):
 
     util.ocr_data_print_tables(df)
     captured = capsys.readouterr()
-    # breakpoint()
     assert "│ species │ zostericolum │ zasdfoppasf │ zostericolumXX →       │ zostericolum │\n" in captured.out
 
 

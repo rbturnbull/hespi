@@ -88,7 +88,7 @@ def output_parser(text:str) -> dict[str, str]:
 
 def llm_correct_detection_results(institutional_label_image:Path, detection_results:dict) -> None:
     template = build_template(institutional_label_image, detection_results)
-
+    
     model_name = "gpt-4o"
     llm = ChatOpenAI(model_name=model_name)
     chain = template | llm | StrOutputParser() | output_parser

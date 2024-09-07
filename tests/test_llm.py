@@ -1,8 +1,19 @@
 from pathlib import Path
+from unittest.mock import patch
 
 from hespi.llm import llm_correct_detection_results, build_template, encode_image, output_parser
 
 test_data_dir = Path(__file__).parent/"testdata"
+
+def mock_llm(*args, **kwargs):
+    def invoke(*args, **kwargs):
+        return f"""
+        family: Chlorophyceae
+        genus: Chlamydomonas
+        species: reinhardtii
+        garbage: garbage
+        """
+    return invoke
 
 def test_encode_image():
     image = test_data_dir/"test.jpg"
@@ -58,7 +69,7 @@ def test_output_parser():
         "month": "March",
     }
 
-
+@patch("hespi.llm.ChatOpenAI", mock_llm)
 def test_llm():
     institutional_label_image = "hespi-output/MELUD104449_sp66541195778794889279_medium/MELUD104449_sp66541195778794889279_medium.institutional_label.jpg"
     detection_results = {
@@ -126,3 +137,8 @@ def test_llm():
         "collector": "MO. HAAN",
         "year": "Moy",
     }
+    llm_correct_detection_results(institutional_label_image, detection_results)
+    assert detection_results["family"] == "Chlorophyceae"
+    assert detection_results["genus"] == "Chlamydomonas"
+    assert detection_results["species"] == "reinhardtii"
+    assert detection_results['family_ocr_results'][0] == {'ocr': 'LLM', 'original_text_detected': 'Chlorophyceae', 'adjusted_text': '', 'match_score': 0}
