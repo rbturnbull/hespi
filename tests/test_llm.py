@@ -71,7 +71,7 @@ def test_output_parser():
 
 @patch("hespi.llm.ChatOpenAI", mock_llm)
 def test_llm():
-    institutional_label_image = "hespi-output/MELUD104449_sp66541195778794889279_medium/MELUD104449_sp66541195778794889279_medium.institutional_label.jpg"
+    institutional_label_image = test_data_dir/"institution_label.jpg"
     detection_results = {
         "id": "MELUD104449_sp66541195778794889279_medium",
         "label_classification": "handwritten",
