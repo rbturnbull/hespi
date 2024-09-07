@@ -383,7 +383,7 @@ def test_institutional_label_detect_trocr_found_preferred(mock_yolo_output):
     with patch('ultralytics.YOLO', return_value=mock_yolo_model) as mock_yolo_class:
         hespi = Hespi(
             label_field_weights=weights,
-            llm=False,
+            llm_model="",
         )
         hespi.trocr = MockOCR({"species.jpg":"zostericolaX", "location.jpg":"Queenscliff"})
         hespi.tesseract = MockOCR({"species.jpg":"zOstericolaXX", "location.jpg":"Queeadfafdnljk"})

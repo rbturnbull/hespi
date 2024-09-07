@@ -138,7 +138,7 @@ def test_llm():
         "collector": "MO. HAAN",
         "year": "Moy",
     }
-    llm_correct_detection_results(institutional_label_image, detection_results)
+    llm_correct_detection_results(mock_llm(), institutional_label_image, detection_results)
     assert detection_results["family"] == "Chlorophyceae"
     assert detection_results["genus"] == "Chlamydomonas"
     assert detection_results["species"] == "reinhardtii"
