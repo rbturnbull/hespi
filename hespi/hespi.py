@@ -42,6 +42,7 @@ class Hespi():
         fuzzy: bool = True,
         fuzzy_cutoff: float = 0.8,
         htr: bool = True,
+        llm: bool = True,
         tmp_dir:str = None,
         batch_size:int = 4,
         sheet_component_res:int = 1280,
@@ -55,6 +56,7 @@ class Hespi():
         self.fuzzy = fuzzy
         self.fuzzy_cutoff = fuzzy_cutoff
         self.htr = htr
+        self.llm = llm
         self.tmp_dir = tmp_dir
         self.batch_size = batch_size
         self.sheet_component_res = sheet_component_res
@@ -326,7 +328,8 @@ class Hespi():
         
         detection_results.update(results)
 
-        llm_correct_detection_results(component, detection_results)
+        if self.llm:
+            llm_correct_detection_results(component, detection_results)
 
         return detection_results
 

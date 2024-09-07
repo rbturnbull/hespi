@@ -30,6 +30,10 @@ def detect(
         True,
         help="Whether or not to do handwritten text recognition using Microsoft's TrOCR.",
     ),
+    llm: bool = typer.Option(
+        True,
+        help="Whether or not to do use a Large Language Model to correct the text recognition.",
+    ),
     trocr_size: TrOCRSize = typer.Option(
         TrOCRSize.LARGE.value,
         help="The size of the TrOCR model to use for handwritten text recognition.",
