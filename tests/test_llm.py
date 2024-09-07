@@ -56,6 +56,7 @@ def test_output_parser():
     collector: Pips Lyndon
     locality: Vieforca Aeonpatha
     month: March
+    these are the corrected fields.
     ----
     """
     result = output_parser(text)
