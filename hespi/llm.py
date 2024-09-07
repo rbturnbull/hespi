@@ -2,10 +2,12 @@ import re
 from pathlib import Path
 import base64
 from langchain_core.messages import HumanMessage, AIMessage, SystemMessage
-from langchain_openai import ChatOpenAI
 from langchain.prompts import ChatPromptTemplate
 from langchain.schema.output_parser import StrOutputParser
 from langchain.chat_models.base import BaseChatModel
+from langchain_openai import ChatOpenAI
+from langchain_anthropic import ChatAnthropic
+
 
 from .util import label_fields
 
@@ -93,7 +95,6 @@ def get_llm(
     temperature:float=0.0,
 ) -> BaseChatModel:
     if model_id.startswith('gpt'):
-        from langchain_openai import ChatOpenAI
         return ChatOpenAI(
             openai_api_key=api_key, 
             temperature=temperature,
@@ -101,7 +102,6 @@ def get_llm(
         )
     
     if model_id.startswith('claude'):
-        from langchain_anthropic import ChatAnthropic
         return ChatAnthropic(
             model=model_id,
             temperature=temperature,
