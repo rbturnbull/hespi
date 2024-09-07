@@ -8,7 +8,7 @@ def test_encode_image():
     image = test_data_dir/"test.jpg"
     encoded_image = encode_image(image)
     assert encoded_image is not None
-    assert encode_image.startswith("/9j/4AAQSkZJRgABAQAASABIAAD/4QB")
+    assert encoded_image.startswith("/9j/4AAQSkZJRgABAQAASABIAAD/4QB")
 
 
 def test_build_template():
