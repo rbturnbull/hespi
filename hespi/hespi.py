@@ -13,6 +13,7 @@ from .download import get_location
 from .util import mk_reference, ocr_data_df, adjust_text, get_stub, ocr_data_print_tables
 from .ocr import TrOCRSize
 from .report import write_report
+from .llm import llm_correct_detection_results
 
 console = Console()
 
@@ -324,6 +325,8 @@ class Hespi():
                             results[f"{key}_{i+1}"] = image_path
         
         detection_results.update(results)
+
+        llm_correct_detection_results(component, detection_results)
 
         return detection_results
 

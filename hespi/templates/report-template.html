@@ -99,6 +99,7 @@
                         <th scope="col">Recognized Text</th>
                         <th scope="col">OCR</th>
                         <th scope="col">HTR</th>
+                        <th scope="col">LLM</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -116,6 +117,7 @@
                             <td>{{ row[field] }}</td>
                             <td>{{ ocr_result_str(row, field, "Tesseract") }}</td>
                             <td>{{ ocr_result_str(row, field, "TrOCR") }}</td>
+                            <td>{{ ocr_result_str(row, field, "LLM") }}</td>
                           </div>
                         {% endif %}
                       {% endfor %}

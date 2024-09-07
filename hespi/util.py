@@ -71,6 +71,9 @@ def process_row_ocr_results(row, field_name):
     tesseract_original = []
     tesseract_adjusted = []
     tesseract_match_score = []
+    llm_original = []
+    llm_adjusted = []
+    llm_match_score = []
 
     for d in row:
         if d['ocr'] == 'TrOCR':
@@ -81,6 +84,10 @@ def process_row_ocr_results(row, field_name):
             tesseract_original.append(d['original_text_detected'])
             tesseract_adjusted.append(d['adjusted_text'])
             tesseract_match_score.append(d['match_score'])
+        elif d['ocr'] == 'LLM':
+            llm_original.append(d['original_text_detected'])
+            llm_adjusted.append(d['adjusted_text'])
+            llm_match_score.append(d['match_score'])
 
     return {
         f"{field_name}_TrOCR_original": trocr_original,
@@ -89,6 +96,9 @@ def process_row_ocr_results(row, field_name):
         f"{field_name}_Tesseract_original": tesseract_original,
         f"{field_name}_Tesseract_adjusted": tesseract_adjusted,
         f"{field_name}_Tesseract_match_score": tesseract_match_score,
+        f"{field_name}_LLM_original": llm_original,
+        f"{field_name}_LLM_adjusted": llm_adjusted,
+        f"{field_name}_LLM_match_score": llm_match_score,
     }
 
 
@@ -215,6 +225,7 @@ def ocr_data_print_tables(df: pd.DataFrame) -> None:
             Column("Text"),
             Column("Tesseract"),
             Column("TrOCR"),
+            Column("LLM"),
             title=f"Fields in institutional label: {filename}",
         )
 
@@ -225,6 +236,7 @@ def ocr_data_print_tables(df: pd.DataFrame) -> None:
                     row[field],
                     ocr_result_str(row, field, ocr_type="Tesseract"),
                     ocr_result_str(row, field, ocr_type="TrOCR"),
+                    ocr_result_str(row, field, ocr_type="LLM"),
                 )
 
         console.print(table)

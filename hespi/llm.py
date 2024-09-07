@@ -1,0 +1,109 @@
+import re
+from pathlib import Path
+import base64
+from langchain_core.messages import HumanMessage, AIMessage, SystemMessage
+from langchain_openai import ChatOpenAI
+from langchain.prompts import ChatPromptTemplate
+from langchain.schema.output_parser import StrOutputParser
+
+from .util import label_fields
+
+def encode_image(path:Path|str) -> str:
+    path = Path(path)
+    with path.open('rb') as image_file:
+        image_data = image_file.read()
+
+    # Encode the image data to base64
+    base64_encoded_image = base64.b64encode(image_data).decode('utf-8')
+    return base64_encoded_image
+
+
+def build_template(institutional_label_image:Path, detection_results:dict) -> ChatPromptTemplate:
+    base64_encoded_image = encode_image(institutional_label_image)
+    value_dict = {key: value.replace('\n', ' ') for key, value in detection_results.items() if key in label_fields}
+    values_string = "\n".join([f"{field}: {value}" for field, value in value_dict.items()])
+
+    system_message = SystemMessage("You are an expert curator of a herbarium with vast knowledge of plant species.")
+    main_prompt = f"""
+        We have a pipeline for automatically reading the institutional labels and extracting the following fields:\n{', '.join(label_fields)}.
+        
+        You need to inspect an image and see if the fields have been extracted correctly. 
+        If there are errors, then print out the field name with a colon and then the correct value. Each correction is on a new line.
+        If the values provided are correct, then don't output anything for that field.
+        When you are finished, print out 5 hyphens '-----' to indicate the end of the text.
+
+        For example, if the GENUS field and the SPECIES field were extracted incorrectly, then you would print:
+        genus: Abies
+        species: alba
+        -----
+
+        Here are the following fields that we have extracted from the institutional label:
+        {values_string}
+
+        Here is the image of the institutional label:
+    """
+    main_prompt = re.sub(r'[\t ]+', ' ', main_prompt).strip()
+    human_message = HumanMessage(
+        content=[
+            {
+                "type": "text", 
+                "text": main_prompt 
+            },
+            {
+                "type": "image_url",
+                "image_url": {"url": f"data:image/jpeg;base64,{base64_encoded_image}"},
+            },
+        ]
+    )
+    ai_message = AIMessage("Certainly, here are the corrections:\n")
+    return ChatPromptTemplate.from_messages(messages=[system_message, human_message, ai_message])
+
+
+def output_parser(text:str) -> dict[str, str]:
+    lines = text.split("\n")
+    result = {}
+    for line in lines:
+        if not line.strip():
+            continue
+
+        # check end condition
+        if "----" in line:
+            break
+
+        # split at first colon
+        colon = line.find(":")
+        if colon == -1:
+            continue
+
+        field = line[:colon].strip().lower()
+        value = line[colon+1:].strip()
+
+        if field not in label_fields:
+            continue
+
+        result[field] = value
+
+    return result
+
+
+def llm_correct_detection_results(institutional_label_image:Path, detection_results:dict) -> None:
+    template = build_template(institutional_label_image, detection_results)
+
+    model_name = "gpt-4o"
+    llm = ChatOpenAI(model_name=model_name)
+    chain = template | llm | StrOutputParser() | output_parser
+
+    result = chain.invoke({})
+    detection_results.update(result)
+    for field_name, value in result.items():
+        ocr_results_key = f"{field_name}_ocr_results"
+        if ocr_results_key not in detection_results:
+            detection_results[ocr_results_key] = []
+
+        detection_results[ocr_results_key].append(dict(
+            ocr="LLM",
+            original_text_detected=value,
+            adjusted_text="",
+            match_score=0,
+        ))
+
