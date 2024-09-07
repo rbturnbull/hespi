@@ -20,15 +20,18 @@ classifiers = [
 ]
 
 [tool.poetry.dependencies]
-python = ">=3.8,<3.12"
+python = ">=3.8.1,<3.12"
 rich = ">=10.16.1"
 typer = ">=0.4.0"
 torchapp = ">=0.2.0"
+torch = "=2.2.1"
 pytesseract = ">=0.3.10"
 transformers = ">=4.21.3"
 appdirs = ">=1.4.4"
 jinja2 = ">=3.1.2"
 ultralytics = ">=8.1.0"
+langchain = ">=0.2.0"
+langchain-openai = ">=0.1.0"
 
 [tool.poetry.dev-dependencies]
 rcssmin = ">=1.1.2"
