@@ -18,6 +18,7 @@ Hespi
 
    quickstart
    pipeline
+   reproduce
    training
    cli
    contributing

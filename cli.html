@@ -49,6 +49,7 @@
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="quickstart.html">Quickstart</a></li>
 <li class="toctree-l1"><a class="reference internal" href="pipeline.html">Pipeline</a></li>
+<li class="toctree-l1"><a class="reference internal" href="reproduce.html">Reproducing Test Results</a></li>
 <li class="toctree-l1"><a class="reference internal" href="training.html">Training with custom data</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Command Line Interface Reference</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#hespi">hespi</a></li>
@@ -153,6 +154,38 @@ If then detects the fields of the institutional label and attempts to read them 
 <dl class="field-list simple">
 <dt class="field-odd">Default<span class="colon">:</span></dt>
 <dd class="field-odd"><p>True</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-hespi-llm">
+<span class="sig-name descname"><span class="pre">--llm</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;llm&gt;</span></span><a class="headerlink" href="#cmdoption-hespi-llm" title="Permalink to this definition"></a></dt>
+<dd><p>The Large Langauge Model to use. Currently OpenAI and Anthropic Claude models supported.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Default<span class="colon">:</span></dt>
+<dd class="field-odd"><p>gpt-4o</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-hespi-llm-api-key">
+<span class="sig-name descname"><span class="pre">--llm-api-key</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;llm_api_key&gt;</span></span><a class="headerlink" href="#cmdoption-hespi-llm-api-key" title="Permalink to this definition"></a></dt>
+<dd><p>The API key to use for the Large Language Model. Can be set as an environment variable using the standard variable names.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Default<span class="colon">:</span></dt>
+<dd class="field-odd"><p></p></dd>
+</dl>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-hespi-llm-temperature">
+<span class="sig-name descname"><span class="pre">--llm-temperature</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;llm_temperature&gt;</span></span><a class="headerlink" href="#cmdoption-hespi-llm-temperature" title="Permalink to this definition"></a></dt>
+<dd><p>The temperature to use for the Large Language Model.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Default<span class="colon">:</span></dt>
+<dd class="field-odd"><p>0.0</p>
 </dd>
 </dl>
 </dd></dl>
@@ -389,7 +422,7 @@ If then detects the fields of the institutional label and attempts to read them 
 <dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-hespi-tools-trocr-arg-IMAGE">
 <span class="sig-name descname"><span class="pre">IMAGE</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-hespi-tools-trocr-arg-IMAGE" title="Permalink to this definition"></a></dt>
-<dd><p><strong>Required argument</strong>  &lt;click.types.Path object at 0x7f31ef48acb0&gt;</p>
+<dd><p><strong>Required argument</strong>  &lt;click.types.Path object at 0x7f1a59bab460&gt;</p>
 </dd></dl>
 
 </section>

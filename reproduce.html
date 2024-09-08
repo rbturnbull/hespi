@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Reproducing Test Results &mdash; hespi 0.1.0 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="_static/copybutton.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js?v=2389946f"></script>
+        <script src="_static/doctools.js?v=888ff710"></script>
+        <script src="_static/sphinx_highlight.js?v=4825356b"></script>
+        <script src="_static/clipboard.min.js?v=a7894cd8"></script>
+        <script src="_static/copybutton.js?v=71494f10"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Training with custom data" href="training.html" />
+    <link rel="prev" title="Pipeline" href="pipeline.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            hespi
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="quickstart.html">Quickstart</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pipeline.html">Pipeline</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Reproducing Test Results</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#the-melu-print-typewriter-data">The MELU Print/Typewriter Data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#the-melu-handwritten-data">The MELU Handwritten Data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#the-dillen-data">The DILLEN Data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#other-options">Other options</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="training.html">Training with custom data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cli.html">Command Line Interface Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="credits.html">Credits</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">hespi</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Reproducing Test Results</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/reproduce.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="reproducing-test-results">
+<h1>Reproducing Test Results<a class="headerlink" href="#reproducing-test-results" title="Permalink to this heading"></a></h1>
+<p>This document describes how to reproduce the results of the paper.</p>
+<p>Make sure you have installed hespi.</p>
+<p>The results in the paper use the default LLM which is ChatGPT (gpt-4o).
+Make sure you have credit with OpenAI and have set the <code class="docutils literal notranslate"><span class="pre">OPENAI_API_KEY</span></code> environment variable.</p>
+<p>The test data for the paper is available at <a class="reference external" href="https://doi.org/10.26188/25648902">https://doi.org/10.26188/25648902</a>
+This can be downloaded as follows:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>wget<span class="w"> </span>https://figshare.unimelb.edu.au/ndownloader/articles/25648902/<span class="w"> </span>-O<span class="w"> </span>hespi-test-data.zip
+unzip<span class="w"> </span>hespi-test-data.zip
+</pre></div>
+</div>
+<p>Install the requirements as follows:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>-r<span class="w"> </span>requirements.txt
+</pre></div>
+</div>
+<p>There are three test datasets:</p>
+<ol class="arabic simple">
+<li><p>The MELU Print/Typewriter Data (100 images in MELU-T.csv)</p></li>
+<li><p>The MELU Handwritten Data (100 images in MELU-H.csv)</p></li>
+<li><p>The DILLEN Data (100 images in DILLEN.csv)</p></li>
+</ol>
+<section id="the-melu-print-typewriter-data">
+<h2>The MELU Print/Typewriter Data<a class="headerlink" href="#the-melu-print-typewriter-data" title="Permalink to this heading"></a></h2>
+<p>To reproduce the results for the MELU Print/Typewriter Data, run the following commands:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="k">for</span><span class="w"> </span>URL<span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="sb">`</span>tail<span class="w"> </span>-n+2<span class="w"> </span>MELU-T.csv<span class="w"> </span><span class="p">|</span><span class="w"> </span>cut<span class="w"> </span>-f1<span class="w"> </span>-d,<span class="sb">`</span><span class="p">;</span><span class="w"> </span><span class="k">do</span>
+<span class="w">    </span>hespi<span class="w"> </span><span class="nv">$URL</span><span class="w"> </span>--output-dir<span class="w"> </span>MELU-T-results
+<span class="k">done</span>
+</pre></div>
+</div>
+<p>That will download each of the images and run them through the hespi pipeline.
+The results will include a CSV file at <code class="docutils literal notranslate"><span class="pre">MELU-T-results/results.csv</span></code>.
+Evalulate this with the test annotations as follows:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python3<span class="w"> </span>./evaluate.py<span class="w"> </span>MELU-T.csv<span class="w"> </span>MELU-T-results/hespi-results.csv<span class="w"> </span>--output-csv<span class="w"> </span>MELU-T-results/MELU-T-evaluation.csv<span class="w"> </span>--output-fig<span class="w"> </span>MELU-T-results/MELU-T-evaluation.png
+</pre></div>
+</div>
+<p>That will produce an image like this:</p>
+<img alt="MELU Print/Typewriter Evaluation Results" class="align-center" src="_images/MELU-T-evaluation.png" />
+<p>The similarity measure uses the Gestalt (Ratcliff/Obershelp) approach and is a percentage similarity between the each pair of strings.
+Only fields where text is provided in either the test dataset or the predictions are included in the results.
+If a field is present in either the test dataset or the predictions but not the other then the similarity is given as zero.
+All non-ASCII characters are removed. By default the results are not case-sensitive.
+If you wish to evaluate with case-sensitive comparison, then use the <cite>–case-sensitive</cite> option on the command line.
+The output of the script will also provide the accuracy of the label classification and the whether or not any particular field should be empty.</p>
+</section>
+<section id="the-melu-handwritten-data">
+<h2>The MELU Handwritten Data<a class="headerlink" href="#the-melu-handwritten-data" title="Permalink to this heading"></a></h2>
+<p>To reproduce the results for the MELU Handwritten Data, run the following commands:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="k">for</span><span class="w"> </span>URL<span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="sb">`</span>tail<span class="w"> </span>-n+2<span class="w"> </span>MELU-H.csv<span class="w"> </span><span class="p">|</span><span class="w"> </span>cut<span class="w"> </span>-f1<span class="w"> </span>-d,<span class="sb">`</span><span class="p">;</span><span class="w"> </span><span class="k">do</span>
+<span class="w">    </span><span class="nb">echo</span><span class="w"> </span>hespi<span class="w"> </span><span class="nv">$URL</span><span class="w"> </span>--output-dir<span class="w"> </span>MELU-H-results
+<span class="k">done</span>
+
+python3<span class="w"> </span>./evaluate.py<span class="w"> </span>MELU-H.csv<span class="w"> </span>MELU-H-results/hespi-results.csv<span class="w"> </span>--output-csv<span class="w"> </span>MELU-H-results/MELU-H-evaluation.csv<span class="w"> </span>--output-fig<span class="w"> </span>MELU-H-results/MELU-H-evaluation.png
+</pre></div>
+</div>
+<p>That will produce an image like this:</p>
+<img alt="MELU Handwritten Evaluation Results" class="align-center" src="_images/MELU-H-evaluation.png" />
+</section>
+<section id="the-dillen-data">
+<h2>The DILLEN Data<a class="headerlink" href="#the-dillen-data" title="Permalink to this heading"></a></h2>
+<p>To reproduce the results for the DILLEN Data, run the following commands:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="k">for</span><span class="w"> </span>URL<span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="sb">`</span>tail<span class="w"> </span>-n+2<span class="w"> </span>DILLEN.csv<span class="w"> </span><span class="p">|</span><span class="w"> </span>cut<span class="w"> </span>-f1<span class="w"> </span>-d,<span class="sb">`</span><span class="p">;</span><span class="w"> </span><span class="k">do</span>
+<span class="w">    </span><span class="nb">echo</span><span class="w"> </span>hespi<span class="w"> </span><span class="nv">$URL</span><span class="w"> </span>--output-dir<span class="w"> </span>DILLEN-results
+<span class="k">done</span>
+
+python3<span class="w"> </span>./evaluate.py<span class="w"> </span>DILLEN.csv<span class="w"> </span>DILLEN-results/hespi-results.csv<span class="w"> </span>--output-csv<span class="w"> </span>DILLEN-results/DILLEN-evaluation.csv<span class="w"> </span>--output-fig<span class="w"> </span>DILLEN-results/DILLEN-evaluation.png
+</pre></div>
+</div>
+<p>That will produce an image like this:</p>
+<img alt="DILLEN Evaluation Results" class="align-center" src="_images/DILLEN-evaluation.png" />
+</section>
+<section id="other-options">
+<h2>Other options<a class="headerlink" href="#other-options" title="Permalink to this heading"></a></h2>
+<p>If you wish to run the pipeline without an LLM, then you can add <code class="docutils literal notranslate"><span class="pre">--llm</span> <span class="pre">none</span></code> to the command line arguments of Hespi.</p>
+<p>The evaluation script has a number of options. See them with this command:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./evaluate.py<span class="w"> </span>--help
+</pre></div>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="pipeline.html" class="btn btn-neutral float-left" title="Pipeline" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="training.html" class="btn btn-neutral float-right" title="Training with custom data" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Robert Turnbull.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
