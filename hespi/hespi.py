@@ -33,7 +33,7 @@ CLASSIFICATION_EMOJI = {
 class Hespi():
     def __init__(
         self,
-        trocr_size: TrOCRSize = TrOCRSize.BASE.value,
+        trocr_size: TrOCRSize = TrOCRSize.LARGE.value,
         sheet_component_weights: str = "",
         label_field_weights: str = "",
         institutional_label_classifier_weights: str = "",
@@ -107,7 +107,7 @@ class Hespi():
 
     @cached_property
     def trocr(self):
-        print(f"Getting TrOCR model of size '{self.trocr_size}'")
+        print(f"Loading TrOCR model of size '{self.trocr_size}'")
         trocr = TrOCR(size=self.trocr_size)
         return trocr
 
