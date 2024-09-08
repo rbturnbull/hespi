@@ -30,6 +30,18 @@ def detect(
         True,
         help="Whether or not to do handwritten text recognition using Microsoft's TrOCR.",
     ),
+    llm: str = typer.Option(
+        "gpt-4o",
+        help="The Large Langauge Model to use. Currently OpenAI and Anthropic Claude models supported.",
+    ),
+    llm_api_key: str = typer.Option(
+        "",
+        help="The API key to use for the Large Language Model. Can be set as an environment variable using the standard variable names.",
+    ),
+    llm_temperature: float = typer.Option(
+        0.0,
+        help="The temperature to use for the Large Language Model.",
+    ),
     trocr_size: TrOCRSize = typer.Option(
         TrOCRSize.LARGE.value,
         help="The size of the TrOCR model to use for handwritten text recognition.",
@@ -72,6 +84,9 @@ def detect(
         gpu=gpu,
         fuzzy=fuzzy,
         fuzzy_cutoff=fuzzy_cutoff,
+        llm_model=llm,
+        llm_api_key=llm_api_key,
+        llm_temperature=llm_temperature,
         htr=htr,
         tmp_dir=tmp_dir,
         batch_size=batch_size,

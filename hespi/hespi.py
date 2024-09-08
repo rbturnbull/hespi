@@ -13,6 +13,7 @@ from .download import get_location
 from .util import mk_reference, ocr_data_df, adjust_text, get_stub, ocr_data_print_tables
 from .ocr import TrOCRSize
 from .report import write_report
+from .llm import llm_correct_detection_results, get_llm
 
 console = Console()
 
@@ -32,7 +33,7 @@ CLASSIFICATION_EMOJI = {
 class Hespi():
     def __init__(
         self,
-        trocr_size: TrOCRSize = TrOCRSize.BASE.value,
+        trocr_size: TrOCRSize = TrOCRSize.LARGE.value,
         sheet_component_weights: str = "",
         label_field_weights: str = "",
         institutional_label_classifier_weights: str = "",
@@ -41,6 +42,9 @@ class Hespi():
         fuzzy: bool = True,
         fuzzy_cutoff: float = 0.8,
         htr: bool = True,
+        llm_model: str = "gpt-4o",
+        llm_api_key: str = "",
+        llm_temperature: float = 0.0,
         tmp_dir:str = None,
         batch_size:int = 4,
         sheet_component_res:int = 1280,
@@ -58,6 +62,11 @@ class Hespi():
         self.batch_size = batch_size
         self.sheet_component_res = sheet_component_res
         self.label_field_res = label_field_res
+
+        if llm_model and llm_model.lower() != "none":
+            self.llm = get_llm(llm_model, llm_api_key, llm_temperature)
+        else:
+            self.llm = None
         
         # Check if gpu is available
         import torch
@@ -98,7 +107,7 @@ class Hespi():
 
     @cached_property
     def trocr(self):
-        print(f"Getting TrOCR model of size '{self.trocr_size}'")
+        print(f"Loading TrOCR model of size '{self.trocr_size}'")
         trocr = TrOCR(size=self.trocr_size)
         return trocr
 
@@ -324,6 +333,9 @@ class Hespi():
                             results[f"{key}_{i+1}"] = image_path
         
         detection_results.update(results)
+
+        if self.llm:
+            llm_correct_detection_results(self.llm, component, detection_results)
 
         return detection_results
 
