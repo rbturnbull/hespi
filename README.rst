@@ -71,7 +71,8 @@ To run the pipeline, use the executable ``hespi`` and give it any number of imag
 
     hespi image1.jpg image2.jpg
 
-This will prompt you to specify an output directory. You can set the output directory with the command with the ``--output-dir`` argument:
+By default the output will go to a directory called ``hespi-output``. 
+You can set the output directory with the command with the ``--output-dir`` argument:
 
 .. code-block:: bash
 
@@ -79,6 +80,11 @@ This will prompt you to specify an output directory. You can set the output dire
 
 The detected components and text fields will be cropped and stored in the output directory. 
 There will also be a CSV file with the filename ``hespi-results.csv`` in the output directory with the text recognition results for any institutional labels found.
+
+By default ``hespi`` will use OpenAI's ``gpt-4o`` large language model in the pipeline to produce the final results.
+If you wish to use a different model from OpenAI or Anthropic, add it on the command-line like this: ``--llm MODEL_NAME``
+You will need to include an API key for the LLM. This can be ``OPENAI_API_KEY`` for an OpenAI LLM or ``ANTHROPIC_API_KEY`` for Anthropic.
+You can also pass the API key to hespi with the ``--llm-api-key API_KEY`` argument.
 
 More information on the command line arguments can be found in the `Command Line Reference <https://rbturnbull.github.io/hespi/cli.html>`_ in the documentation.
 
