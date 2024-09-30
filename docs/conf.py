@@ -19,8 +19,8 @@ sys.path.insert(0, os.path.abspath(".."))
 # -- Project information -----------------------------------------------------
 
 project = "hespi"
-copyright = "2022–2024, Robert Turnbull"
-author = "Robert Turnbull"
+copyright = "2022–2024, Melbourne Data Analytics Platform"
+author = "Melbourne Data Analytics Platform"
 
 # The full version, including alpha/beta/rc tags
 #release = "0.5.0"
