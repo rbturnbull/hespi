@@ -1,5 +1,5 @@
 =========================
-Training with custom data
+Training With Custom Data
 =========================
 
 ``hespi`` comes with pretrained models, trained on the dataset provided by the authors. 

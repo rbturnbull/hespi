@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Hespi &mdash; hespi 0.1.0 documentation</title>
+  <title>Hespi &mdash; hespi 0.5.0 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/copybutton.css" type="text/css" />
@@ -14,7 +14,7 @@
   
         <script src="_static/jquery.js?v=5d32c60e"></script>
         <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js?v=2389946f"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js?v=3fadbb4a"></script>
         <script src="_static/doctools.js?v=888ff710"></script>
         <script src="_static/sphinx_highlight.js?v=4825356b"></script>
         <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -49,7 +49,7 @@
 <li class="toctree-l1"><a class="reference internal" href="quickstart.html">Quickstart</a></li>
 <li class="toctree-l1"><a class="reference internal" href="pipeline.html">Pipeline</a></li>
 <li class="toctree-l1"><a class="reference internal" href="reproduce.html">Reproducing Test Results</a></li>
-<li class="toctree-l1"><a class="reference internal" href="training.html">Training with custom data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="training.html">Training With Custom Data</a></li>
 <li class="toctree-l1"><a class="reference internal" href="cli.html">Command Line Interface Reference</a></li>
 <li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="credits.html">Credits</a></li>
@@ -81,7 +81,7 @@
              
   <section id="hespi">
 <h1>Hespi<a class="headerlink" href="#hespi" title="Permalink to this heading"></a></h1>
-<p><a class="reference external" href="https://github.com/rbturnbull/hespi/actions"><img alt="testing badge" src="https://github.com/rbturnbull/hespi/actions/workflows/testing.yml/badge.svg" /></a> <a class="reference external" href="https://rbturnbull.github.io/hespi/coverage/"><img alt="coverage badge" src="https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/rbturnbull/f31036b00473b6d0af3a160ea681903b/raw/coverage-badge.json" /></a> <a class="reference external" href="https://rbturnbull.github.io/hespi"><img alt="docs badge" src="https://github.com/rbturnbull/hespi/actions/workflows/docs.yml/badge.svg" /></a> <a class="reference external" href="https://github.com/psf/black"><img alt="black badge" src="https://img.shields.io/badge/code%20style-black-000000.svg" /></a></p>
+<p><a class="reference external" href="https://pypi.org/project/hespi/"><img alt="pypi badge" src="https://img.shields.io/pypi/v/hespi" /></a> <a class="reference external" href="https://github.com/rbturnbull/hespi/actions"><img alt="testing badge" src="https://github.com/rbturnbull/hespi/actions/workflows/testing.yml/badge.svg" /></a> <a class="reference external" href="https://rbturnbull.github.io/hespi/coverage/"><img alt="coverage badge" src="https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/rbturnbull/f31036b00473b6d0af3a160ea681903b/raw/coverage-badge.json" /></a> <a class="reference external" href="https://rbturnbull.github.io/hespi"><img alt="docs badge" src="https://github.com/rbturnbull/hespi/actions/workflows/docs.yml/badge.svg" /></a> <a class="reference external" href="https://github.com/psf/black"><img alt="black badge" src="https://img.shields.io/badge/code%20style-black-000000.svg" /></a></p>
 <img alt="https://raw.githubusercontent.com/rbturnbull/hespi/main/docs/images/hespi-banner.svg" src="https://raw.githubusercontent.com/rbturnbull/hespi/main/docs/images/hespi-banner.svg" /><div class="toctree-wrapper compound">
 <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul>
@@ -96,7 +96,8 @@
 <li class="toctree-l2"><a class="reference internal" href="pipeline.html#the-label-field-model">The Label-Field Model</a></li>
 <li class="toctree-l2"><a class="reference internal" href="pipeline.html#label-classifier">Label Classifier</a></li>
 <li class="toctree-l2"><a class="reference internal" href="pipeline.html#text-recognition">Text Recognition</a></li>
-<li class="toctree-l2"><a class="reference internal" href="pipeline.html#post-processing-and-outputs">Post-processing and Outputs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pipeline.html#large-language-model-llm-correction">Large Language Model (LLM) Correction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pipeline.html#outputs">Outputs</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="reproduce.html">Reproducing Test Results</a><ul>
@@ -106,7 +107,7 @@
 <li class="toctree-l2"><a class="reference internal" href="reproduce.html#other-options">Other options</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="training.html">Training with custom data</a><ul>
+<li class="toctree-l1"><a class="reference internal" href="training.html">Training With Custom Data</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="training.html#annotate-your-images">Annotate your images</a></li>
 <li class="toctree-l2"><a class="reference internal" href="training.html#locate-pretrained-model">Locate pretrained model</a></li>
 <li class="toctree-l2"><a class="reference internal" href="training.html#train-the-model">Train the model</a></li>
@@ -152,7 +153,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2022, Robert Turnbull.</p>
+    <p>&#169; Copyright 2022–2024, Melbourne Data Analytics Platform.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

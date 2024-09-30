@@ -71,7 +71,7 @@ To reproduce the results for the MELU Handwritten Data, run the following comman
 .. code-block:: bash
 
     for URL in `tail -n+2 MELU-H.csv | cut -f1 -d,`; do 
-        echo hespi $URL --output-dir MELU-H-results
+        hespi $URL --output-dir MELU-H-results
     done
 
     python3 ./evaluate.py MELU-H.csv MELU-H-results/hespi-results.csv --output-csv MELU-H-results/MELU-H-evaluation.csv --output-fig MELU-H-results/MELU-H-evaluation.png
@@ -91,7 +91,7 @@ To reproduce the results for the DILLEN Data, run the following commands:
 .. code-block:: bash
 
     for URL in `tail -n+2 DILLEN.csv | cut -f1 -d,`; do 
-        echo hespi $URL --output-dir DILLEN-results
+        hespi $URL --output-dir DILLEN-results
     done
 
     python3 ./evaluate.py DILLEN.csv DILLEN-results/hespi-results.csv --output-csv DILLEN-results/DILLEN-evaluation.csv --output-fig DILLEN-results/DILLEN-evaluation.png

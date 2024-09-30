@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Quickstart &mdash; hespi 0.1.0 documentation</title>
+  <title>Quickstart &mdash; hespi 0.5.0 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/copybutton.css" type="text/css" />
@@ -14,7 +14,7 @@
   
         <script src="_static/jquery.js?v=5d32c60e"></script>
         <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js?v=2389946f"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js?v=3fadbb4a"></script>
         <script src="_static/doctools.js?v=888ff710"></script>
         <script src="_static/sphinx_highlight.js?v=4825356b"></script>
         <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -55,7 +55,7 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="pipeline.html">Pipeline</a></li>
 <li class="toctree-l1"><a class="reference internal" href="reproduce.html">Reproducing Test Results</a></li>
-<li class="toctree-l1"><a class="reference internal" href="training.html">Training with custom data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="training.html">Training With Custom Data</a></li>
 <li class="toctree-l1"><a class="reference internal" href="cli.html">Command Line Interface Reference</a></li>
 <li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="credits.html">Credits</a></li>
@@ -95,6 +95,7 @@ which detects different textual fields written on the label.
 A Label Classifier is also used to determine the type of text written on the label.
 If it is printed or typewritten, then the text of each field is given to an Optical Character Recognition (OCR) engine
 and if there is handwriting, then each field is given to the Handwritten Text Recognition (HTR) engine.
+The recognized text is then corrected using a multimodal Large Language Model (LLM).
 Finally, the result of the fields is post-processed before being written into
 an HTML report, a CSV file and text files.</p>
 <p>The stages of the pipeline are explained in the <a class="reference external" href="https://rbturnbull.github.io/hespi/pipeline.html">documentation for the pipeline</a>.</p>
@@ -114,12 +115,17 @@ an HTML report, a CSV file and text files.</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>hespi<span class="w"> </span>image1.jpg<span class="w"> </span>image2.jpg
 </pre></div>
 </div>
-<p>This will prompt you to specify an output directory. You can set the output directory with the command with the <code class="docutils literal notranslate"><span class="pre">--output-dir</span></code> argument:</p>
+<p>By default the output will go to a directory called <code class="docutils literal notranslate"><span class="pre">hespi-output</span></code>.
+You can set the output directory with the command with the <code class="docutils literal notranslate"><span class="pre">--output-dir</span></code> argument:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>hespi<span class="w"> </span>images/*.tif<span class="w"> </span>--output-dir<span class="w"> </span>./hespi-output
 </pre></div>
 </div>
 <p>The detected components and text fields will be cropped and stored in the output directory.
 There will also be a CSV file with the filename <code class="docutils literal notranslate"><span class="pre">hespi-results.csv</span></code> in the output directory with the text recognition results for any institutional labels found.</p>
+<p>By default <code class="docutils literal notranslate"><span class="pre">hespi</span></code> will use OpenAI’s <code class="docutils literal notranslate"><span class="pre">gpt-4o</span></code> large language model (LLM) in the pipeline to produce the final results.
+If you wish to use a different model from OpenAI or Anthropic, add it on the command-line like this: <code class="docutils literal notranslate"><span class="pre">--llm</span> <span class="pre">MODEL_NAME</span></code>
+You will need to include an API key for the LLM. This can be <code class="docutils literal notranslate"><span class="pre">OPENAI_API_KEY</span></code> for an OpenAI LLM or <code class="docutils literal notranslate"><span class="pre">ANTHROPIC_API_KEY</span></code> for Anthropic.
+You can also pass the API key to hespi with the <code class="docutils literal notranslate"><span class="pre">--llm-api-key</span> <span class="pre">API_KEY</span></code> argument.</p>
 <p>More information on the command line arguments can be found in the <a class="reference external" href="https://rbturnbull.github.io/hespi/cli.html">Command Line Reference</a> in the documentation.</p>
 <p>There is another command line utility called <code class="docutils literal notranslate"><span class="pre">hespi-tools</span></code> which provides additional functionality.
 See the <a class="reference external" href="https://rbturnbull.github.io/hespi/cli.html#hespi-tools">documentation</a> for more information.</p>
@@ -141,7 +147,7 @@ See the <a class="reference external" href="https://rbturnbull.github.io/hespi/c
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2022, Robert Turnbull.</p>
+    <p>&#169; Copyright 2022–2024, Melbourne Data Analytics Platform.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
