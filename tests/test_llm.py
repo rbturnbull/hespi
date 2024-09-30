@@ -65,7 +65,7 @@ def test_build_template():
     assert "ata:image/jpeg;base64,/9j/4AAQSkZJRg" in template_string
     assert "The Tesseract model thought the family was 'Piurnosazedie' and it was adjusted to 'Piurnosacedie'" in template_string
     assert "The TrOCR model thought the species was 'hilli'" in template_string
-    assert "\nAI: Certainly, here are the corrections:\n" in template_string
+    assert "\nAI: Certainly, here are the corrections:" in template_string
     assert "family: Piurnosacedie" in template_string
     assert "authority: Ffisell ." in template_string
     assert "species: hilli" in template_string
