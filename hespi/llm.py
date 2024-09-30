@@ -79,7 +79,7 @@ def build_template(institutional_label_image:Path, detection_results:dict) -> Ch
             },
         ]
     )
-    ai_message = AIMessage("Certainly, here are the corrections:\n")
+    ai_message = AIMessage("Certainly, here are the corrections:")
     return ChatPromptTemplate.from_messages(messages=[system_message, human_message, ai_message])
 
 
