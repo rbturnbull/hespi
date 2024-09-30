@@ -6,7 +6,10 @@ hespi
 
 .. start-badges
 
-|testing badge| |coverage badge| |docs badge| |black badge|
+|pypi badge| |testing badge| |coverage badge| |docs badge| |black badge|
+
+.. |pypi badge| image:: https://img.shields.io/pypi/v/hespi
+    :target: https://pypi.org/project/hespi/
 
 .. |testing badge| image:: https://github.com/rbturnbull/hespi/actions/workflows/testing.yml/badge.svg
     :target: https://github.com/rbturnbull/hespi/actions
