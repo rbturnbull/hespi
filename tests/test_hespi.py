@@ -197,7 +197,7 @@ def test_read_field_file_fuzzy():
 @patch("hespi.llm.ChatOpenAI", mock_llm)
 def test_institutional_label_classify():
     hespi = Hespi()
-    targets = ["typewritten", "printed", "handwritten", ""]
+    targets = ["typewriter", "printed", "handwritten", ""]
     mapper = {}
     for t in targets:
         mapper[f"{t}.jpg"] = pd.DataFrame([dict(prediction=t)]) if t else ""

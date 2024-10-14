@@ -6,7 +6,7 @@ hespi
 
 .. start-badges
 
-|pypi badge| |testing badge| |coverage badge| |docs badge| |black badge|
+|pypi badge| |testing badge| |coverage badge| |docs badge| |black badge| |arxiv badge|
 
 .. |pypi badge| image:: https://img.shields.io/pypi/v/hespi
     :target: https://pypi.org/project/hespi/
@@ -22,6 +22,11 @@ hespi
     
 .. |coverage badge| image:: https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/rbturnbull/f31036b00473b6d0af3a160ea681903b/raw/coverage-badge.json
     :target: https://rbturnbull.github.io/hespi/coverage/
+
+.. |arxiv badge| image:: https://img.shields.io/badge/arXiv-2410.08740-b31b1b.svg
+   :target: https://arxiv.org/abs/2410.08740
+   :alt: arXiv:2410.08740
+
     
 .. end-badges
 
@@ -108,6 +113,12 @@ Credits
 .. start-credits
 
 Robert Turnbull, Emily Fitzgerald, Karen Thompson and Jo Birch from the University of Melbourne.
+
+The paper describing the pipeline is available as a preprint:
+
+    Turnbull, R., Fitzgerald, E., Thompson, K., & Birch, J. L. (2024). 
+    *Hespi: A pipeline for automatically detecting information from herbarium specimen sheets*. 
+    `DOI: 10.48550/arXiv.2410.08740 <https://doi.org/10.48550/arXiv.2410.08740>`_.
 
 This research was supported by The University of Melbourne’s Research Computing Services and the Petascale Campus Initiative. 
 The authors thank collaborators Niels Klazenga, Heroen Verbruggen, Nunzio Knerr, Noel Faux, Simon Mutch, Babak Shaban, Andrew Drinnan, Michael Bayly and Hannah Turnbull.
