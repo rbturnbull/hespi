@@ -30,12 +30,14 @@ def yolo_output(model, images, output_dir, tmp_dir_prefix=None, batch_size=4, re
 
     model.predictor.save_dir = tmp_dir_path
 
-    results = model.predict(source=images, show=False, save=True, batch=batch_size, imgsz=res)
     output_files = defaultdict(list)
 
     output_dir = Path(output_dir)
 
-    for image, predictions in zip(images, results):
+    for image in images:
+        results = model.predict(source=[image], show=False, save=True, batch=1, imgsz=res)
+        predictions = next(results)
+
         stub = get_stub(image)
         image_output_dir = output_dir / stub
         image_output_dir.mkdir(exist_ok=True, parents=True)
