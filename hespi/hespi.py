@@ -144,7 +144,7 @@ class Hespi():
         images:List[Path],
         output_dir:Path,
         report:bool = True,
-    ):
+    ) -> Path|None:
 
         # Clean up images input
         if isinstance(images, (Path, str)):
@@ -189,7 +189,7 @@ class Hespi():
             
             write_report(report_path, component_files, df)
 
-        return df
+            return report_path
 
     def institutional_label_classify(self, component:Path, classification_csv:Path) -> str:
         component = Path(component)

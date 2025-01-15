@@ -20,7 +20,7 @@ classifiers = [
 ]
 
 [tool.poetry.dependencies]
-python = ">=3.8.1,<3.12"
+python = ">=3.10,<3.12"
 rich = ">=10.16.1"
 typer = ">=0.4.0"
 torchapp = ">=0.2.0"
@@ -33,6 +33,7 @@ ultralytics = ">=8.1.0"
 langchain = ">=0.2.0"
 langchain-openai = ">=0.1.0"
 langchain-anthropic = "^0.1.23"
+gradio = "^5.11.0"
 
 [tool.poetry.dev-dependencies]
 rcssmin = ">=1.1.2"

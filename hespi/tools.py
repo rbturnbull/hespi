@@ -55,3 +55,13 @@ def trocr(
     ocr = TrOCR(size=size)
     text = ocr.get_text(image)
     console.print(text)
+
+
+@app.command()
+def gui():
+    """
+    Start the Hespi GUI
+    """
+    from .gui import build_interface
+    interface = build_interface()
+    interface.launch()
