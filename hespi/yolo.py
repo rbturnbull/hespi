@@ -36,7 +36,7 @@ def yolo_output(model, images, output_dir, tmp_dir_prefix=None, batch_size=4, re
 
     for image in images:
         results = model.predict(source=[image], show=False, save=True, batch=1, imgsz=res)
-        predictions = next(results)
+        predictions = next(iter(results))
 
         stub = get_stub(image)
         image_output_dir = output_dir / stub
