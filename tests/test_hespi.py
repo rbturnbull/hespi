@@ -107,7 +107,7 @@ def test_sheet_component_detect(mock_yolo_output):
         )
         hespi.sheet_component_detect("images", "output_dir")
         mock_yolo_class.assert_called_once()
-        mock_yolo_output.assert_called_once_with(mock_yolo_model, "images", output_dir="output_dir", tmp_dir_prefix=None, res=1280, batch_size=4)
+        mock_yolo_output.assert_called_once_with(mock_yolo_model, "images", output_dir="output_dir", res=1280)
     
 
 
@@ -122,7 +122,7 @@ def test_label_field_model_detect(mock_yolo_output):
         )
         hespi.label_field_model_detect("images", "output_dir")
         mock_yolo_class.assert_called_once()
-        mock_yolo_output.assert_called_once_with(mock_yolo_model, "images", output_dir="output_dir", tmp_dir_prefix=None, res=1280, batch_size=4)
+        mock_yolo_output.assert_called_once_with(mock_yolo_model, "images", output_dir="output_dir", res=1280)
 
 
 @patch("hespi.llm.ChatOpenAI", mock_llm)
@@ -237,7 +237,7 @@ def test_institutional_label_detect(mock_yolo_output):
         assert result["species_ocr_results"][1]['adjusted_text'] == 'zostericola'
         assert result["species_ocr_results"][1]['match_score'] == 0.917
         mock_yolo_class.assert_called_once()
-        mock_yolo_output.assert_called_once_with(mock_yolo_model, [institution_label], output_dir="output_dir", tmp_dir_prefix=None, res=1280, batch_size=4)
+        mock_yolo_output.assert_called_once_with(mock_yolo_model, [institution_label], output_dir="output_dir", res=1280)
 
 
 @patch.object(Hespi, 'sheet_component_detect', return_value={

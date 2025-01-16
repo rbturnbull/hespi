@@ -1,50 +1,49 @@
-import tempfile
-from shutil import move
 from pathlib import Path
 from PIL import Image
 from collections import defaultdict, Counter
 from rich.console import Console
 from rich.table import Column, Table
+from drawyolo.draw import draw_box_on_image_with_yolo_result
 
 console = Console()
 
 from .util import get_stub
 
+
 def predictions_filename(stub):
     return f"{stub}.all.jpg"
 
 
-def yolo_output(model, images, output_dir, tmp_dir_prefix=None, batch_size=4, res=1280):
-    try:
-        from ultralytics.models.yolo.detect.predict import DetectionPredictor
-    except ImportError: # pragma: no cover
-        from ultralytics.yolo.v8.detect.predict import DetectionPredictor # pragma: no cover
+def thumbnail_filename(stub):
+    return f"{stub}.thumbnail.jpg"
 
-    if not model.predictor:
-        model.predictor = DetectionPredictor()
-        model.predictor.setup_model(model=model.model)
 
-    tmp_dir = tempfile.TemporaryDirectory(prefix=tmp_dir_prefix)
-    tmp_dir_path = Path(tmp_dir.name)
-    console.print(f"Using temporary directory '{tmp_dir_path}'")
-
-    model.predictor.save_dir = tmp_dir_path
-
+def yolo_output(model, images, output_dir:str|Path, res:int=1280, thumbnail_width:int=240):
     output_files = defaultdict(list)
 
     output_dir = Path(output_dir)
 
     for image in images:
-        results = model.predict(source=[image], show=False, save=True, batch=1, imgsz=res)
+        results = model.predict(source=[image], show=False, save=False, batch=1, imgsz=res)
         predictions = next(iter(results))
 
         stub = get_stub(image)
         image_output_dir = output_dir / stub
-        image_output_dir.mkdir(exist_ok=True, parents=True)
         prediction_path = image_output_dir / predictions_filename(stub)
-
-        prediction_path_tmp_location = Path(model.predictor.save_dir)/image.name
-        assert prediction_path_tmp_location.exists()
+        draw_box_on_image_with_yolo_result(
+            image,
+            predictions,
+            output=prediction_path,
+            classes=model.names,
+        )    
+        prediction_path_thumbnail = image_output_dir / thumbnail_filename(stub)
+        draw_box_on_image_with_yolo_result(
+            image,
+            predictions,
+            output=prediction_path_thumbnail,
+            classes=model.names,
+            width=thumbnail_width,
+        )    
 
         table = Table(
             Column(header="Category", justify="middle"),
@@ -52,8 +51,6 @@ def yolo_output(model, images, output_dir, tmp_dir_prefix=None, batch_size=4, re
             title=f"Saving predicitons for: '{stub}'",
         )
         table.add_row("All", prediction_path.name)
-
-        move(prediction_path_tmp_location, prediction_path)
 
         counter = Counter()
 
@@ -80,8 +77,6 @@ def yolo_output(model, images, output_dir, tmp_dir_prefix=None, batch_size=4, re
 
             im_crop.convert('RGB').save(output_path)
             output_files[stub].append(output_path)
-
-    tmp_dir.cleanup()
 
     console.print(table)
 
