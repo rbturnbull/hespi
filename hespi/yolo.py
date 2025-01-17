@@ -14,10 +14,6 @@ def predictions_filename(stub):
     return f"{stub}.all.jpg"
 
 
-def thumbnail_filename(stub):
-    return f"{stub}.thumbnail.jpg"
-
-
 def yolo_output(model, images, output_dir:str|Path, res:int=1280, thumbnail_width:int=240):
     output_files = defaultdict(list)
 
@@ -36,13 +32,19 @@ def yolo_output(model, images, output_dir:str|Path, res:int=1280, thumbnail_widt
             output=prediction_path,
             classes=model.names,
         )    
-        prediction_path_thumbnail = image_output_dir / thumbnail_filename(stub)
         draw_box_on_image_with_yolo_result(
             image,
             predictions,
-            output=prediction_path_thumbnail,
+            output=image_output_dir/f"{stub}.thumbnail.jpg",
             classes=model.names,
             width=thumbnail_width,
+        )    
+        draw_box_on_image_with_yolo_result(
+            image,
+            predictions,
+            output=image_output_dir/f"{stub}.medium.jpg",
+            classes=model.names,
+            width=400,
         )    
 
         table = Table(
