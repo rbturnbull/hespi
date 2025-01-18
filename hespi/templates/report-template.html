@@ -51,26 +51,23 @@
       <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
         <div class="tab-content" id="myTabContent">
           {% for stub, files in component_files.items() %}
-            <div class="tab-pane fade show {% if loop.first %}active{% endif %}" id="{{ stub }}" role="tabpanel" aria-labelledby="{{ stub }}-tab">
+            <div class="tab-pane fade {% if loop.first %}show active{% endif %}" id="{{ stub }}" role="tabpanel" aria-labelledby="{{ stub }}-tab">
               <h1>{{ stub }}</h1>
 
               {% set my_ocr_df = ocr_df[ocr_df["id"] == stub] %}
               <ul class="nav nav-tabs" id="{{ stub }}-tabs" role="tablist">
+                {% for _, row in my_ocr_df.iterrows() %}
                 <li class="nav-item" role="presentation">
-                  <button class="nav-link active" id="{{ stub }}-institional-label-tab" data-bs-toggle="tab" data-bs-target="#{{ stub }}-institional-label" type="button" role="tab" aria-controls="{{ stub }}-institional-label" aria-selected="true">Institutional Label</button>
+                  <button class="nav-link {% if loop.first %}show active{% endif %}" id="{{ stub }}-institional-label-tab-{{ loop.index }}" data-bs-toggle="tab" data-bs-target="#{{ stub }}-institional-label-{{ loop.index }}" type="button" role="tab" aria-controls="{{ stub }}-institional-label-{{ loop.index }}" aria-selected="true">Institutional Label {% if not loop.first %}{{ loop.index }}{% endif %}</button>
                 </li>
+                {% endfor %}
                 <li class="nav-item" role="presentation">
-                  <button class="nav-link" id="{{ stub }}-sheet-components-tab" data-bs-toggle="tab" data-bs-target="#{{ stub }}-sheet-components" type="button" role="tab" aria-controls="{{ stub }}-sheet-components" aria-selected="false">Sheet Components</button>
+                  <button class="nav-link {% if len(my_ocr_df) == 0 %}show active{% endif %}" id="{{ stub }}-sheet-components-tab" data-bs-toggle="tab" data-bs-target="#{{ stub }}-sheet-components" type="button" role="tab" aria-controls="{{ stub }}-sheet-components" aria-selected="{% if len(my_ocr_df) == 0 %}true{% else%}false{% endif %}">Sheet Components</button>
                 </li>
               </ul>
               <div class="tab-content" id="{{ stub }}-myTabContent">
-                <div class="tab-pane fade show active" id="{{ stub }}-institional-label" role="tabpanel" aria-labelledby="{{ stub }}-institional-label-tab">
-
-                  
-                  {% if len(my_ocr_df) %}
-                    <h2>Institutional Labels</h2>
-              
-                    {% for _, row in my_ocr_df.iterrows() %}
+                {% for _, row in my_ocr_df.iterrows() %}
+                  <div class="tab-pane fade {% if loop.first %}show active{% endif %}" id="{{ stub }}-institional-label-{{ loop.index }}" role="tabpanel" aria-labelledby="{{ stub }}-institional-label-tab-{{ loop.index }}">              
                       <center>
                         <a href='{{ relative_to_output(row["predictions"]) }}'><img src='{{ relative_to_output(row["predictions"]) }}' class="hespi-image"/></a>
                         <p>Classification: {{ row["label_classification"] }}</p>
@@ -108,14 +105,9 @@
                           {% endfor %}
                         </tbody>
                       </table>
-    
-    
-                    {% endfor %}
-                  {% endif %}    
-
-                </div>
-                <div class="tab-pane fade" id="{{ stub }}-sheet-components" role="tabpanel" aria-labelledby="{{ stub }}-sheet-components-tab">
-
+                  </div>
+                {% endfor %}
+                <div class="tab-pane fade {% if len(my_ocr_df) == 0 %}show active{% endif %}" id="{{ stub }}-sheet-components" role="tabpanel" aria-labelledby="{{ stub }}-sheet-components-tab">
                   <center>
                     <a href='{{ stub }}/{{ stub }}.all.jpg'><img src='{{ stub }}/{{ stub }}.medium.jpg' class="hespi-image"/></a>
                     </center>
