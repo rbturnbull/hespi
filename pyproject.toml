@@ -35,7 +35,7 @@ gradio = ">=5.11.0"
 drawyolo = ">=0.1.2"
 llmloader = "^0.1.1"
 
-[tool.poetry.dev-dependencies]
+[tool.poetry.group.dev.dependencies]
 rcssmin = ">=1.1.2"
 pytest = ">=6.2.5"
 ipykernel = ">=6.6.1"
