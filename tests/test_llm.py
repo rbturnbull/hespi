@@ -1,6 +1,4 @@
-import pytest
 from pathlib import Path
-from unittest.mock import patch
 
 from hespi.llm import llm_correct_detection_results, build_template, encode_image, output_parser
 
@@ -98,7 +96,6 @@ def test_output_parser():
     }
 
 
-@patch("hespi.llm.ChatOpenAI", mock_llm)
 def test_llm():
     institutional_label_image = test_data_dir/"institution_label.jpg"
     detection_results = {
