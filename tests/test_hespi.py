@@ -38,72 +38,71 @@ class MockClassifier(DictionaryPathMocker, OCR):
 
 
 @patch('ultralytics.YOLO')
-@patch("hespi.llm.ChatOpenAI", mock_llm)
 def test_get_yolo(mock):
-    hespi = Hespi()
+    hespi = Hespi(llm_model=None)
     weights = test_data_dir/"test-no-extension-ebaa296923904111a3972b54eba5cf5f.dat"
     hespi.get_yolo(weights)
     mock.assert_called_once_with(weights)
 
 
 @patch('ultralytics.YOLO')
-@patch("hespi.llm.ChatOpenAI", mock_llm)
 def test_sheet_component_model(mock):
     weights = test_data_dir/"test-no-extension-ebaa296923904111a3972b54eba5cf5f.dat"
     hespi = Hespi(
-        sheet_component_weights=weights
+        sheet_component_weights=weights,
+        llm_model=None,
     )
     _ = hespi.sheet_component_model
     mock.assert_called_once_with(weights)
 
 
 @patch('ultralytics.YOLO')
-@patch("hespi.llm.ChatOpenAI", mock_llm)
 def test_label_field_model(mock):
     weights = test_data_dir/"test-no-extension-ebaa296923904111a3972b54eba5cf5f.dat"
     hespi = Hespi(
-        label_field_weights=weights
+        label_field_weights=weights,
+        llm_model=None,
     )
     _ = hespi.label_field_model
     mock.assert_called_once_with(weights)
 
-@patch("hespi.llm.ChatOpenAI", mock_llm)
+
 def test_institutional_label_classifier():
     weights = test_data_dir/"test-no-extension-ebaa296923904111a3972b54eba5cf5f.dat"
     hespi = Hespi(
-        institutional_label_classifier_weights=weights
+        institutional_label_classifier_weights=weights,
+        llm_model=None,
     )
     model = hespi.institutional_label_classifier
     assert isinstance(model, ImageClassifier)
     assert model.pretrained == weights
 
-@patch("hespi.llm.ChatOpenAI", mock_llm)
+
 def test_reference():
-    hespi = Hespi()
+    hespi = Hespi(llm_model=None)
     assert list(hespi.reference.keys()) == ["family", "genus", "species", "authority"]
 
-@patch("hespi.llm.ChatOpenAI", mock_llm)
+
 def test_tesseract():
-    hespi = Hespi()
+    hespi = Hespi(llm_model=None)
     assert isinstance(hespi.tesseract, Tesseract)
 
 
 @patch('transformers.TrOCRProcessor.from_pretrained', lambda *args: MockProcessor() )
 @patch('transformers.VisionEncoderDecoderModel.from_pretrained', lambda *args: MockModel() )
-@patch("hespi.llm.ChatOpenAI", mock_llm)
 def test_trocr():
-    hespi = Hespi()
+    hespi = Hespi(llm_model=None)
     assert isinstance(hespi.trocr, TrOCR)
 
 
-@patch("hespi.llm.ChatOpenAI", mock_llm)
 @patch('hespi.hespi.yolo_output')
 def test_sheet_component_detect(mock_yolo_output):
     weights = test_data_dir/"test-no-extension-ebaa296923904111a3972b54eba5cf5f.dat"
     mock_yolo_model = MockYoloModel()
     with patch('ultralytics.YOLO', return_value=mock_yolo_model) as mock_yolo_class:
         hespi = Hespi(
-            sheet_component_weights=weights
+            sheet_component_weights=weights,
+            llm_model=None,
         )
         hespi.sheet_component_detect("images", "output_dir")
         mock_yolo_class.assert_called_once()
@@ -112,22 +111,21 @@ def test_sheet_component_detect(mock_yolo_output):
 
 
 @patch('hespi.hespi.yolo_output')
-@patch("hespi.llm.ChatOpenAI", mock_llm)
 def test_label_field_model_detect(mock_yolo_output):
     weights = test_data_dir/"test-no-extension-ebaa296923904111a3972b54eba5cf5f.dat"
     mock_yolo_model = MockYoloModel()
     with patch('ultralytics.YOLO', return_value=mock_yolo_model) as mock_yolo_class:
         hespi = Hespi(
-            label_field_weights=weights
+            label_field_weights=weights,
+            llm_model=None,
         )
         hespi.label_field_model_detect("images", "output_dir")
         mock_yolo_class.assert_called_once()
         mock_yolo_output.assert_called_once_with(mock_yolo_model, "images", output_dir="output_dir", res=1280)
 
 
-@patch("hespi.llm.ChatOpenAI", mock_llm)
 def test_read_field_file_tesseract_only():
-    hespi = Hespi(htr=False, fuzzy=True)
+    hespi = Hespi(htr=False, fuzzy=True, llm_model=None)
     image = Path("species.jpg")
     hespi.trocr = MockOCR({"species.jpg":"zostericolaX"})
     hespi.tesseract = MockOCR({"species.jpg":"zOstericolaXX"})
@@ -144,9 +142,8 @@ def test_read_field_file_tesseract_only():
     assert result["species_ocr_results"][0]['match_score'] == 0.917
 
 
-@patch("hespi.llm.ChatOpenAI", mock_llm)
 def test_read_field_file_htr():
-    hespi = Hespi(htr=True, fuzzy=False)
+    hespi = Hespi(htr=True, fuzzy=False, llm_model=None)
     image = Path("species.jpg")
     hespi.trocr = MockOCR({"species.jpg":"zostericolaX"})
     hespi.tesseract = MockOCR({"species.jpg":"zOstericolaXX"})
@@ -169,9 +166,8 @@ def test_read_field_file_htr():
     assert result["species_ocr_results"][1]['match_score'] == ""
 
 
-@patch("hespi.llm.ChatOpenAI", mock_llm)
 def test_read_field_file_fuzzy():
-    hespi = Hespi(htr=True, fuzzy=True)
+    hespi = Hespi(htr=True, fuzzy=True, llm_model=None)
     image = Path("species.jpg")
     hespi.trocr = MockOCR({"species.jpg":"zostericolaX"})
     hespi.tesseract = MockOCR({"species.jpg":"zOstericolaXX"})
@@ -194,9 +190,8 @@ def test_read_field_file_fuzzy():
     assert result["species_ocr_results"][1]['match_score'] == 0.917
 
 
-@patch("hespi.llm.ChatOpenAI", mock_llm)
 def test_institutional_label_classify():
-    hespi = Hespi()
+    hespi = Hespi(llm_model=None)
     targets = ["typewriter", "printed", "handwritten", ""]
     mapper = {}
     for t in targets:
@@ -209,13 +204,13 @@ def test_institutional_label_classify():
 
 
 @patch('hespi.hespi.yolo_output', return_value={"species":["species.jpg"]})
-@patch("hespi.llm.ChatOpenAI", mock_llm)
 def test_institutional_label_detect(mock_yolo_output):
     weights = test_data_dir/"test-no-extension-ebaa296923904111a3972b54eba5cf5f.dat"
     mock_yolo_model = MockYoloModel()
     with patch('ultralytics.YOLO', return_value=mock_yolo_model) as mock_yolo_class:
         hespi = Hespi(
-            label_field_weights=weights
+            label_field_weights=weights,
+            llm_model=mock_llm(),
         )
         hespi.trocr = MockOCR({"species.jpg":"zostericolaX"})
         hespi.tesseract = MockOCR({"species.jpg":"zOstericolaXX"})
@@ -245,9 +240,8 @@ def test_institutional_label_detect(mock_yolo_output):
 })
 @patch.object(Hespi, 'institutional_label_detect')
 @patch('hespi.hespi.ocr_data_df')
-@patch("hespi.llm.ChatOpenAI", mock_llm)
 def test_detect(mock_ocr_data_df, mock_institutional_label_detect, mock_sheet_component_detect):
-    hespi = Hespi()
+    hespi = Hespi(llm_model=mock_llm())
     with tempfile.TemporaryDirectory() as tmpdir:        
         output_dir = Path(tmpdir)
         hespi.detect(test_data_dir/"test2.jpg", output_dir)
@@ -267,9 +261,8 @@ def test_detect(mock_ocr_data_df, mock_institutional_label_detect, mock_sheet_co
 })
 @patch.object(Hespi, 'institutional_label_detect')
 @patch('hespi.hespi.ocr_data_df')
-@patch("hespi.llm.ChatOpenAI", mock_llm)
 def test_detect_truncated(mock_ocr_data_df, mock_institutional_label_detect, mock_sheet_component_detect):
-    hespi = Hespi()
+    hespi = Hespi(llm_model=mock_llm())
     with tempfile.TemporaryDirectory() as tmpdir:        
         output_dir = Path(tmpdir)
         hespi.detect(test_data_dir/"test2.jpg", output_dir)
@@ -289,9 +282,8 @@ def test_detect_truncated(mock_ocr_data_df, mock_institutional_label_detect, moc
 })
 @patch.object(Hespi, 'institutional_label_detect')
 @patch('hespi.hespi.ocr_data_df')
-@patch("hespi.llm.ChatOpenAI", mock_llm)
 def test_detect_multi(mock_ocr_data_df, mock_institutional_label_detect, mock_sheet_component_detect):
-    hespi = Hespi()
+    hespi = Hespi(llm_model=mock_llm())
     with tempfile.TemporaryDirectory() as tmpdir:        
         output_dir = Path(tmpdir)
         hespi.detect([test_data_dir/"test2.jpg", test_data_dir/"test.jpg"], output_dir)
@@ -311,9 +303,8 @@ def test_detect_multi(mock_ocr_data_df, mock_institutional_label_detect, mock_sh
 })
 @patch.object(Hespi, 'institutional_label_detect')
 @patch('hespi.hespi.ocr_data_df')
-@patch("hespi.llm.ChatOpenAI", mock_llm)
 def test_detect_multi_report_exists(mock_ocr_data_df, mock_institutional_label_detect, mock_sheet_component_detect):
-    hespi = Hespi()
+    hespi = Hespi(llm_model=mock_llm())
     with tempfile.TemporaryDirectory() as tmpdir:        
         output_dir = Path(tmpdir)
         first_report_file = output_dir/"hespi-report.html"
@@ -332,9 +323,8 @@ def test_detect_multi_report_exists(mock_ocr_data_df, mock_institutional_label_d
         assert "<head>" in report_file.read_text()
 
 
-@patch("hespi.llm.ChatOpenAI", mock_llm)
 def test_determine_best_ocr_result_non_reference():
-    hespi = Hespi(htr=True, fuzzy=True)
+    hespi = Hespi(htr=True, fuzzy=True, llm_model=None)
     image = Path("location.jpg")
     hespi.trocr = MockOCR({"location.jpg":"Queenscliff"})
     hespi.tesseract = MockOCR({"location.jpg":"Queeadfafdnljk"})
@@ -351,9 +341,8 @@ def test_determine_best_ocr_result_non_reference():
     assert best_engine == ""
 
 
-@patch("hespi.llm.ChatOpenAI", mock_llm)
 def test_determine_best_ocr_result_reference():
-    hespi = Hespi(htr=True, fuzzy=True)
+    hespi = Hespi(htr=True, fuzzy=True, llm_model=None)
     image = Path("species.jpg")
     hespi.trocr = MockOCR({"species.jpg":"zostericolaX"})
     hespi.tesseract = MockOCR({"species.jpg":"zOstericolaXX"})
@@ -370,9 +359,8 @@ def test_determine_best_ocr_result_reference():
     assert best_engine == "TrOCR"
 
 
-@patch("hespi.llm.ChatOpenAI", mock_llm)
 def test_determine_best_ocr_result_single():
-    hespi = Hespi(htr=False, fuzzy=True)
+    hespi = Hespi(htr=False, fuzzy=True, llm_model=None)
     image = Path("species.jpg")
     hespi.tesseract = MockOCR({"species.jpg":"zOstericolaXX"})
     
@@ -383,9 +371,8 @@ def test_determine_best_ocr_result_single():
     assert best_engine == ""
 
 
-@patch("hespi.llm.ChatOpenAI", mock_llm)
 def test_determine_best_ocr_result_empty():
-    hespi = Hespi(htr=False, fuzzy=True)
+    hespi = Hespi(htr=False, fuzzy=True, llm_model=None)
     best_text, best_match_score, best_engine = hespi.determine_best_ocr_result([])
     assert best_text == ""
     assert best_match_score == ""
@@ -393,7 +380,6 @@ def test_determine_best_ocr_result_empty():
 
 
 @patch('hespi.hespi.yolo_output', return_value={"species":["species.jpg"], "location":["location.jpg"]})
-@patch("hespi.llm.ChatOpenAI", mock_llm)
 def test_institutional_label_detect_trocr_found_preferred(mock_yolo_output):
     weights = test_data_dir/"test-no-extension-ebaa296923904111a3972b54eba5cf5f.dat"
     mock_yolo_model = MockYoloModel()
@@ -415,14 +401,13 @@ def test_institutional_label_detect_trocr_found_preferred(mock_yolo_output):
 
 
 @patch('hespi.hespi.yolo_output', return_value={"location":["location.jpg"]})
-@patch("hespi.llm.ChatAnthropic", mock_llm)
 def test_institutional_label_detect_tesseract_preferred(mock_yolo_output):
     weights = test_data_dir/"test-no-extension-ebaa296923904111a3972b54eba5cf5f.dat"
     mock_yolo_model = MockYoloModel()
     with patch('ultralytics.YOLO', return_value=mock_yolo_model) as mock_yolo_class:
         hespi = Hespi(
             label_field_weights=weights,
-            llm_model="claude-3-5-sonnet-20240620",
+            llm_model=mock_llm(),
         )
         hespi.trocr = MockOCR({"species.jpg":"zostericolaX", "location.jpg":"Queenscliff"})
         hespi.tesseract = MockOCR({"species.jpg":"zOstericolaXX", "location.jpg":"Queeadfafdnljk"})
@@ -436,13 +421,13 @@ def test_institutional_label_detect_tesseract_preferred(mock_yolo_output):
 
 
 @patch('hespi.hespi.yolo_output', return_value={"location":["location.jpg"]})
-@patch("hespi.llm.ChatOpenAI", mock_llm)
 def test_institutional_label_detect_trocr_handwritten(mock_yolo_output):
     weights = test_data_dir/"test-no-extension-ebaa296923904111a3972b54eba5cf5f.dat"
     mock_yolo_model = MockYoloModel()
     with patch('ultralytics.YOLO', return_value=mock_yolo_model) as mock_yolo_class:
         hespi = Hespi(
-            label_field_weights=weights
+            label_field_weights=weights,
+            llm_model=None,
         )
         hespi.trocr = MockOCR({"species.jpg":"zostericolaX", "location.jpg":"Queenscliff"})
         hespi.tesseract = MockOCR({"species.jpg":"zOstericolaXX", "location.jpg":"Queeadfafdnljk"})
@@ -456,13 +441,13 @@ def test_institutional_label_detect_trocr_handwritten(mock_yolo_output):
 
 
 @patch('hespi.hespi.yolo_output', return_value={"stub":["stub.0.location.jpg", "stub.1.location.jpg"]})
-@patch("hespi.llm.ChatOpenAI", mock_llm)
 def test_institutional_label_detect_multiple_images(mock_yolo_output):
     weights = test_data_dir/"test-no-extension-ebaa296923904111a3972b54eba5cf5f.dat"
     mock_yolo_model = MockYoloModel()
     with patch('ultralytics.YOLO', return_value=mock_yolo_model) as mock_yolo_class:
         hespi = Hespi(
-            label_field_weights=weights
+            label_field_weights=weights,
+            llm_model=None,
         )
         hespi.trocr = MockOCR({"stub.0.location.jpg":"Queeadfafdnljk", "stub.1.location.jpg":"Queenscliff", })
         hespi.tesseract = MockOCR({"stub.0.location.jpg":"Queenscliff", "stub.1.location.jpg":"Queenscliff"})

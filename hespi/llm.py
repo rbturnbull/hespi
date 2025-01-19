@@ -114,7 +114,6 @@ def llm_correct_detection_results(llm:BaseChatModel, institutional_label_image:P
     template = build_template(institutional_label_image, detection_results)
     
     chain = template | llm | StrOutputParser() | output_parser
-
     result = chain.invoke({})
     detection_results.update(result)
     for field_name, value in result.items():

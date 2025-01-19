@@ -59,7 +59,9 @@ class Hespi():
         self.htr = htr
         self.sheet_component_res = sheet_component_res
         self.label_field_res = label_field_res
-        if llm_model.lower() == "none":
+
+        # Set LLM
+        if not llm_model or str(llm_model).lower() == "none":
             console.print(f"[red]LLM not being used[/red]")
             self.llm = None
         else:
