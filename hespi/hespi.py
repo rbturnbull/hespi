@@ -6,6 +6,7 @@ from functools import cached_property
 from rich.console import Console
 from collections import defaultdict
 from rich.progress import track
+import llmloader
 
 from .yolo import yolo_output, predictions_filename
 from .ocr import Tesseract, TrOCR, TrOCRSize
@@ -13,7 +14,7 @@ from .download import get_location
 from .util import mk_reference, ocr_data_df, adjust_text, get_stub, ocr_data_print_tables
 from .ocr import TrOCRSize
 from .report import write_report
-from .llm import llm_correct_detection_results, get_llm
+from .llm import llm_correct_detection_results
 
 console = Console()
 
@@ -58,11 +59,15 @@ class Hespi():
         self.htr = htr
         self.sheet_component_res = sheet_component_res
         self.label_field_res = label_field_res
-
-        if llm_model and llm_model.lower() != "none":
-            self.llm = get_llm(llm_model, llm_api_key, llm_temperature)
-        else:
+        if llm_model.lower() == "none":
+            console.print(f"[red]LLM not being used[/red]")
             self.llm = None
+        else:
+            try:
+                self.llm = llmloader.load(model=llm_model, temperature=llm_temperature, api_key=llm_api_key)
+            except ValueError as err:
+                console.print(f"[red]Error loading LLM model: {err}[/red]")
+                self.llm = None
         
         # Check if gpu is available
         import torch

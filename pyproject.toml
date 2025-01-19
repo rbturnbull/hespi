@@ -31,10 +31,9 @@ appdirs = ">=1.4.4"
 jinja2 = ">=3.1.2"
 ultralytics = ">=8.1.0"
 langchain = ">=0.2.0"
-langchain-openai = ">=0.1.0"
-langchain-anthropic = "^0.1.23"
-gradio = "^5.11.0"
-drawyolo = "^0.1.1"
+gradio = ">=5.11.0"
+drawyolo = ">=0.1.1"
+llmloader = "^0.1.1"
 
 [tool.poetry.dev-dependencies]
 rcssmin = ">=1.1.2"

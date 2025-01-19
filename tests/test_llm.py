@@ -2,7 +2,7 @@ import pytest
 from pathlib import Path
 from unittest.mock import patch
 
-from hespi.llm import llm_correct_detection_results, build_template, encode_image, output_parser, get_llm
+from hespi.llm import llm_correct_detection_results, build_template, encode_image, output_parser
 
 test_data_dir = Path(__file__).parent/"testdata"
 
@@ -96,11 +96,6 @@ def test_output_parser():
         "locality": "Vieforca Aeonpatha",
         "month": "March",
     }
-
-
-def test_get_llm_error():
-    with pytest.raises(ValueError):
-        get_llm("unknown_model")
 
 
 @patch("hespi.llm.ChatOpenAI", mock_llm)

@@ -110,30 +110,6 @@ def output_parser(text:str) -> dict[str, str]:
     return result
 
 
-def get_llm(
-    model_id:str="gpt-4o",
-    api_key:str="",
-    temperature:float=0.0,
-) -> BaseChatModel:
-    if model_id.startswith('gpt'):
-        return ChatOpenAI(
-            openai_api_key=api_key, 
-            temperature=temperature,
-            model_name=model_id,
-        )
-    
-    if model_id.startswith('claude'):
-        return ChatAnthropic(
-            model=model_id,
-            temperature=temperature,
-            max_tokens=1024,
-            timeout=None,
-            max_retries=2,
-            api_key=api_key,
-        )
-    raise ValueError(f"Model {model_id} not recognized.")
-
-
 def llm_correct_detection_results(llm:BaseChatModel, institutional_label_image:Path, detection_results:dict) -> None:
     template = build_template(institutional_label_image, detection_results)
     
