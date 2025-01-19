@@ -32,7 +32,7 @@ jinja2 = ">=3.1.2"
 ultralytics = ">=8.1.0"
 langchain = ">=0.2.0"
 gradio = ">=5.11.0"
-drawyolo = ">=0.1.1"
+drawyolo = ">=0.1.2"
 llmloader = "^0.1.1"
 
 [tool.poetry.dev-dependencies]

@@ -1239,21 +1239,21 @@ files = [
 
 [[package]]
 name = "drawyolo"
-version = "0.1.1"
+version = "0.1.2"
 description = "Draws boxes on images from annotations in YOLO format"
 optional = false
 python-versions = "<3.13,>=3.10"
 groups = ["main"]
 files = [
-    {file = "drawyolo-0.1.1-py3-none-any.whl", hash = "sha256:d7765ef926361db530600bd84151f3a40c5606d90048d28235ac94aa758cc3fb"},
-    {file = "drawyolo-0.1.1.tar.gz", hash = "sha256:3ecfffdda16ccdee1d6f29d537bbbb5eead54220f5eadfc97ef64bbe7dc03b0e"},
+    {file = "drawyolo-0.1.2-py3-none-any.whl", hash = "sha256:724d860eb67b2b7fa77944810ca62c2a6defb5cb482308ff7a8afd921a59db90"},
+    {file = "drawyolo-0.1.2.tar.gz", hash = "sha256:d64768235b30cbcaf47ae75bdf5392686f8752c9f59ea2f01a23094f327f9677"},
 ]
 
 [package.dependencies]
 opencv-python = ">=4.9.0.80"
 rich = ">=13.7.0"
 typer = ">=0.9.0"
-ultralytics = ">=8.2.23,<9.0.0"
+ultralytics = ">=8.1.0"
 
 [[package]]
 name = "entrypoints"
