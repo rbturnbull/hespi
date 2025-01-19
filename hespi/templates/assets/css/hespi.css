@@ -174,3 +174,15 @@ H2 {
     max-width: 400px;
     max-height: 400px;
 }
+
+.recognized-text {
+    text-align: center;
+    font-size: 2.0rem;
+}
+
+.alternative-text {
+    text-align: center;
+    font-size: 0.9rem;
+    color: #727272;
+    margin-bottom: 6px;
+}

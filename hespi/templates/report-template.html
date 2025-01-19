@@ -78,10 +78,7 @@
                           <tr>
                             <th scope="col">Field</th>
                             <th scope="col">Image</th>
-                            <th scope="col">Recognized Text</th>
-                            <th scope="col">OCR</th>
-                            <th scope="col">HTR</th>
-                            <th scope="col">LLM</th>
+                            <th scope="col">Text</th>
                           </tr>
                         </thead>
                         <tbody>
@@ -96,10 +93,12 @@
                                     </a>
                                   {% endfor %}
                                 </td>
-                                <td>{{ row[field] }}</td>
-                                <td>{{ ocr_result_str(row, field, "Tesseract") }}</td>
-                                <td>{{ ocr_result_str(row, field, "TrOCR") }}</td>
-                                <td>{{ ocr_result_str(row, field, "LLM") }}</td>
+                                <td>
+                                  <p class="recognized-text">{{ row[field] }}</p>
+                                  {% if ocr_result_str(row, field, "Tesseract") %}<p class="alternative-text">Tesseract: {{ ocr_result_str(row, field, "Tesseract")}}. </p>{% endif %}
+                                  {% if ocr_result_str(row, field, "TrOCR") %}<p class="alternative-text">TrOCR: {{ ocr_result_str(row, field, "TrOCR")}}. </p>{% endif %}
+                                  {% if ocr_result_str(row, field, "LLM") %}<p class="alternative-text">LLM: {{ ocr_result_str(row, field, "LLM")}}. </p>{% endif %}
+                                </td>
                               </div>
                             {% endif %}
                           {% endfor %}
