@@ -183,8 +183,9 @@ def ocr_data_df(data: dict, output_path: Path=None) -> pd.DataFrame:
         else:
             console.print(f"Writing Hespi text results to: '{output_path}'")
             write_df = df
-        
+
         write_df.to_csv(output_path, index=False)
+        write_df.to_json(output_path, index=False)
 
     return df
 

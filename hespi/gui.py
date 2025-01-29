@@ -9,7 +9,14 @@ def process_images(image_list: list[str], llm_model: str, llm_temperature: float
     return gr.update(value=str(report_path), visible=True)
 
 
+def compile_sass(assets_dir, sass_in_dir="sass", css_out_dir="__css__"):
+    print(f"Compiling sass: {assets_dir / sass_in_dir}, {assets_dir / css_out_dir}")
+    import sass
+    sass.compile(dirname=(assets_dir / sass_in_dir, assets_dir / css_out_dir), output_style="nested")
+
+
 def build_interface():
+    compile_sass(Path(__file__).parent / "templates" / "assets")
     with gr.Blocks() as interface:
         banner = "https://raw.githubusercontent.com/rbturnbull/hespi/main/docs/images/hespi-banner.svg"
         gr.HTML(f"<div style='text-align:center;'><center><img src='{banner}' alt='Hespi Banner' style='width:100%; max-width: 700px;'></center></div>")

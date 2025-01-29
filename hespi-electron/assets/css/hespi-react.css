@@ -1,0 +1,12 @@
+body{
+  align-items: flex-start;
+}
+
+#hespi-root {
+  flex-direction: column;
+  display: flex;
+  align-items: center;
+  align-content: flex-start;
+  justify-content: flex-start;
+  width: 100%;
+}

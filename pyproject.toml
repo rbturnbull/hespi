@@ -34,6 +34,7 @@ langchain = ">=0.2.0"
 gradio = ">=5.11.0"
 drawyolo = ">=0.1.2"
 llmloader = "^0.1.1"
+libsass = "^0.23.0"
 
 [tool.poetry.group.dev.dependencies]
 rcssmin = ">=1.1.2"
