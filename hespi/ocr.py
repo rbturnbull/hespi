@@ -29,7 +29,7 @@ class TrOCR(OCR):
         self.processor = TrOCRProcessor.from_pretrained(
             f"microsoft/trocr-{size}-handwritten"
         )
-
+        
         self.model = VisionEncoderDecoderModel.from_pretrained(
             f"microsoft/trocr-{size}-handwritten",
         )

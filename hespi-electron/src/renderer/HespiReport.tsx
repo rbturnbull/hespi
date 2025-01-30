@@ -4,6 +4,9 @@ import FilesDropzone from './FilesDropzone';
 
 import icon from '../../assets/icon.svg';
 import {ReactComponent as HespiLogo} from 'assets/img/hespi-logo2.svg';
+import componentFiles from "public/hespi-output/hespi-results.json";
+import Stub from './Stub';
+
 
 
 const onAcceptedFiles = (acceptedFiles: File[]) => {
@@ -23,6 +26,8 @@ const onAcceptedFiles = (acceptedFiles: File[]) => {
 
 
 export default function HespiReport() {
+
+  const stubs = componentFiles.map((stub, i) => <Stub stub={stub} key={`stub-${i}`} index={i} />)
   return (
     <>
       <header className="navbar navbar-dark sticky-top bg-light flex-md-nowrap p-0 shadow">
@@ -50,9 +55,14 @@ export default function HespiReport() {
             </div>
           </nav>
 
+          <main className="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+            <div className="tab-content" id="myTabContent">
+              {stubs}
+            </div>
+          </main>
+
         </div>
       </div>
-    <FilesDropzone />
     </>
   );
 }

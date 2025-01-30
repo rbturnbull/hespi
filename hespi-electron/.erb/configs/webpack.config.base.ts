@@ -47,6 +47,15 @@ const configuration: webpack.Configuration = {
     modules: [webpackPaths.srcPath, 'node_modules'],
     // There is no need to add aliases here, the paths in tsconfig get mirrored
     plugins: [new TsconfigPathsPlugins()],
+    fallback: {
+      "fs": false,
+      "tls": false,
+      "net": false,
+      "path": require.resolve("path-browserify"),
+      "zlib": false,
+      "http": false,
+      "https": false
+    } 
   },
 
   plugins: [

@@ -6,6 +6,8 @@ import string
 from rich.console import Console
 from difflib import get_close_matches, SequenceMatcher
 from rich.table import Column, Table
+import json
+from math import isnan
 
 
 console = Console()
@@ -185,9 +187,35 @@ def ocr_data_df(data: dict, output_path: Path=None) -> pd.DataFrame:
             write_df = df
 
         write_df.to_csv(output_path, index=False)
-        write_df.to_json(output_path, index=False)
-
+        
+        try:
+            exported_df = pd.read_csv(output_path)
+            exported_df.to_json(output_path.with_suffix('.json'), orient="records", indent=3)
+        except Exception as e:
+            console.print(f"Error writing JSON file: {e}")
     return df
+
+
+def to_json(df):
+    json_list = json.loads(json.dumps(list(df.T.to_dict().values())))
+    json_clean = []
+
+    for obj in json_list:
+        clean_obj = {}
+        for k, v in obj.items():
+            try:
+                if isnan(v):
+                    obj[k] = None
+                    continue
+            except:
+                pass
+            clean_obj[k] = v
+        json_clean.append(clean_obj)
+    with open("hespi-results-list.json", "w") as f:
+        json.dump(json_list, f, indent=3)
+    with open("hespi-results-clean.json", "w") as f:
+        json.dump(json_clean, f, indent=3)
+
 
 
 def ocr_result_str(row, field_name:str, ocr_type:str) -> str:

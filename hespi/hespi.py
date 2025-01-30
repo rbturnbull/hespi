@@ -7,6 +7,7 @@ from rich.console import Console
 from collections import defaultdict
 from rich.progress import track
 import llmloader
+from gradio import Progress as grProgress
 
 from .yolo import yolo_output, predictions_filename
 from .ocr import Tesseract, TrOCR, TrOCRSize
@@ -59,6 +60,7 @@ class Hespi():
         self.htr = htr
         self.sheet_component_res = sheet_component_res
         self.label_field_res = label_field_res
+        self.progress = None
 
         # Set LLM
         if not llm_model or str(llm_model).lower() == "none":
@@ -106,11 +108,14 @@ class Hespi():
 
     @cached_property
     def tesseract(self):
+        self.progress(0.1, desc="Loading Tesseract")
         return Tesseract()
 
     @cached_property
     def trocr(self):
-        print(f"Loading TrOCR model of size '{self.trocr_size}'")
+        desc = f"Loading TrOCR model of size '{self.trocr_size}'"
+        print(desc)
+        self.progress(0.1, desc=desc)
         trocr = TrOCR(size=self.trocr_size)
         return trocr
 
@@ -143,8 +148,9 @@ class Hespi():
         images:List[Path],
         output_dir:Path,
         report:bool = True,
+        progress: grProgress = None,
     ) -> Path|None:
-
+        self.progress = progress
         # Clean up images input
         if isinstance(images, (Path, str)):
             images = [images]
@@ -157,6 +163,8 @@ class Hespi():
         # Sheet-Components predictions
         component_files = self.sheet_component_detect(images, output_dir=output_dir)
 
+        if self.progress is not None:
+            self.progress(0.1, desc="Loading models...")
         ocr_data = {}
         
         # Institutional Label Field Detection Model Predictions
@@ -167,7 +175,9 @@ class Hespi():
                         component, 
                         stub=stub,
                         output_dir=output_dir / stub,
+                        progress=progress
                     )
+                    yield ocr_data[str(component)]
 
 
         df = ocr_data_df(ocr_data, output_path=output_dir/"hespi-results.csv")
@@ -250,7 +260,7 @@ class Hespi():
 
         return best_text, best_match_score, best_engine            
 
-    def institutional_label_detect(self, component, stub, output_dir) -> Dict:
+    def institutional_label_detect(self, component, stub, output_dir, progress:grProgress=None) -> Dict:
         detection_results = {"id": stub}
 
         # Institutional Label Classification
@@ -271,8 +281,10 @@ class Hespi():
         detection_results["predictions"] = predictions_path
 
         # Text Recognition on bounding boxes found by YOLO
+        desc = f"Reading fields for {component.name}"
         for fields in field_files.values():
-            for field_file in track(fields, description=f"Reading fields for {component.name}"):
+            progress_track = track(fields, description=desc) if progress is None else progress.tqdm(fields, desc=desc)
+            for field_file in progress_track:
                 field_results = self.read_field_file(
                     field_file, 
                     classification,

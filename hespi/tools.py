@@ -62,6 +62,7 @@ def gui():
     """
     Start the Hespi GUI
     """
-    from .gui import build_interface
-    interface = build_interface()
+    from .gui import build_blocks, compile_sass
+    compile_sass(Path(__file__).parent / "templates" / "assets")
+    interface = build_blocks()
     interface.launch()
