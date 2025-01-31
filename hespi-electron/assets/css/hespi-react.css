@@ -11,3 +11,25 @@ body{
   align-content: flex-start;
   justify-content: flex-start;
 }
+
+.editable-ocr-field{
+  display: flex;
+  flex-direction: row;
+  gap: 0.5rem;
+  flex-wrap: nowrap;
+  align-items: center;
+  align-content: center;
+  justify-content: center;
+  justify-items: center;
+}
+
+.recognized-text{
+  margin: 0;
+  border-radius: 4px;
+}
+
+.recognized-text:read-only{
+  border: 0;
+  background-color: var(--bs-gray-200);
+  color: var(--bs-gray-600);
+}

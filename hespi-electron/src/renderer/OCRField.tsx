@@ -1,10 +1,12 @@
 import React from 'react'
-import { useCallback } from 'react'
+import { useCallback, useState, useEffect } from 'react'
 import icon from '../../assets/icon.svg';
 import { ReactComponent as HespiLogo } from 'assets/img/hespi-logo2.svg';
 import useImage from '../hooks/useImage';
 import path from 'path';
 import { convertOutputPath } from './utils';
+import { PencilSquare, FloppyFill, TrashFill } from 'react-bootstrap-icons';
+
 
 
 const OCR_TYPES = ["Tesseract", "TrOCR", "LLM"]
@@ -62,7 +64,34 @@ const getFieldImages = (data, field) => {
 
 // return " | ".join(texts)
 
-const getOCRResults = (data, field, ocr) => {
+function EditableOCRField({data, field, ocr}) {
+  const [editMode, setEditMode] = useState(false)
+  const iconSize = 15;
+  const iconColor = "#999999";
+  return <div className="editable-ocr-field">
+    <input readOnly={!editMode} className="textfield--input recognized-text" value={data[field]} />
+    {/* <p className="recognized-text">{data[field]}</p> */}
+    {!editMode ?
+      <PencilSquare color={iconColor} size={iconSize} onClick={() => {
+        console.log("Toggling editing mode!")
+        setEditMode(prevEditMode => !prevEditMode)
+      }} onBlur={() => setEditMode(false)} />
+      :
+      <div style={{display: "flex", flexDirection: "row", gap: "0.5rem"}}>
+        <FloppyFill color={iconColor} size={iconSize} onClick={() => {
+          console.log("Toggling editing mode!")
+          setEditMode(prevEditMode => !prevEditMode)
+        }} />
+        <TrashFill color={iconColor} size={iconSize} onClick={() => {
+          console.log("Toggling editing mode!")
+          setEditMode(prevEditMode => !prevEditMode)
+        }} />
+      </div>
+  }
+  </div>
+}
+
+function OCRResults({data, field, ocr}) {
   var results = [];
   OCR_TYPES.forEach((ocrType, i) => {
     const base = `${field}_${ocrType}_`;
@@ -88,8 +117,8 @@ export default function OCRField({ data, field, index }) {
         )}
       </td>
       <td>
-        <p className="recognized-text">{data[field]}</p>
-        {getOCRResults(data, field)}
+        <EditableOCRField data={data} field={field} />
+        <OCRResults data={data} field={field} />
       </td>
     </tr>
   );

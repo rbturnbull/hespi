@@ -6,6 +6,8 @@ import icon from '../../assets/icon.svg';
 import {ReactComponent as HespiLogo} from 'assets/img/hespi-logo2.svg';
 import componentFiles from "public/hespi-output/hespi-results.json";
 import Stub from './Stub';
+import { convertOutputPath } from './utils';
+
 
 
 
@@ -22,6 +24,18 @@ const onAcceptedFiles = (acceptedFiles: File[]) => {
     }
     reader.readAsArrayBuffer(file)
   })
+}
+
+function NavItem({stub, index}) {
+  const baseImg = "/hespi-output/"+stub.id + "/" + stub.id;
+  return (
+    <li className="nav-item">
+      <a className={"nav-link" + (index <= 0 ? " active" : "")} aria-current="page" href="#" id={stub.id + "-tab"} data-bs-toggle="tab" data-bs-target={`#${stub.id}`} type="button" role="tab" aria-controls={stub.id} aria-selected="true">
+        <img src={`${baseImg}.thumbnail.jpg`}/>
+        {stub.id}
+      </a>
+    </li>
+  )
 }
 
 
@@ -46,11 +60,7 @@ export default function HespiReport() {
 
             <div className="position-sticky">
               <ul className="nav flex-column pt-2">
-                <li className="nav-item">
-                  <a className="nav-link {% if loop.first %}active{% endif %}" aria-current="page" href="#" id="{{ stub }}-tab" data-bs-toggle="tab" data-bs-target="#{{ stub }}" type="button" role="tab" aria-controls="{{ stub }}" aria-selected="true">
-                    <img src='{{ stub }}/{{ stub }}.thumbnail.jpg' />
-                  </a>
-                </li>
+                {componentFiles.map((stub, i) => <NavItem stub={stub} index={i} key={`stub-${i}`} />)}
               </ul>
             </div>
           </nav>
