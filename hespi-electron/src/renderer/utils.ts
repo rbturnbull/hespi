@@ -4,5 +4,6 @@ const convertOutputPath = (filePath: string, outDirName: string = "hespi-output/
   return res
 };
 
+const outDir = "/Users/gabrielem/GitHub/hespi-gui/"
 
-module.exports = { convertOutputPath }
+module.exports = { convertOutputPath, outDir }

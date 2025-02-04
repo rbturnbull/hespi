@@ -4,8 +4,7 @@ import icon from '../../assets/icon.svg';
 import { ReactComponent as HespiLogo } from 'assets/img/hespi-logo2.svg';
 import OCRField from './OCRField';
 import useImage from '../hooks/useImage';
-import { convertOutputPath } from './utils';
-
+import { convertOutputPath, outDir } from './utils';
 import path from 'path';
 
 interface StubData {
@@ -34,8 +33,8 @@ export default function Stub({ stub, index }) {
   const showActive = isFirst ? "show active" : "";
   const elId = `${stub.id}-institional-label-${index}`
   const tabId = `${stub.id}-institional-label-tab-${index}`
-  const imgPath = convertOutputPath(stub.predictions as string);
-  const baseImg = stub.id + "/" + stub.id;
+  const imgPath = stub.predictions as string;
+  const baseImg = outDir+ stub.id + "/" + stub.id;
   // const customImgPath = "/hespi-output/MELUD109283a_sp62022822692917164542_original/MELUD109283a_sp62022822692917164542_original..institutional_label/MELUD109283a_sp62022822692917164542_original..institutional_label.all.jpg"
   // console.log(`Custom Image Path: ${customImgPath}`)
   // console.log(`Image Path: ${imgPath}`)
@@ -63,7 +62,7 @@ export default function Stub({ stub, index }) {
         {/* {% for _, row in my_ocr_df.iterrows() %} */}
         <div className={"tab-pane fade " + showActive} id={elId} role="tabpanel" aria-labelledby={tabId}>
           <center>
-            <a href={imgPath}><img src={imgPath} className="hespi-image" /></a>
+            <a href={imgPath}><img src={"file-loader://"+imgPath} className="hespi-image" /></a>
             <p>Classification: {stub.label_classification}</p>
           </center>
 
@@ -88,7 +87,7 @@ export default function Stub({ stub, index }) {
         {/* {% endfor %} */}
         <div className="tab-pane fade show active" id={ stub.id+"-sheet-components"} role="tabpanel" aria-labelledby={stub.id +"-sheet-components-tab"}>
           <center>
-            <a href={baseImg + ".all.jpg"}><img src={baseImg+".medium.jpg"} className="hespi-image" /></a>
+            <a href={baseImg + ".all.jpg"}><img src={"file-loader://"+baseImg+".medium.jpg"} className="hespi-image" /></a>
           </center>
           <h2>Sheet Components</h2>
 

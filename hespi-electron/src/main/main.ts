@@ -9,7 +9,7 @@
  * `./src/main.js` using webpack. This gives us some performance wins.
  */
 import path from 'path';
-import { app, BrowserWindow, shell, ipcMain } from 'electron';
+import { app, protocol, net, BrowserWindow, shell, ipcMain,  } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import MenuBuilder from './menu';
@@ -124,9 +124,26 @@ app.on('window-all-closed', () => {
   }
 });
 
+protocol.registerSchemesAsPrivileged([
+  {
+    scheme: 'file-loader',
+    privileges: {
+      bypassCSP: true,
+      // standard: true, // Setting it as standard would not parse absolute paths properly (it seemed to remove the initial '/' and lowercase the first path's letter)
+      secure: true,
+      supportFetchAPI: true,
+    }
+  }
+]);
+
 app
   .whenReady()
   .then(() => {
+    protocol.handle('file-loader', (request) => {
+      var fileUrl = 'file://' + request.url.replace('file-loader://', '')
+      console.log('Fetching with file-loader: ' + fileUrl);
+      return net.fetch(fileUrl)
+    })
     createWindow();
     app.on('activate', () => {
       // On macOS it's common to re-create a window in the app when the

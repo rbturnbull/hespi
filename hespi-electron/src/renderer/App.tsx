@@ -9,8 +9,8 @@ export default function App() {
     <Router>
       <Routes>
         {/* <Route path="/Hello" element={<Hello />} /> */}
-        <Route path="/" element={<HespiReport />} />
-        <Route path="/input" element={<HespiGUI />} />
+        <Route path="/report" element={<HespiReport />} />
+        <Route path="/" element={<HespiGUI />} />
       </Routes>
     </Router>
   );

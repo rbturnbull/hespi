@@ -1,7 +1,7 @@
-import React from 'react'
-import { useCallback } from 'react'
+import React, {useState, useCallback, useEffect} from 'react'
 import Dropzone from 'react-dropzone'
 import { useDropzone } from 'react-dropzone'
+import { Upload } from 'react-bootstrap-icons';
 
 import icon from '../../assets/icon.svg';
 
@@ -21,17 +21,28 @@ const onAcceptedFiles = (acceptedFiles: File[]) => {
 }
 
 
-export default function FilesDropzone() {
+export default function FilesDropzone({onFile}) {
+  const [files, setFiles] = React.useState([])
+  const onDrop = useCallback(acceptedFiles => {
+    setFiles(acceptedFiles)
+    onFile(acceptedFiles)    
+  })
   return (
-    <Dropzone onDrop={onAcceptedFiles}>
-      {({ getRootProps, getInputProps }) => (
-        <section>
-          <div {...getRootProps()}>
-            <input {...getInputProps()} />
-            <p>Drag 'n' drop some files here, or click to select files</p>
+    <Dropzone onDrop={onDrop}>
+      {({ getRootProps, getInputProps }) => {
+        return <section className='files-dropzone-container'>
+          {files.map(file => <p>{file.name}</p>)}
+          <div {...getRootProps()} className='files-dropzone'>
+            <Upload size={30}/>
+            <div style={{textAlign: 'center'}}>
+              <p>Drop File Here</p>
+              <p style={{color: '#AAAAAA'}}>- or -</p>
+              <input {...getInputProps()} />
+              <p>Click to Upload</p>
+            </div>
           </div>
         </section>
-      )}
+      }}
     </Dropzone>
   );
 }

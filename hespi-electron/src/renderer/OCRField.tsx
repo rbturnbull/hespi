@@ -4,7 +4,7 @@ import icon from '../../assets/icon.svg';
 import { ReactComponent as HespiLogo } from 'assets/img/hespi-logo2.svg';
 import useImage from '../hooks/useImage';
 import path from 'path';
-import { convertOutputPath } from './utils';
+import { convertOutputPath, outDir } from './utils';
 import { PencilSquare, FloppyFill, TrashFill } from 'react-bootstrap-icons';
 
 
@@ -112,7 +112,7 @@ export default function OCRField({ data, field, index }) {
       <td>
         {getFieldImages(data, field).map((image, i) => 
           <a href={ image }>
-            <img src={ image } className="hespi-image" />
+            <img src={"file-loader://" + outDir+ image } className="hespi-image" />
           </a>
         )}
       </td>
@@ -123,3 +123,6 @@ export default function OCRField({ data, field, index }) {
     </tr>
   );
 }
+
+// /Users/gabrielem/GitHub/hespi-gui/hespi-output/sp66677916964219849288.att/sp66677916964219849288.att.institutional_label/sp66677916964219849288.att.institutional_label.day.jpg
+// /Users/gabrielem/GitHub/hespi-gui/hespi-output/sp66677916964219849288.att/sp66677916964219849288.att.institutional_label/sp66677916964219849288.att.institutional_label.day.jpg

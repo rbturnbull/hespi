@@ -1,47 +1,45 @@
-import React from 'react'
+import React, { useEffect, useState  } from 'react'
 import { useCallback } from 'react'
 import FilesDropzone from './FilesDropzone';
 
 import icon from '../../assets/icon.svg';
 import {ReactComponent as HespiLogo} from 'assets/img/hespi-logo2.svg';
-import componentFiles from "public/hespi-output/hespi-results.json";
 import Stub from './Stub';
-import { convertOutputPath } from './utils';
-
-
-
-
-const onAcceptedFiles = (acceptedFiles: File[]) => {
-  acceptedFiles.forEach((file) => {
-    console.log(`File: ${file.path}`)
-    const reader = new FileReader()
-    reader.onabort = () => console.log('file reading was aborted')
-    reader.onerror = () => console.log('file reading has failed')
-    reader.onload = () => {
-      // Do whatever you want with the file contents
-      const binaryStr = reader.result
-      console.log(binaryStr)
-    }
-    reader.readAsArrayBuffer(file)
-  })
-}
+import { convertOutputPath, outDir } from './utils';
 
 function NavItem({stub, index}) {
-  const baseImg = "/hespi-output/"+stub.id + "/" + stub.id;
+  const baseImg = `${outDir}/hespi-output/${stub.id}/${stub.id}`;
   return (
     <li className="nav-item">
       <a className={"nav-link" + (index <= 0 ? " active" : "")} aria-current="page" href="#" id={stub.id + "-tab"} data-bs-toggle="tab" data-bs-target={`#${stub.id}`} type="button" role="tab" aria-controls={stub.id} aria-selected="true">
-        <img src={`${baseImg}.thumbnail.jpg`}/>
+        <img src={`file-loader://${baseImg}.thumbnail.jpg`}/>
         {stub.id}
       </a>
     </li>
   )
 }
 
+export default function HespiReport({jsonData}) {
+  const [componentFiles, setComponentFiles] = useState([]);
 
-export default function HespiReport() {
+  const onJsonLoaded = (data) => {
+    console.log("OnJsonLoaded", data);
+    setComponentFiles(data);
+  }
 
-  const stubs = componentFiles.map((stub, i) => <Stub stub={stub} key={`stub-${i}`} index={i} />)
+  useEffect(() => {
+    if (jsonData){
+      return onJsonLoaded(jsonData);
+    }
+    try{
+      fetch("file-loader:///" + outDir +"hespi-output/hespi-results.json")
+        .then((res) => res.json().then(onJsonLoaded))
+        .catch(_ => null);
+    } catch (e) {
+      console.log(e);
+    }
+  }, []);
+
   return (
     <>
       <header className="navbar navbar-dark sticky-top bg-light flex-md-nowrap p-0 shadow">
@@ -67,7 +65,7 @@ export default function HespiReport() {
 
           <main className="col-md-9 ms-sm-auto col-lg-10 px-md-4">
             <div className="tab-content" id="myTabContent">
-              {stubs}
+              {componentFiles.map((stub, i) => <Stub stub={stub} key={`stub-${i}`} index={i} />)}
             </div>
           </main>
 
