@@ -175,4 +175,4 @@ cython_debug/
 results/
 *.tif
 *.png
-hespi-output/
+hespi-output*/

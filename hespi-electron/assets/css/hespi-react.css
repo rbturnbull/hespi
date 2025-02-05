@@ -29,7 +29,20 @@ body{
 }
 
 .prediction-section{
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
   width: 70%;
+}
+
+.prediction-section button{
+  border-radius: 4px;
+  border: 0px;
+}
+
+.prediction-section button:disabled{
+  background-color: #999999;
+  opacity: 0.6;
 }
 
 #hespi-root {		
@@ -62,4 +75,32 @@ body{
   border: 0;
   background-color: var(--bs-gray-200);
   color: var(--bs-gray-600);
+}
+
+
+.navigation-container{
+  display: flex;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+.navigation-buttons{
+  display: flex;
+}
+
+.navigation-button{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  justify-items: center;
+  align-content: center;
+  cursor: pointer;
+  padding: 0.5rem;
+  font-size: 16pt;
+}
+.navigation-button:hover:not(:disabled){
+  background-color: aqua;
+}
+.navigation-button:disabled{
+  opacity: 0.5;
 }

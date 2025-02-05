@@ -2,7 +2,7 @@
 import { URL } from 'url';
 import path from 'path';
 
-export function resolveHtmlPath(htmlFileName: string) {
+export const resolveHtmlPath = (htmlFileName: string) => {
   var appPath = "";
   if (process.env.NODE_ENV === 'development') {
     const port = process.env.PORT || 1212;

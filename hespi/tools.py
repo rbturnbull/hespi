@@ -2,10 +2,10 @@ import typer
 from rich.console import Console
 from pathlib import Path
 
-from .ocr import TrOCRSize
-from .hespi import DEFAULT_INSTITUTIONAL_LABEL_CLASSIFIER_WEIGHTS, DEFAULT_SHEET_COMPONENT_WEIGHTS, DEFAULT_LABEL_FIELD_WEIGHTS
-from .download import get_location
-from .util import DATA_DIR
+from ocr import TrOCRSize
+from hespi import DEFAULT_INSTITUTIONAL_LABEL_CLASSIFIER_WEIGHTS, DEFAULT_SHEET_COMPONENT_WEIGHTS, DEFAULT_LABEL_FIELD_WEIGHTS
+from download import get_location
+from util import DATA_DIR
 
 console = Console()
 
@@ -23,7 +23,7 @@ def sheet_component_location():
 def label_field_location():
     """ Shows the location of the default Label-Field model weights. """
     path = get_location(DEFAULT_LABEL_FIELD_WEIGHTS)
-    console.print(f"The location of the default Label-Field model is:\n{path}")    
+    console.print(f"The location of the default Label-Field model is:\n{path}")
 
 
 @app.command()
@@ -42,7 +42,7 @@ def bibtex():
 
 @app.command()
 def trocr(
-    image:Path,
+    image: Path,
     size: TrOCRSize = typer.Option(
         TrOCRSize.LARGE.value,
         help="The size of the TrOCR model to use for handwritten text recognition.",
@@ -50,7 +50,7 @@ def trocr(
     ),
 ):
     """ Run the TrOCR model on an image and print the recognized text. """
-    from .ocr import TrOCR
+    from ocr import TrOCR
 
     ocr = TrOCR(size=size)
     text = ocr.get_text(image)
@@ -62,7 +62,10 @@ def gui():
     """
     Start the Hespi GUI
     """
-    from .gui import build_blocks, compile_sass
+    from gui import build_blocks, compile_sass
     compile_sass(Path(__file__).parent / "templates" / "assets")
     interface = build_blocks()
     interface.launch()
+
+if __name__ == "__main__":
+    gui()

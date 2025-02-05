@@ -14,6 +14,8 @@ import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import MenuBuilder from './menu';
 import { resolveHtmlPath } from './util';
+import { findPython, runHespi, runTest } from '../common/utils';
+
 
 class AppUpdater {
   constructor() {
@@ -22,6 +24,7 @@ class AppUpdater {
     autoUpdater.checkForUpdatesAndNotify();
   }
 }
+
 
 let mainWindow: BrowserWindow | null = null;
 
@@ -78,9 +81,59 @@ const createWindow = async () => {
       preload: app.isPackaged
         ? path.join(__dirname, 'preload.js')
         : path.join(__dirname, '../../.erb/dll/preload.js'),
+      nodeIntegration: true,
     },
   });
 
+
+  const navigationHistory = mainWindow.webContents
+  ipcMain.handle('nav:back', () =>
+    navigationHistory.goBack()
+  )
+
+  ipcMain.handle('nav:forward', () => {
+    navigationHistory.goForward()
+  })
+
+  ipcMain.handle('nav:canGoBack', () => navigationHistory.canGoBack())
+  ipcMain.handle('nav:canGoForward', () => navigationHistory.canGoForward())
+  ipcMain.handle('nav:loadURL', (_, url) =>
+    mainWindow?.webContents.loadURL(url)
+  )
+  ipcMain.handle('nav:getCurrentURL', () => mainWindow?.webContents.getURL())
+  ipcMain.handle('nav:getHistory', () => {
+    return navigationHistory?.getAllEntries()
+  })
+
+
+  const pathMap = findPython();
+  // const { pythonPath, execPath, hespiPath } = pathMap;
+
+  ipcMain.handle('python:hespi', async () => {
+    if(!pathMap) return null;
+    const { execPath, hespiPath } = pathMap;
+    return runHespi(execPath, hespiPath);    
+  })
+  ipcMain.handle('python:test', async () => {
+    if (!pathMap) return null;
+    const { execPath } = pathMap;
+    return runTest(execPath);
+  })
+
+
+
+
+  mainWindow.webContents.on('did-navigate', () => {
+    mainWindow?.webContents.send('nav:updated')
+  })
+
+  mainWindow.webContents.on('did-navigate-in-page', () => {
+    mainWindow?.webContents.send('nav:updated')
+  })
+
+
+
+  
   mainWindow.loadURL(resolveHtmlPath('index.html'));
 
   mainWindow.on('ready-to-show', () => {
@@ -135,6 +188,8 @@ protocol.registerSchemesAsPrivileged([
     }
   }
 ]);
+
+
 
 app
   .whenReady()

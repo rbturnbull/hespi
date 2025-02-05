@@ -30,6 +30,16 @@ label_fields = [
 ]
 
 
+# Utility class to catch the return value of a generator after all "yields"
+class Generator:
+    def __init__(self, gen):
+        self.gen = gen
+
+    def __iter__(self):
+        self.value = yield from self.gen
+        return self.value
+
+
 def adjust_case(field, value):
     if field in ["genus", "family"]:
         return value.title()

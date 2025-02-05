@@ -3,9 +3,10 @@ from pathlib import Path
 import pandas as pd
 from typing import Dict
 
-from .util import console, ocr_result_str, label_fields
+from util import console, ocr_result_str, label_fields
 
-def write_report(output:Path, component_files:Dict, ocr_df:pd.DataFrame):
+
+def write_report(output: Path, component_files: Dict, ocr_df: pd.DataFrame):
     """
     Writes an HTML report of the detection found.
 
@@ -64,5 +65,4 @@ def write_report(output:Path, component_files:Dict, ocr_df:pd.DataFrame):
     )
     with open(str(output), 'w') as f:
         console.print(f"Writing HTML report to '{output}'")
-        f.write(result)                
-
+        f.write(result)

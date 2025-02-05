@@ -7,9 +7,10 @@ from langchain.schema.output_parser import StrOutputParser
 from langchain.chat_models.base import BaseChatModel
 
 
-from .util import label_fields
+from util import label_fields
 
-def encode_image(path:Path|str) -> str:
+
+def encode_image(path: Path | str) -> str:
     path = Path(path)
     with path.open('rb') as image_file:
         image_data = image_file.read()
@@ -19,7 +20,7 @@ def encode_image(path:Path|str) -> str:
     return base64_encoded_image
 
 
-def build_template(institutional_label_image:Path, detection_results:dict) -> ChatPromptTemplate:
+def build_template(institutional_label_image: Path, detection_results: dict) -> ChatPromptTemplate:
     base64_encoded_image = encode_image(institutional_label_image)
     value_dict = {key: value.replace('\n', ' ') for key, value in detection_results.items() if key in label_fields}
     values_string = "\n".join([f"{field}: {value}" for field, value in value_dict.items()])
@@ -33,9 +34,9 @@ def build_template(institutional_label_image:Path, detection_results:dict) -> Ch
                 engine = ocr_result['ocr']
                 original_text_detected = ocr_result['original_text_detected'].replace('\n', ' ')
                 adjusted_text = ocr_result['adjusted_text'].replace('\n', ' ')
-                
+
                 ocr_results_string = f"The {engine} model thought the {field} was '{original_text_detected}'"
-            
+
                 if adjusted_text and adjusted_text != original_text_detected:
                     ocr_results_string += f" and it was adjusted to '{adjusted_text}'"
 
@@ -46,8 +47,8 @@ def build_template(institutional_label_image:Path, detection_results:dict) -> Ch
     system_message = SystemMessage("You are an expert curator of a herbarium with vast knowledge of plant species.")
     main_prompt = f"""
         We have a pipeline for automatically reading the institutional labels and extracting the following fields:\n{', '.join(label_fields)}.
-        
-        You need to inspect an image and see if the fields have been extracted correctly. 
+
+        You need to inspect an image and see if the fields have been extracted correctly.
         If there are errors, then print out the field name with a colon and then the correct value. Each correction is on a new line.
         If the values provided are correct, then don't output anything for that field.
         When you are finished, print out 5 hyphens '-----' to indicate the end of the text.
@@ -68,8 +69,8 @@ def build_template(institutional_label_image:Path, detection_results:dict) -> Ch
     human_message = HumanMessage(
         content=[
             {
-                "type": "text", 
-                "text": main_prompt 
+                "type": "text",
+                "text": main_prompt
             },
             {
                 "type": "image_url",
@@ -81,7 +82,7 @@ def build_template(institutional_label_image:Path, detection_results:dict) -> Ch
     return ChatPromptTemplate.from_messages(messages=[system_message, human_message, ai_message])
 
 
-def output_parser(text:str) -> dict[str, str]:
+def output_parser(text: str) -> dict[str, str]:
     lines = text.split("\n")
     result = {}
     for line in lines:
@@ -108,9 +109,9 @@ def output_parser(text:str) -> dict[str, str]:
     return result
 
 
-def llm_correct_detection_results(llm:BaseChatModel, institutional_label_image:Path, detection_results:dict) -> None:
+def llm_correct_detection_results(llm: BaseChatModel, institutional_label_image: Path, detection_results: dict) -> None:
     template = build_template(institutional_label_image, detection_results)
-    
+
     chain = template | llm | StrOutputParser() | output_parser
     result = chain.invoke({})
     detection_results.update(result)
@@ -125,4 +126,3 @@ def llm_correct_detection_results(llm:BaseChatModel, institutional_label_image:P
             adjusted_text="",
             match_score=0,
         ))
-

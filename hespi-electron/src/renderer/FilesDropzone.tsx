@@ -26,7 +26,7 @@ export default function FilesDropzone({onFile}) {
   const onDrop = useCallback(acceptedFiles => {
     setFiles(acceptedFiles)
     onFile(acceptedFiles)    
-  })
+  }, [])
   return (
     <Dropzone onDrop={onDrop}>
       {({ getRootProps, getInputProps }) => {

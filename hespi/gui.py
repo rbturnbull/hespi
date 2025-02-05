@@ -1,17 +1,10 @@
 import gradio as gr
 from pathlib import Path
-from .hespi import Hespi
+from hespi import Hespi
 import time
+from util import Generator
 
 
-# Utility class to catch the return value of a generator after all "yields"
-class Generator:
-    def __init__(self, gen):
-        self.gen = gen
-
-    def __iter__(self):
-        self.value = yield from self.gen
-        return self.value
 
 def process_images(image_list: list[str], llm_model: str, llm_temperature: float, progress=gr.Progress()):
     output_dir = Path().cwd() / "hespi-output"
@@ -22,10 +15,12 @@ def process_images(image_list: list[str], llm_model: str, llm_temperature: float
         yield f"{ocr_data['id']}"
     yield f"HTML report: {str(gen.value)}"
 
+
 def compile_sass(assets_dir, sass_in_dir="sass", css_out_dir="__css__"):
     print(f"Compiling sass: {assets_dir / sass_in_dir}, {assets_dir / css_out_dir}")
     import sass
     sass.compile(dirname=(assets_dir / sass_in_dir, assets_dir / css_out_dir), output_style="nested")
+
 
 def build_blocks():
     compile_sass(Path(__file__).parent / "templates" / "assets")
@@ -56,10 +51,10 @@ def build_blocks():
         # Also this: https://www.gradio.app/guides/dynamic-apps-with-render-decorator
         # btn.click(start, inputs=[], outputs=pbar, show_progress="full")
         btn.click(process_images, inputs=process_inputs, outputs=pbar, show_progress="full")
-        
+
         def on_detect(p_log, progress):
             return f"{p_log} ✅ {progress}\n"
-            
+
         pbar.change(on_detect, inputs=[progress_log, pbar], outputs=progress_log)
 
     return interface.queue()

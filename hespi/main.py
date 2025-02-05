@@ -3,14 +3,16 @@ import typer
 from pathlib import Path
 import pandas as pd
 from rich.console import Console
+from util import Generator
 
-from .hespi import Hespi
-from .hespi import DEFAULT_INSTITUTIONAL_LABEL_CLASSIFIER_WEIGHTS, DEFAULT_SHEET_COMPONENT_WEIGHTS, DEFAULT_LABEL_FIELD_WEIGHTS
-from .ocr import TrOCRSize
+from hespi import Hespi
+from hespi import DEFAULT_INSTITUTIONAL_LABEL_CLASSIFIER_WEIGHTS, DEFAULT_SHEET_COMPONENT_WEIGHTS, DEFAULT_LABEL_FIELD_WEIGHTS
+from ocr import TrOCRSize
 
 console = Console()
 
 app = typer.Typer()
+
 
 @app.command()
 def detect(
@@ -48,7 +50,7 @@ def detect(
         case_sensitive=False,
     ),
     sheet_component_weights: str = typer.Option(
-        DEFAULT_SHEET_COMPONENT_WEIGHTS, 
+        DEFAULT_SHEET_COMPONENT_WEIGHTS,
         help="The path to the sheet component model weights.",
         envvar="HESPI_SHEET_COMPONENT_WEIGHTS",
     ),
@@ -62,9 +64,9 @@ def detect(
         envvar="HESPI_INSTITUTIONAL_LABEL_CLASSIFIER_WEIGHTS",
         help="The path to the institutional label classifier weights.",
     ),
-    force_download:bool = typer.Option(False, help="Whether or not to force download model weights even if a weights file is present."),
-    sheet_component_res:int = typer.Option(1280, min=640, help="The resolution of images to use for the Sheet-Component model."),
-    label_field_res:int = typer.Option(1280, min=640, help="The resolution of images to use for the Label-Field model."),
+    force_download: bool = typer.Option(False, help="Whether or not to force download model weights even if a weights file is present."),
+    sheet_component_res: int = typer.Option(1280, min=640, help="The resolution of images to use for the Sheet-Component model."),
+    label_field_res: int = typer.Option(1280, min=640, help="The resolution of images to use for the Label-Field model."),
 ) -> pd.DataFrame:
     """
     HErbarium Specimen sheet PIpeline
@@ -89,6 +91,12 @@ def detect(
         sheet_component_res=sheet_component_res,
         label_field_res=label_field_res,
     )
-    return hespi.detect(images, output_dir)
-    
+    console.print(f"Processing images: {images}. Outputting to: {output_dir}")
+    gen = Generator(hespi.detect(images, output_dir))
+    for ocr_data in gen:
+        f"{ocr_data['id']}"
+    console.print(f"DONE!")
 
+
+if __name__ == "__main__":
+    app()

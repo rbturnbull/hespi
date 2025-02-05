@@ -182,8 +182,8 @@
     "webpack-merge": "^5.9.0"
   },
   "build": {
-    "productName": "ElectronReact",
-    "appId": "org.erb.ElectronReact",
+    "productName": "HESPI",
+    "appId": "au.com.unimelb.mdap.HESPI",
     "asar": true,
     "asarUnpack": "**\\*.{node,dll}",
     "files": [
@@ -201,7 +201,7 @@
           "x64"
         ]
       },
-      "type": "module",
+      "type": "distribution",
       "hardenedRuntime": true,
       "entitlements": "assets/entitlements.mac.plist",
       "entitlementsInherit": "assets/entitlements.mac.plist",
@@ -238,7 +238,21 @@
       "output": "release/build"
     },
     "extraResources": [
-      "./assets/**"
+      "./assets/**",
+      {
+        "from": "python",
+        "to": "python",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../hespi",
+        "to": "python/hespi",
+        "filter": [
+          "**/*"
+        ]
+      }
     ],
     "publish": {
       "provider": "github",
