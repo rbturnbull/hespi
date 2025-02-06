@@ -14,7 +14,8 @@ import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import MenuBuilder from './menu';
 import { resolveHtmlPath } from './util';
-import { findPython, runHespi, runTest } from '../common/utils';
+import { handleProtocols, registerProtocols } from './protocols';
+import { registerIpcMainHandles } from './ipcMainHandles';
 
 
 class AppUpdater {
@@ -25,22 +26,15 @@ class AppUpdater {
   }
 }
 
-
 let mainWindow: BrowserWindow | null = null;
 
-ipcMain.on('ipc-example', async (event, arg) => {
-  const msgTemplate = (pingPong: string) => `IPC test: ${pingPong}`;
-  console.log(msgTemplate(arg));
-  event.reply('ipc-example', msgTemplate('pong'));
-});
 
 if (process.env.NODE_ENV === 'production') {
   const sourceMapSupport = require('source-map-support');
   sourceMapSupport.install();
 }
 
-const isDebug =
-  process.env.NODE_ENV === 'development' || process.env.DEBUG_PROD === 'true';
+const isDebug =process.env.NODE_ENV === 'development' || process.env.DEBUG_PROD === 'true';
 
 if (isDebug) {
   require('electron-debug')();
@@ -86,43 +80,6 @@ const createWindow = async () => {
   });
 
 
-  const navigationHistory = mainWindow.webContents
-  ipcMain.handle('nav:back', () =>
-    navigationHistory.goBack()
-  )
-
-  ipcMain.handle('nav:forward', () => {
-    navigationHistory.goForward()
-  })
-
-  ipcMain.handle('nav:canGoBack', () => navigationHistory.canGoBack())
-  ipcMain.handle('nav:canGoForward', () => navigationHistory.canGoForward())
-  ipcMain.handle('nav:loadURL', (_, url) =>
-    mainWindow?.webContents.loadURL(url)
-  )
-  ipcMain.handle('nav:getCurrentURL', () => mainWindow?.webContents.getURL())
-  ipcMain.handle('nav:getHistory', () => {
-    return navigationHistory?.getAllEntries()
-  })
-
-
-  const pathMap = findPython();
-  // const { pythonPath, execPath, hespiPath } = pathMap;
-
-  ipcMain.handle('python:hespi', async () => {
-    if(!pathMap) return null;
-    const { execPath, hespiPath } = pathMap;
-    return runHespi(execPath, hespiPath);    
-  })
-  ipcMain.handle('python:test', async () => {
-    if (!pathMap) return null;
-    const { execPath } = pathMap;
-    return runTest(execPath);
-  })
-
-
-
-
   mainWindow.webContents.on('did-navigate', () => {
     mainWindow?.webContents.send('nav:updated')
   })
@@ -130,9 +87,6 @@ const createWindow = async () => {
   mainWindow.webContents.on('did-navigate-in-page', () => {
     mainWindow?.webContents.send('nav:updated')
   })
-
-
-
   
   mainWindow.loadURL(resolveHtmlPath('index.html'));
 
@@ -160,6 +114,8 @@ const createWindow = async () => {
     return { action: 'deny' };
   });
 
+  registerIpcMainHandles(mainWindow)
+
   // Remove this if your app does not use auto updates
   // eslint-disable-next-line
   new AppUpdater();
@@ -177,28 +133,13 @@ app.on('window-all-closed', () => {
   }
 });
 
-protocol.registerSchemesAsPrivileged([
-  {
-    scheme: 'file-loader',
-    privileges: {
-      bypassCSP: true,
-      // standard: true, // Setting it as standard would not parse absolute paths properly (it seemed to remove the initial '/' and lowercase the first path's letter)
-      secure: true,
-      supportFetchAPI: true,
-    }
-  }
-]);
 
-
+registerProtocols(protocol)
 
 app
   .whenReady()
   .then(() => {
-    protocol.handle('file-loader', (request) => {
-      var fileUrl = 'file://' + request.url.replace('file-loader://', '')
-      console.log('Fetching with file-loader: ' + fileUrl);
-      return net.fetch(fileUrl)
-    })
+    handleProtocols(protocol)
     createWindow();
     app.on('activate', () => {
       // On macOS it's common to re-create a window in the app when the

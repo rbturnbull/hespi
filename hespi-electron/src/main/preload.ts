@@ -1,6 +1,7 @@
 // Disable no-unused-vars, broken for spread args
 /* eslint no-unused-vars: off */
 import { contextBridge, ipcRenderer, IpcRendererEvent } from 'electron';
+import { installPythonDependencies } from '../common/utils';
 
 export type Channels = 'ipc-example';
 
@@ -29,6 +30,7 @@ contextBridge.exposeInMainWorld('electron', electronHandler);
 contextBridge.exposeInMainWorld('electronAPI', {
   runHespi: (imagesList, llmTemperature) => ipcRenderer.invoke('python:hespi', imagesList, llmTemperature),
   runTest: () => ipcRenderer.invoke('python:test'),
+  installPython: () => ipcRenderer.invoke('python:install'),
   goBack: () => ipcRenderer.invoke('nav:back'),
   goForward: () => ipcRenderer.invoke('nav:forward'),
   canGoBack: () => ipcRenderer.invoke('nav:canGoBack'),

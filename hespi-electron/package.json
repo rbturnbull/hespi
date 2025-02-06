@@ -110,6 +110,7 @@
     "json-loader": "^0.5.7",
     "path-browserify": "^1.0.1",
     "react": "^18.2.0",
+    "react-bootstrap": "^2.10.9",
     "react-bootstrap-icons": "^1.11.5",
     "react-dom": "^18.2.0",
     "react-dropzone": "^14.3.5",

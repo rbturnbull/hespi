@@ -1,0 +1,1 @@
+pip install rich typer torch torchapp pytesseract transformers appdirs jinja2 ultralytics langchain gradio drawyolo llmloader libsass orjson rcssmin pytest ipykernel coverage autopep8 sphinx nbsphinx sphinx-rtd-theme sphinx-autobuild myst-parser pre-commit sphinx-copybutton sphinx-click black

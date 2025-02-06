@@ -5,9 +5,12 @@ import Hello from './Hello';
 import HespiReport from './HespiReport';
 import HespiGUI from './HespiGUI';
 import { ArrowLeft, ArrowRight } from 'react-bootstrap-icons';
+import PythonInstallerModal from './PythonInstallerModal';
 
 
 export default function App() {
+  const [modalShow, setModalShow] = useState(true);
+
 
   const updateButtons = async () => {
     const canGoBack = await window.electronAPI.canGoBack()
@@ -22,19 +25,27 @@ export default function App() {
     })  
     updateButtons()
   }, [])
+
   return (
     <Router>
-      <div className='navigation-container'>
-        <div className='navigation-buttons'>
-          <div className='navigation-button back'><ArrowLeft /></div>
-          <div className='navigation-button forward' style={{display: 'none'}}><ArrowRight /></div>
+      <div>
+          <PythonInstallerModal
+            show={modalShow}
+            onHide={() => setModalShow(false)}
+          />
+        
+        <div className='navigation-container'>
+          <div className='navigation-buttons'>
+            <div className='navigation-button back'><ArrowLeft /></div>
+            <div className='navigation-button forward' style={{display: 'none'}}><ArrowRight /></div>
+          </div>
         </div>
+        <Routes>
+          {/* <Route path="/Hello" element={<Hello />} /> */}
+          <Route path="/report" element={<HespiReport />} />
+          <Route path="/" element={<HespiGUI />} />
+        </Routes>
       </div>
-      <Routes>
-        {/* <Route path="/Hello" element={<Hello />} /> */}
-        <Route path="/report" element={<HespiReport />} />
-        <Route path="/" element={<HespiGUI />} />
-      </Routes>
     </Router>
   );
 }
