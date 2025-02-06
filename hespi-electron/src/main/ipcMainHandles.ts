@@ -28,10 +28,7 @@ export const registerIpcMainHandles = (mainWindow: BrowserWindow) => {
   });
 
   ipcMain.handle('python:install', async (event, ...args) => {
-    event.sender.send('python:install:update', "HEY HEY!");
-    // event?.reply('python:install:update', "HEY HEY!");
     const pythonConfig = await getPython(event, args);
-    return pythonConfig?.dependenciesInstalled;
   })
   ipcMain.handle('python:hespi', async (event, ...args) => runHespi(event, args))
   ipcMain.handle('python:test', async (event, ...args) => runTest(event, args))
