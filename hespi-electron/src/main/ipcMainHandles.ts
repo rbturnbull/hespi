@@ -1,5 +1,5 @@
 import { app, protocol, net, BrowserWindow, shell, ipcMain, } from 'electron';
-import { getPython, installPythonDependencies, runHespi, runTest } from '../common/utils';
+import { getPython, runHespi, runTest } from '../common/pythonUtils';
 
 export const registerIpcMainHandles = (mainWindow: BrowserWindow) => {
   const navigationHistory = mainWindow.webContents
@@ -27,8 +27,13 @@ export const registerIpcMainHandles = (mainWindow: BrowserWindow) => {
     event.reply('ipc-example', msgTemplate('pong'));
   });
 
-  ipcMain.handle('python:install', async () => installPythonDependencies())
-  ipcMain.handle('python:hespi', async () => runHespi())
-  ipcMain.handle('python:test', async () => runTest())
+  ipcMain.handle('python:install', async (event, ...args) => {
+    event.sender.send('python:install:update', "HEY HEY!");
+    // event?.reply('python:install:update', "HEY HEY!");
+    const pythonConfig = await getPython(event, args);
+    return pythonConfig?.dependenciesInstalled;
+  })
+  ipcMain.handle('python:hespi', async (event, ...args) => runHespi(event, args))
+  ipcMain.handle('python:test', async (event, ...args) => runTest(event, args))
 
 }

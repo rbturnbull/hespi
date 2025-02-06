@@ -28,3 +28,7 @@ npm-debug.log.*
 *.sass.d.ts
 *.scss.d.ts
 release
+
+python/hespi-gui-env
+python/hespi-libs
+python/hespi-env
