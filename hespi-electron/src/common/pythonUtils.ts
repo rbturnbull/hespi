@@ -153,6 +153,7 @@ export const checkPythonDependencies = async (envName = 'hespi-gui', event = nul
       CONFIG.python.libsDir = libsDir;
       CONFIG.python.dependenciesInstalled = true;
       isInstalling = false;
+      event?.sender?.send('python:install:update', "Python already installed", true);
     } else {
       const cmdOpts = { cwd: CONFIG.python.rootPath };
       if (batchInstall) {
@@ -183,7 +184,11 @@ export const runHespi = async () => {
     return msg;
   }
   try {
-    const result = await execPython(["run_hespi.py", "--libsPaths", CONFIG.python.libsDir, CONFIG.hespi.srcPath, TEST_IMAGES.join(" ")]);
+    const args = ["run_hespi.py"];
+    args.push("-l", "'" + CONFIG.python.libsDir + "'");
+    args.push("-l", "'" + CONFIG.hespi.srcPath + "'");
+    args.push(TEST_IMAGES.join(" "));
+    const result = await execPython(args);
     console.log("Python HESPI Result:", result.stdout);
     fs.writeFile(`${APP_DATA_PATH}/hespi_output.txt`, result.stdout.toString(), err => {
       if (err) console.error(err);
