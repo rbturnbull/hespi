@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 
+const TEST_IMAGES = ["/Users/gabrielem/GitHub/hespi-gui/tests/testdata/test-558d5d8ab1da205b9cfc9754513a9882.jpg"]
 export default function PythonInstallerModal(props) {
   const [pythonInstalled, setPythonInstalled] = useState(false);
 
@@ -16,7 +17,7 @@ export default function PythonInstallerModal(props) {
 
   const testHespi = () => {
     console.log(`Running HESPI (Renderer)...`)
-    window.electronAPI.runHespi().then((stdout) => {
+    window.electronAPI.runHespi(TEST_IMAGES).then((stdout) => {
       console.log(`HESPI (Renderer) output`, stdout)
     }).catch((err) => {
       console.error(`Testing HESPI (Renderer): ${err}`)

@@ -23,7 +23,8 @@ export default function NewPrediction({ onImagesUploaded, ...params }) {
           }
         }} />
         <button className='btn btn-primary' disabled={filesUploaded.length <= 0} onClick={() => {
-          window.electronAPI.runHespi(filesUploaded, 0.2)
+          console.log("Calling hespi electron api ", filesUploaded)
+          window.electronAPI.runHespi(filesUploaded.map(f => "'" + f.path + "'"), 0.2)
         }}>Predict</button>
       </div>
     </>

@@ -6,7 +6,6 @@ import path from 'path';
 import { CONFIG, updateConfig, APP_DATA_PATH } from './configUtils';
 
 const dependencies = ["rich", "typer", "torch", "torchapp", "pytesseract", "transformers", "appdirs", "jinja2", "ultralytics", "langchain", "gradio", "drawyolo", "llmloader", "libsass", "orjson", "rcssmin", "pytest", "ipykernel", "coverage", "autopep8", "sphinx", "nbsphinx", "sphinx-rtd-theme", "sphinx-autobuild", "myst-parser", "pre-commit", "sphinx-copybutton", "sphinx-click", "black"]
-const TEST_IMAGES = ["/Users/gabrielem/GitHub/hespi-gui/tests/testdata/test-558d5d8ab1da205b9cfc9754513a9882.jpg"]
 const reqFile = "hespi-gui-req.txt"
 const envFile = "hespi-env-specs.yaml"
 
@@ -177,18 +176,22 @@ const execPython = async (args, options = null) => {
   }
 }
 
-export const runHespi = async () => {
+export const runHespi = async (event, hespiArgs) => {
   if (isInstalling) {
     const msg = "Python dependencies are still installing...";
     console.log(msg);
     return msg;
   }
+
+  console.log("Running HESPI...", hespiArgs);
+  var imgPaths = hespiArgs[0].join(" ");
+  // imgPaths += TEST_IMAGES.join(" ")
+  const cliArgs = ["run_hespi.py"];
+  cliArgs.push("-l", "'" + CONFIG.python.libsDir + "'");
+  cliArgs.push("-l", "'" + CONFIG.hespi.srcPath + "'");
+  cliArgs.push(imgPaths);
   try {
-    const args = ["run_hespi.py"];
-    args.push("-l", "'" + CONFIG.python.libsDir + "'");
-    args.push("-l", "'" + CONFIG.hespi.srcPath + "'");
-    args.push(TEST_IMAGES.join(" "));
-    const result = await execPython(args);
+    const result = await execPython(cliArgs);
     console.log("Python HESPI Result:", result.stdout);
     fs.writeFile(`${APP_DATA_PATH}/hespi_output.txt`, result.stdout.toString(), err => {
       if (err) console.error(err);
