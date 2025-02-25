@@ -3,9 +3,12 @@ body{
 }
 
 .files-dropzone-container{
-  cursor: pointer;
   display: flex;
   flex-direction: column;
+  border-radius: 4px;
+  border: 1px solid #AAAAAA;
+  overflow: hidden;
+  min-width: min(160px, 100%);
 }
 .files-dropzone{
   cursor: pointer;
@@ -16,12 +19,32 @@ body{
   justify-content: center;
   justify-items: center;
   gap: 1rem;
-  padding: 2rem 5rem;
-  border-radius: 5px;
-  border-style: dashed;
-  overflow: hidden;
-  min-width: min(160px, 100%);
-  border-width: 1px;
+  border: 1px #888888 dashed;
+  padding: 2rem;
+  border-radius: 3px;
+  margin: 1rem 1.5rem;
+}
+.uploaded-files{
+
+}
+
+.uploaded-file{
+  padding: 0.1rem 1rem;
+  background-color: aliceblue;
+  border: 0.5px solid #9ec2e2;
+  display: flex;
+  place-content: space-between;
+}
+
+.file-info{
+  display: flex;
+  place-content: space-evenly;
+  place-items: center;
+  gap: 0.2rem;
+}
+
+.file-info .remove-file-btn{
+  cursor: pointer;
 }
 
 .files-dropzone p {

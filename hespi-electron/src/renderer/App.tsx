@@ -6,6 +6,7 @@ import HespiReport from './HespiReport';
 import HespiGUI from './HespiGUI';
 import { ArrowLeft, ArrowRight } from 'react-bootstrap-icons';
 import PythonInstallerModal from './PythonInstallerModal';
+import { ToastCommunications } from './ToastCommunications';
 
 
 export default function App() {
@@ -28,24 +29,22 @@ export default function App() {
 
   return (
     <Router>
-      <div>
-          <PythonInstallerModal
-            show={modalShow}
-            onHide={() => setModalShow(false)}
-          />
-        
-        <div className='navigation-container'>
-          <div className='navigation-buttons'>
-            <div className='navigation-button back'><ArrowLeft /></div>
-            <div className='navigation-button forward' style={{display: 'none'}}><ArrowRight /></div>
-          </div>
+      <PythonInstallerModal
+        show={modalShow}
+        onHide={() => setModalShow(false)}
+      />      
+      <div className='navigation-container'>
+        <div className='navigation-buttons'>
+          <div className='navigation-button back'><ArrowLeft /></div>
+          <div className='navigation-button forward' style={{display: 'none'}}><ArrowRight /></div>
         </div>
-        <Routes>
-          {/* <Route path="/Hello" element={<Hello />} /> */}
-          <Route path="/report" element={<HespiReport />} />
-          <Route path="/" element={<HespiGUI />} />
-        </Routes>
       </div>
+      <Routes>
+        {/* <Route path="/Hello" element={<Hello />} /> */}
+        <Route path="/report" element={<HespiReport />} />
+        <Route path="/" element={<HespiGUI />} />
+      </Routes>
+      <ToastCommunications />
     </Router>
   );
 }
