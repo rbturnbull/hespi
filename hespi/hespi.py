@@ -159,7 +159,7 @@ class Hespi():
 
         ocr_data = {}
         
-        # Institutional Label Field Detection Model Predictions
+        # Primary Specimen Label Field Detection Model Predictions
         for stub, components in component_files.items():
             for component in components:
                 if re.match(r".*\.institutional_label-?\d*.jpg$", component.name):
@@ -253,7 +253,7 @@ class Hespi():
     def institutional_label_detect(self, component, stub, output_dir) -> Dict:
         detection_results = {"id": stub}
 
-        # Institutional Label Classification
+        # Primary Specimen Label Classification
         classification = self.institutional_label_classify(
             component=component,
             classification_csv = component.parent / f"label_classification.txt",
