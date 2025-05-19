@@ -9,7 +9,6 @@ from rich.table import Column, Table
 import json
 from math import isnan
 
-
 console = Console()
 
 DATA_DIR = Path(__file__).parent / "data"
@@ -149,6 +148,44 @@ def clean_prediction_data(root: dict) -> dict:
             clean_root[key] = root[key]
     return clean_root
 
+
+def clean_sheet_components(component_files: Dict, output_path: Path = None) -> Dict:
+    def relative_to_output(path):
+        try:
+            return Path(path).relative_to(output_path.parent)
+        except Exception:
+            return path
+
+    # def get_field_images(row, field, relative=True):
+    #     images = []
+    #     i = 1
+    #     while True:
+    #         suffix = f"_{i}" if i > 1 else ""
+    #         image = row.get(f"{field}_image{suffix}")
+    #         if image is None:
+    #             break
+    #         if relative:
+    #             image = relative_to_output(image)
+    #         images.append(image)
+    #         i += 1
+    #     return images
+
+    def get_classification(path):
+        return Path(path).name.split(".")[-2].replace("_", " ").title()
+    
+    if component_files is None:
+        return None
+    clean_components = {}
+    for key, components in component_files.items():
+        clean_components[key] = []
+        for c in components:
+            clean_components[key].append({
+                "absolute_path": str(c),
+                "relative_path": relative_to_output(c),
+                "classification": get_classification(c),
+            })
+    return clean_components
+
 def ocr_data_json(data: dict, component_files: Dict = None, output_path: Path = None) -> None:
     """    
     Exports a .hespi file (i.e. JSON) following the structure of the ocr_data Dict
@@ -163,9 +200,14 @@ def ocr_data_json(data: dict, component_files: Dict = None, output_path: Path = 
     Returns:
         pd.DataFrame: The text recognition data as a Pandas dataframe
     """
+    
+    # Clean the component_files an extract relative paths and classification from the absolute path
+    component_files = clean_sheet_components(component_files, output_path)
+    
     clean_data = {}
     print(f"\n------Cleaning JSON data. Keys: {list(data.keys())}--------")
     for root_key in data.keys():
+        # Do not process a component_files dict if it's one of the root keys
         if "component_files" in root_key.lower():
             print(f"Skipping key {root_key} as it is a component file")
             continue
@@ -174,10 +216,11 @@ def ocr_data_json(data: dict, component_files: Dict = None, output_path: Path = 
         clean_root["label_file"] = root_key
         if component_files is not None:
             clean_root["component_files"] = component_files[clean_root["id"]]
-            # del component_files[clean_root["id"]]
+            del component_files[clean_root["id"]]
         print(f"Adding key {clean_root.get('id', 'NO_ID_KEY_IN_DICT')} to new clean JSON")
         clean_data[clean_root["id"]] = clean_root
     
+    # In case there is any component_files that was not in the ocr_data
     if component_files is not None and len(component_files) > 0:
         clean_data["_component_files"] = component_files
     with open(str(output_path), "w") as f:

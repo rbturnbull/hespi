@@ -83,7 +83,11 @@ def picklejson():
 
     with open(str(input_file), "rb") as f:
         ocr_data = pickle.load(f)
-        print(ocr_data)
-    ocr_data_json(ocr_data, output_path = output_file)
+        # print(ocr_data)
+    component_files = None
+    if "component_files" in ocr_data:
+        component_files = ocr_data.get("component_files", None)
+        del ocr_data["component_files"]
+    ocr_data_json(ocr_data, component_files=component_files, output_path=output_file)
 
     console.print(f"Converted {input_file} to {output_file}")
