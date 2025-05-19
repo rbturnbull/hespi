@@ -7,7 +7,7 @@ from langchain.schema.output_parser import StrOutputParser
 from langchain.chat_models.base import BaseChatModel
 
 
-from .util import label_fields
+from hespi.util import label_fields
 
 def encode_image(path:Path|str) -> str:
     path = Path(path)
@@ -19,8 +19,8 @@ def encode_image(path:Path|str) -> str:
     return base64_encoded_image
 
 
-def build_template(institutional_label_image:Path, detection_results:dict) -> ChatPromptTemplate:
-    base64_encoded_image = encode_image(institutional_label_image)
+def build_template(primary_specimen_label_image:Path, detection_results:dict) -> ChatPromptTemplate:
+    base64_encoded_image = encode_image(primary_specimen_label_image)
     value_dict = {key: value.replace('\n', ' ') for key, value in detection_results.items() if key in label_fields}
     values_string = "\n".join([f"{field}: {value}" for field, value in value_dict.items()])
 
@@ -108,8 +108,8 @@ def output_parser(text:str) -> dict[str, str]:
     return result
 
 
-def llm_correct_detection_results(llm:BaseChatModel, institutional_label_image:Path, detection_results:dict) -> None:
-    template = build_template(institutional_label_image, detection_results)
+def llm_correct_detection_results(llm:BaseChatModel, primary_specimen_label_image:Path, detection_results:dict) -> None:
+    template = build_template(primary_specimen_label_image, detection_results)
     
     chain = template | llm | StrOutputParser() | output_parser
     result = chain.invoke({})

@@ -2,6 +2,7 @@ from typer.testing import CliRunner
 from hespi import tools
 from unittest.mock import patch
 from pathlib import Path
+
 from .test_ocr import MockProcessor, MockModel
 
 runner = CliRunner()
@@ -36,11 +37,11 @@ def test_label_field_location():
 
 
 @patch("hespi.tools.get_location", mock_get_location)
-def test_institutional_label_classifier_location():
-    result = runner.invoke(tools.app, ["institutional-label-classifier-location"])
+def test_primary_specimen_label_classifier_location():
+    result = runner.invoke(tools.app, ["primary-specimen-label-classifier-location"])
     assert result.exit_code == 0
     assert "hespi" in result.stdout
-    assert "institutional-label-classifier" in result.stdout.replace("\n", "")
+    assert "The location of the default Primary Specimen Label Classifier" in result.stdout.replace("\n", "")
     assert ".pkl" in result.stdout
 
 

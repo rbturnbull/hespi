@@ -4,9 +4,9 @@ from pathlib import Path
 import pandas as pd
 from rich.console import Console
 
-from .hespi import Hespi
-from .hespi import DEFAULT_INSTITUTIONAL_LABEL_CLASSIFIER_WEIGHTS, DEFAULT_SHEET_COMPONENT_WEIGHTS, DEFAULT_LABEL_FIELD_WEIGHTS
-from .ocr import TrOCRSize
+from hespi.hespi import Hespi
+from hespi.hespi import DEFAULT_INSTITUTIONAL_LABEL_CLASSIFIER_WEIGHTS, DEFAULT_SHEET_COMPONENT_WEIGHTS, DEFAULT_LABEL_FIELD_WEIGHTS
+from hespi.ocr import TrOCRSize
 
 console = Console()
 
@@ -57,7 +57,7 @@ def detect(
         help="The path to the Label-Field model weights.",
         envvar="HESPI_LABEL_FIELD_WEIGHTS",
     ),
-    institutional_label_classifier_weights: str = typer.Option(
+    primary_specimen_label_classifier_weights: str = typer.Option(
         DEFAULT_INSTITUTIONAL_LABEL_CLASSIFIER_WEIGHTS,
         envvar="HESPI_INSTITUTIONAL_LABEL_CLASSIFIER_WEIGHTS",
         help="The path to the institutional label classifier weights.",
@@ -77,7 +77,7 @@ def detect(
         trocr_size=trocr_size,
         sheet_component_weights=sheet_component_weights,
         label_field_weights=label_field_weights,
-        institutional_label_classifier_weights=institutional_label_classifier_weights,
+        primary_specimen_label_classifier_weights=primary_specimen_label_classifier_weights,
         force_download=force_download,
         gpu=gpu,
         fuzzy=fuzzy,

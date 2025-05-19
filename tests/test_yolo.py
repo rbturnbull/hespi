@@ -50,10 +50,14 @@ class MockYoloPredictor():
         pass
 
 
+class MockYoloModelObject():
+    names = None
+
+
 class MockYoloModel():
     predictor = None
-    model = None
-    names = [str(x) for x in range(4)]
+    model = MockYoloModelObject()
+    names = {x:str(x) for x in range(4)}
     
     def predict(self, source, show=False, save=True, batch=4, imgsz=1280):
         return MockYoloOutput(source)

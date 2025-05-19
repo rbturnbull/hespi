@@ -8,13 +8,13 @@ from collections import defaultdict
 from rich.progress import track
 import llmloader
 
-from .yolo import yolo_output, predictions_filename
-from .ocr import Tesseract, TrOCR, TrOCRSize
-from .download import get_location
-from .util import mk_reference, ocr_data_df, adjust_text, get_stub, ocr_data_print_tables
-from .ocr import TrOCRSize
-from .report import write_report
-from .llm import llm_correct_detection_results
+from hespi.yolo import yolo_output, predictions_filename
+from hespi.ocr import Tesseract, TrOCR, TrOCRSize
+from hespi.download import get_location
+from hespi.util import mk_reference, ocr_data_df, adjust_text, get_stub, ocr_data_print_tables
+from hespi.ocr import TrOCRSize
+from hespi.report import write_report
+from hespi.llm import llm_correct_detection_results
 
 console = Console()
 
@@ -37,7 +37,7 @@ class Hespi():
         trocr_size: TrOCRSize = TrOCRSize.LARGE.value,
         sheet_component_weights: str = "",
         label_field_weights: str = "",
-        institutional_label_classifier_weights: str = "",
+        primary_specimen_label_classifier_weights: str = "",
         force_download:bool = False,
         gpu: bool = True,
         fuzzy: bool = True,
@@ -52,7 +52,7 @@ class Hespi():
         self.trocr_size = trocr_size
         self.sheet_component_weights = sheet_component_weights or DEFAULT_SHEET_COMPONENT_WEIGHTS
         self.label_field_weights = label_field_weights or DEFAULT_LABEL_FIELD_WEIGHTS
-        self.institutional_label_classifier_weights = institutional_label_classifier_weights or DEFAULT_INSTITUTIONAL_LABEL_CLASSIFIER_WEIGHTS
+        self.primary_specimen_label_classifier_weights = primary_specimen_label_classifier_weights or DEFAULT_INSTITUTIONAL_LABEL_CLASSIFIER_WEIGHTS
         self.force_download = force_download
         self.fuzzy = fuzzy
         self.fuzzy_cutoff = fuzzy_cutoff
@@ -86,18 +86,26 @@ class Hespi():
 
     @cached_property
     def sheet_component_model(self):
-        return self.get_yolo(self.sheet_component_weights)
+        model = self.get_yolo(self.sheet_component_weights)
+        def replace_name(name):
+            if name == "institutional label":
+                return "primary specimen label"
+            else:
+                return name
+
+        model.model.names = {key:replace_name(name) for key,name in model.names.items()}
+        return model
 
     @cached_property
     def label_field_model(self):
         return self.get_yolo(self.label_field_weights)
 
     @cached_property
-    def institutional_label_classifier(self):
+    def primary_specimen_label_classifier(self):
         from torchapp.examples.image_classifier import ImageClassifier
 
         model = ImageClassifier()
-        model.pretrained = get_location(self.institutional_label_classifier_weights, force=self.force_download)
+        model.pretrained = get_location(self.primary_specimen_label_classifier_weights, force=self.force_download)
         return model
 
     @cached_property
@@ -162,8 +170,8 @@ class Hespi():
         # Primary Specimen Label Field Detection Model Predictions
         for stub, components in component_files.items():
             for component in components:
-                if re.match(r".*\.institutional_label-?\d*.jpg$", component.name):
-                    ocr_data[str(component)] = self.institutional_label_detect(
+                if re.match(r".*\.primary_specimen_label-?\d*.jpg$", component.name):
+                    ocr_data[str(component)] = self.primary_specimen_label_detect(
                         component, 
                         stub=stub,
                         output_dir=output_dir / stub,
@@ -190,12 +198,12 @@ class Hespi():
 
             return report_path
 
-    def institutional_label_classify(self, component:Path, classification_csv:Path) -> str:
+    def primary_specimen_label_classify(self, component:Path, classification_csv:Path) -> str:
         component = Path(component)
         console.print(f"Classifying '{component.name}':")
-        classifier_results = self.institutional_label_classifier(
+        classifier_results = self.primary_specimen_label_classifier(
             items=component,
-            pretrained=self.institutional_label_classifier.pretrained,
+            pretrained=self.primary_specimen_label_classifier.pretrained,
             gpu=self.gpu,
             output_csv=classification_csv,
             verbose=False,
@@ -250,11 +258,11 @@ class Hespi():
 
         return best_text, best_match_score, best_engine            
 
-    def institutional_label_detect(self, component, stub, output_dir) -> Dict:
+    def primary_specimen_label_detect(self, component, stub, output_dir) -> Dict:
         detection_results = {"id": stub}
 
         # Primary Specimen Label Classification
-        classification = self.institutional_label_classify(
+        classification = self.primary_specimen_label_classify(
             component=component,
             classification_csv = component.parent / f"label_classification.txt",
         )
@@ -265,9 +273,9 @@ class Hespi():
             output_dir=output_dir,
         )
 
-        institutional_label_stub = get_stub(component)
-        institutional_label_dir = component.parent/institutional_label_stub
-        predictions_path = institutional_label_dir/predictions_filename(institutional_label_stub)
+        primary_specimen_label_stub = get_stub(component)
+        primary_specimen_label_dir = component.parent/primary_specimen_label_stub
+        predictions_path = primary_specimen_label_dir/predictions_filename(primary_specimen_label_stub)
         detection_results["predictions"] = predictions_path
 
         # Text Recognition on bounding boxes found by YOLO
@@ -352,7 +360,7 @@ class Hespi():
                 The type of field needs to be in the second last component of the filename when split by periods.
                 e.g. XXXXX.FIELD_NAME.jpg
                            ^^^^^^^^^^
-            classification (str, optional): The classification of the institutional label from the institutional_label_classifier model.
+            classification (str, optional): The classification of the institutional label from the primary_specimen_label_classifier model.
                 If it is 'printed' or 'typewriter' then the Tesseract OCR result will be favoured.
                 Otherwise the TrOCR model result will be favoured.
 

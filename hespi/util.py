@@ -1,6 +1,7 @@
 from pathlib import Path
 from typing import Dict
 import pandas as pd
+import json
 import numpy as np
 import string
 from rich.console import Console
@@ -35,6 +36,7 @@ def adjust_case(field, value):
         return value.lower()
     
     return value
+
 
 def strip_punctuation(field, value):
     punctuation_to_strip = string.punctuation.replace('[', '').replace(']', '').replace('(', '').replace(')', '')
@@ -109,6 +111,17 @@ def flatten_single_item_lists(lst):
         elif len(lst) == 0:
             return ''
     return lst
+
+
+def clean_data_for_json(data:dict) -> dict:
+    if isinstance(data, dict):
+        return {key: clean_data_for_json(value) for key, value in data.items()}
+    elif isinstance(data, list):
+        return [clean_data_for_json(item) for item in data]
+    elif isinstance(data, Path):
+        return str(data)
+    else:
+        return data
 
 
 def ocr_data_df(data: dict, output_path: Path=None) -> pd.DataFrame:
@@ -276,6 +289,14 @@ def get_stub(path:Path) -> str:
     """
     last_period = path.name.rfind(".")
     stub = path.name[:last_period] if last_period else path.name
+
+    # Remove any leading or trailing whitespace
+    stub = stub.strip()
+
+    # Replace punctuation with an underscore
+    translate = str.maketrans(string.punctuation, "_" * len(string.punctuation))
+    stub = stub.translate(translate)
+
     return stub
 
     

@@ -1,1 +1,1 @@
-from .hespi import Hespi
+from hespi.hespi import Hespi
