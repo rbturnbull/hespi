@@ -7,7 +7,7 @@ from drawyolo.draw import draw_box_on_image_with_yolo_result
 
 console = Console()
 
-from .util import get_stub
+from hespi.util import get_stub
 
 
 def predictions_filename(stub):

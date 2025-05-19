@@ -6,7 +6,7 @@ from hespi import util
 def test_write_report():
     with tempfile.TemporaryDirectory() as tmpdir:   
         report_file = Path(tmpdir) / "report.html"
-        component_files = {'stub': [Path('stub.institutional_label.jpg'), Path('stub.swatch.jpg')]}
+        component_files = {'stub': [Path('stub.primary_specimen_label.jpg'), Path('stub.swatch.jpg')]}
         ocr_df = util.ocr_data_df(
             {
                 "institutional label": {

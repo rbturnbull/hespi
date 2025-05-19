@@ -58,7 +58,7 @@
               <ul class="nav nav-tabs" id="{{ stub }}-tabs" role="tablist">
                 {% for _, row in my_ocr_df.iterrows() %}
                 <li class="nav-item" role="presentation">
-                  <button class="nav-link {% if loop.first %}show active{% endif %}" id="{{ stub }}-institional-label-tab-{{ loop.index }}" data-bs-toggle="tab" data-bs-target="#{{ stub }}-institional-label-{{ loop.index }}" type="button" role="tab" aria-controls="{{ stub }}-institional-label-{{ loop.index }}" aria-selected="true">Institutional Label {% if not loop.first %}{{ loop.index }}{% endif %}</button>
+                  <button class="nav-link {% if loop.first %}show active{% endif %}" id="{{ stub }}-institional-label-tab-{{ loop.index }}" data-bs-toggle="tab" data-bs-target="#{{ stub }}-institional-label-{{ loop.index }}" type="button" role="tab" aria-controls="{{ stub }}-institional-label-{{ loop.index }}" aria-selected="true">Primary Specimen Label {% if not loop.first %}{{ loop.index }}{% endif %}</button>
                 </li>
                 {% endfor %}
                 <li class="nav-item" role="presentation">

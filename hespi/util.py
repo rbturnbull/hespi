@@ -1,6 +1,7 @@
 from pathlib import Path
 from typing import Dict
 import pandas as pd
+import json
 import numpy as np
 import string
 from rich.console import Console
@@ -36,6 +37,8 @@ class POSIXPathEncoder(json.JSONEncoder):
         return super().default(obj)
 
 # Utility class to catch the return value of a generator after all "yields"
+
+
 class Generator:
     def __init__(self, gen):
         self.gen = gen
@@ -129,6 +132,17 @@ def flatten_single_item_lists(lst):
     return lst
 
 
+def clean_data_for_json(data: dict) -> dict:
+    if isinstance(data, dict):
+        return {key: clean_data_for_json(value) for key, value in data.items()}
+    elif isinstance(data, list):
+        return [clean_data_for_json(item) for item in data]
+    elif isinstance(data, Path):
+        return str(data)
+    else:
+        return data
+
+
 def clean_prediction_data(root: dict) -> dict:
     clean_root = {}
     for key in root.keys():
@@ -172,7 +186,7 @@ def clean_sheet_components(component_files: Dict, output_path: Path = None) -> D
 
     def get_classification(path):
         return Path(path).name.split(".")[-2].replace("_", " ").title()
-    
+
     if component_files is None:
         return None
     clean_components = {}
@@ -185,6 +199,7 @@ def clean_sheet_components(component_files: Dict, output_path: Path = None) -> D
                 "classification": get_classification(c),
             })
     return clean_components
+
 
 def ocr_data_json(data: dict, component_files: Dict = None, output_path: Path = None) -> None:
     """    
@@ -200,10 +215,10 @@ def ocr_data_json(data: dict, component_files: Dict = None, output_path: Path = 
     Returns:
         pd.DataFrame: The text recognition data as a Pandas dataframe
     """
-    
+
     # Clean the component_files an extract relative paths and classification from the absolute path
     component_files = clean_sheet_components(component_files, output_path)
-    
+
     clean_data = {}
     print(f"\n------Cleaning JSON data. Keys: {list(data.keys())}--------")
     for root_key in data.keys():
@@ -219,12 +234,13 @@ def ocr_data_json(data: dict, component_files: Dict = None, output_path: Path = 
             del component_files[clean_root["id"]]
         print(f"Adding key {clean_root.get('id', 'NO_ID_KEY_IN_DICT')} to new clean JSON")
         clean_data[clean_root["id"]] = clean_root
-    
+
     # In case there is any component_files that was not in the ocr_data
     if component_files is not None and len(component_files) > 0:
         clean_data["_component_files"] = component_files
     with open(str(output_path), "w") as f:
         json.dump(clean_data, f, indent=3, cls=POSIXPathEncoder)
+
 
 def ocr_data_df(data: dict, output_path: Path = None) -> pd.DataFrame:
     """    
@@ -411,4 +427,12 @@ def get_stub(path: Path) -> str:
     """
     last_period = path.name.rfind(".")
     stub = path.name[:last_period] if last_period else path.name
+
+    # Remove any leading or trailing whitespace
+    stub = stub.strip()
+
+    # Replace punctuation with an underscore
+    translate = str.maketrans(string.punctuation, "_" * len(string.punctuation))
+    stub = stub.translate(translate)
+
     return stub

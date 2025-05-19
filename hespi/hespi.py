@@ -11,13 +11,13 @@ import llmloader
 import pickle
 
 
-from .yolo import yolo_output, predictions_filename
-from .ocr import Tesseract, TrOCR, TrOCRSize
-from .download import get_location
-from .util import mk_reference, ocr_data_df, ocr_data_json, adjust_text, get_stub, ocr_data_print_tables
-from .ocr import TrOCRSize
-from .report import write_report
-from .llm import llm_correct_detection_results
+from hespi.yolo import yolo_output, predictions_filename
+from hespi.ocr import Tesseract, TrOCR, TrOCRSize
+from hespi.download import get_location
+from hespi.util import mk_reference, ocr_data_df, ocr_data_json, adjust_text, get_stub, ocr_data_print_tables
+from hespi.ocr import TrOCRSize
+from hespi.report import write_report
+from hespi.llm import llm_correct_detection_results
 
 console = Console()
 
@@ -40,8 +40,8 @@ class Hespi():
         trocr_size: TrOCRSize = TrOCRSize.LARGE.value,
         sheet_component_weights: str = "",
         label_field_weights: str = "",
-        institutional_label_classifier_weights: str = "",
-        force_download:bool = False,
+        primary_specimen_label_classifier_weights: str = "",
+        force_download: bool = False,
         gpu: bool = True,
         fuzzy: bool = True,
         fuzzy_cutoff: float = 0.8,
@@ -49,13 +49,13 @@ class Hespi():
         llm_model: str = "gpt-4o",
         llm_api_key: str = "",
         llm_temperature: float = 0.0,
-        sheet_component_res:int = 1280,
-        label_field_res:int = 1280,
+        sheet_component_res: int = 1280,
+        label_field_res: int = 1280,
     ):
         self.trocr_size = trocr_size
         self.sheet_component_weights = sheet_component_weights or DEFAULT_SHEET_COMPONENT_WEIGHTS
         self.label_field_weights = label_field_weights or DEFAULT_LABEL_FIELD_WEIGHTS
-        self.institutional_label_classifier_weights = institutional_label_classifier_weights or DEFAULT_INSTITUTIONAL_LABEL_CLASSIFIER_WEIGHTS
+        self.primary_specimen_label_classifier_weights = primary_specimen_label_classifier_weights or DEFAULT_INSTITUTIONAL_LABEL_CLASSIFIER_WEIGHTS
         self.force_download = force_download
         self.fuzzy = fuzzy
         self.fuzzy_cutoff = fuzzy_cutoff
@@ -74,13 +74,13 @@ class Hespi():
             except ValueError as err:
                 console.print(f"[red]Error loading LLM model: {err}[/red]")
                 self.llm = None
-        
+
         # Check if gpu is available
         import torch
         self.gpu = gpu and torch.cuda.is_available()
         self.device = "cuda:0" if self.gpu else "cpu"
 
-    def get_yolo(self, weights_url:str) -> "YOLO":
+    def get_yolo(self, weights_url: str) -> "YOLO":
         from ultralytics import YOLO
 
         weights = get_location(weights_url, force=self.force_download)
@@ -90,18 +90,27 @@ class Hespi():
 
     @cached_property
     def sheet_component_model(self):
-        return self.get_yolo(self.sheet_component_weights)
+        model = self.get_yolo(self.sheet_component_weights)
+
+        def replace_name(name):
+            if name == "institutional label":
+                return "primary specimen label"
+            else:
+                return name
+
+        model.model.names = {key: replace_name(name) for key, name in model.names.items()}
+        return model
 
     @cached_property
     def label_field_model(self):
         return self.get_yolo(self.label_field_weights)
 
     @cached_property
-    def institutional_label_classifier(self):
+    def primary_specimen_label_classifier(self):
         from torchapp.examples.image_classifier import ImageClassifier
 
         model = ImageClassifier()
-        model.pretrained = get_location(self.institutional_label_classifier_weights, force=self.force_download)
+        model.pretrained = get_location(self.primary_specimen_label_classifier_weights, force=self.force_download)
         return model
 
     @cached_property
@@ -125,33 +134,33 @@ class Hespi():
 
     def sheet_component_detect(
         self,
-        images:List[Path],
-        output_dir:Path,
+        images: List[Path],
+        output_dir: Path,
     ):
         return yolo_output(
-            self.sheet_component_model, 
-            images, 
-            output_dir=output_dir, 
+            self.sheet_component_model,
+            images,
+            output_dir=output_dir,
             res=self.sheet_component_res,
         )
 
     def label_field_model_detect(
         self,
-        images:List[Path],
-        output_dir:Path,
+        images: List[Path],
+        output_dir: Path,
     ):
         return yolo_output(
-            self.label_field_model, 
-            images, 
-            output_dir=output_dir, 
+            self.label_field_model,
+            images,
+            output_dir=output_dir,
             res=self.label_field_res,
         )
 
     # This is now a generator, you need to yield all the results or it won't process anything, but it's good for progress tracking
     def detect(
         self,
-        images:List[Path],
-        output_dir:Path,
+        images: List[Path],
+        output_dir: Path,
         report: bool = True,
         progress: grProgress = None
     ) -> Path | None:
@@ -171,15 +180,15 @@ class Hespi():
 
         if self.progress is not None:
             self.progress(0.1, desc="Loading models...")
-            
+
         ocr_data = {}
-        
-        # Institutional Label Field Detection Model Predictions
+
+        # Primary Specimen Label Field Detection Model Predictions
         for stub, components in component_files.items():
             for component in components:
-                if re.match(r".*\.institutional_label-?\d*.jpg$", component.name):
-                    ocr_data[str(component)] = self.institutional_label_detect(
-                        component, 
+                if re.match(r".*\.primary_specimen_label-?\d*.jpg$", component.name):
+                    ocr_data[str(component)] = self.primary_specimen_label_detect(
+                        component,
                         stub=stub,
                         output_dir=output_dir / stub,
                         progress=self.progress
@@ -190,7 +199,7 @@ class Hespi():
             ocr_data_pkl = ocr_data.copy()
             ocr_data_pkl["component_files"] = component_files
             pickle.dump(ocr_data_pkl, f)
-            
+
         ocr_data_json(ocr_data, component_files=component_files, output_path=output_dir/"hespi-results.json")
         df = ocr_data_df(ocr_data, output_path=output_dir/"hespi-results.csv")
         ocr_data_print_tables(df)
@@ -207,17 +216,17 @@ class Hespi():
                 while report_path.exists():
                     index += 1
                     report_path = output_dir/f"hespi-report-{index}.html"
-            
+
             write_report(report_path, component_files, df)
 
             return report_path
 
-    def institutional_label_classify(self, component:Path, classification_csv:Path) -> str:
+    def primary_specimen_label_classify(self, component: Path, classification_csv: Path) -> str:
         component = Path(component)
         console.print(f"Classifying '{component.name}':")
-        classifier_results = self.institutional_label_classifier(
+        classifier_results = self.primary_specimen_label_classifier(
             items=component,
-            pretrained=self.institutional_label_classifier.pretrained,
+            pretrained=self.primary_specimen_label_classifier.pretrained,
             gpu=self.gpu,
             output_csv=classification_csv,
             verbose=False,
@@ -230,12 +239,12 @@ class Hespi():
 
         emoji = CLASSIFICATION_EMOJI.get(classification, "")
 
-        console.print( f"[red]{classification}[/red] {emoji}")
+        console.print(f"[red]{classification}[/red] {emoji}")
         console.print(f"Classification result to '{classification_csv}'")
 
         return classification
-    
-    def determine_best_ocr_result(self, detection_result, preferred_engine:str="") -> Tuple:
+
+    def determine_best_ocr_result(self, detection_result, preferred_engine: str = "") -> Tuple:
         assert isinstance(detection_result, list)
         best_text = ''
         best_match_score = ''
@@ -244,7 +253,7 @@ class Hespi():
         # If there are no results, then return empty strings
         if len(detection_result) == 0:
             return best_text, best_match_score, best_engine
-        
+
         # If there is only one result, then return that result
         if len(detection_result) == 1:
             best_text = detection_result[0]['adjusted_text']
@@ -254,7 +263,7 @@ class Hespi():
 
         # Check if there are any results with scores
         detection_results_with_scores = [result for result in detection_result if result['match_score'] not in ['', 0]]
-        if len(detection_results_with_scores) > 0:        
+        if len(detection_results_with_scores) > 0:
             best_result = max(detection_results_with_scores, key=lambda x: x['match_score'])
             best_text = best_result['adjusted_text']
             best_engine = best_result['ocr']
@@ -270,15 +279,15 @@ class Hespi():
         if len(detection_result) > 0:
             best_text = max(detection_result, key=lambda x: len(x['adjusted_text']))['adjusted_text']
 
-        return best_text, best_match_score, best_engine            
+        return best_text, best_match_score, best_engine
 
-    def institutional_label_detect(self, component, stub, output_dir, progress: grProgress = None) -> Dict:
+    def primary_specimen_label_detect(self, component, stub, output_dir, progress: grProgress = None) -> Dict:
         detection_results = {"id": stub}
 
-        # Institutional Label Classification
-        classification = self.institutional_label_classify(
+        # Primary Specimen Label Classification
+        classification = self.primary_specimen_label_classify(
             component=component,
-            classification_csv = component.parent / f"label_classification.txt",
+            classification_csv=component.parent / f"label_classification.txt",
         )
         detection_results["label_classification"] = classification
 
@@ -287,9 +296,9 @@ class Hespi():
             output_dir=output_dir,
         )
 
-        institutional_label_stub = get_stub(component)
-        institutional_label_dir = component.parent/institutional_label_stub
-        predictions_path = institutional_label_dir/predictions_filename(institutional_label_stub)
+        primary_specimen_label_stub = get_stub(component)
+        primary_specimen_label_dir = component.parent/primary_specimen_label_stub
+        predictions_path = primary_specimen_label_dir/predictions_filename(primary_specimen_label_stub)
         detection_results["predictions"] = predictions_path
 
         # Text Recognition on bounding boxes found by YOLO
@@ -298,7 +307,7 @@ class Hespi():
             progress_track = track(fields, description=desc) if self.progress is None else self.progress.tqdm(fields, desc=desc)
             for field_file in progress_track:
                 field_results = self.read_field_file(
-                    field_file, 
+                    field_file,
                     classification,
                 )
 
@@ -307,8 +316,8 @@ class Hespi():
                         detection_results[key] = value
                     else:
                         detection_results[key] = (
-                            detection_results[key] + value 
-                            if isinstance(value, list) 
+                            detection_results[key] + value
+                            if isinstance(value, list)
                             else [detection_results[key], value]
                         )
 
@@ -354,7 +363,7 @@ class Hespi():
                             detection_results[key] = image_path
                         else:
                             results[f"{key}_{i+1}"] = image_path
-        
+
         detection_results.update(results)
 
         if self.llm:
@@ -362,11 +371,10 @@ class Hespi():
 
         return detection_results
 
-    
     def read_field_file(
         self,
-        field_file:Path,
-        classification:str = None,
+        field_file: Path,
+        classification: str = None,
     ) -> Dict:
         """
         Reads the text of an image of a field from an institutional label.
@@ -376,7 +384,7 @@ class Hespi():
                 The type of field needs to be in the second last component of the filename when split by periods.
                 e.g. XXXXX.FIELD_NAME.jpg
                            ^^^^^^^^^^
-            classification (str, optional): The classification of the institutional label from the institutional_label_classifier model.
+            classification (str, optional): The classification of the institutional label from the primary_specimen_label_classifier model.
                 If it is 'printed' or 'typewriter' then the Tesseract OCR result will be favoured.
                 Otherwise the TrOCR model result will be favoured.
 
@@ -390,9 +398,9 @@ class Hespi():
         field = field_file_components[-2].split("-")[0]
         classification = classification or ""
 
-        detection_results = defaultdict(list)              
+        detection_results = defaultdict(list)
         detection_results[f"{field}_image"].append(field_file)
-        
+
         # HTR
         htr_text = ''
         if self.htr:
@@ -401,19 +409,19 @@ class Hespi():
                 # console.print(
                 #     f"Handwritten Text Recognition (TrOCR): [red]'{htr_text}'[/red]"
                 # )
-                
+
                 adjusted_text, match_score = adjust_text(
-                    field, 
-                    htr_text, 
-                    fuzzy=self.fuzzy, 
-                    fuzzy_cutoff=self.fuzzy_cutoff, 
+                    field,
+                    htr_text,
+                    fuzzy=self.fuzzy,
+                    fuzzy_cutoff=self.fuzzy_cutoff,
                     reference=self.reference,
                 )
-                
+
                 detection_results[f"{field}_ocr_results"].append(
                     {
-                        'ocr': 'TrOCR', 
-                        'original_text_detected': htr_text, 
+                        'ocr': 'TrOCR',
+                        'original_text_detected': htr_text,
                         'adjusted_text': adjusted_text,
                         'match_score': match_score,
                     }
@@ -424,24 +432,23 @@ class Hespi():
         if tesseract_text:
             # console.print(
             #     f"Optical Character Recognition (Tesseract): [red]'{tesseract_text}'[/red]"
-            # )            
+            # )
 
             adjusted_text, match_score = adjust_text(
-                field, 
-                tesseract_text, 
-                fuzzy=self.fuzzy, 
-                fuzzy_cutoff=self.fuzzy_cutoff, 
+                field,
+                tesseract_text,
+                fuzzy=self.fuzzy,
+                fuzzy_cutoff=self.fuzzy_cutoff,
                 reference=self.reference,
             )
-            
+
             detection_results[f"{field}_ocr_results"].append(
                 {
-                    'ocr': 'Tesseract', 
-                    'original_text_detected': tesseract_text, 
-                    'adjusted_text': adjusted_text, 
+                    'ocr': 'Tesseract',
+                    'original_text_detected': tesseract_text,
+                    'adjusted_text': adjusted_text,
                     'match_score': match_score,
                 }
-            )            
-        
-        return detection_results
+            )
 
+        return detection_results
