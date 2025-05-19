@@ -1,15 +1,26 @@
 import gradio as gr
 from pathlib import Path
 from .hespi import Hespi
+from .util import Generator
 
-def process_images(image_list: list[str], llm_model: str, llm_temperature: float):
+def process_images(image_list: list[str], llm_model: str, llm_temperature: float, progress=gr.Progress()):
     output_dir = Path().cwd() / "hespi-output"
+    progress(0.0, desc="Starting")
     hespi = Hespi(llm_model=llm_model, llm_temperature=llm_temperature)
-    report_path = hespi.detect(image_list, output_dir)
-    return gr.update(value=str(report_path), visible=True)
+    gen = Generator(hespi.detect(image_list, output_dir, progress=progress))
+    for ocr_data in gen:
+        yield f"{ocr_data['id']}"
+    yield f"HTML report: {str(gen.value)}"
 
 
-def build_interface():
+def compile_sass(assets_dir, sass_in_dir="sass", css_out_dir="__css__"):
+    print(f"Compiling sass: {assets_dir / sass_in_dir}, {assets_dir / css_out_dir}")
+    import sass
+    sass.compile(dirname=(assets_dir / sass_in_dir, assets_dir / css_out_dir), output_style="nested")
+
+
+def build_blocks():
+    compile_sass(Path(__file__).parent / "templates" / "assets")
     with gr.Blocks() as interface:
         banner = "https://raw.githubusercontent.com/rbturnbull/hespi/main/docs/images/hespi-banner.svg"
         gr.HTML(f"<div style='text-align:center;'><center><img src='{banner}' alt='Hespi Banner' style='width:100%; max-width: 700px;'></center></div>")
@@ -28,9 +39,19 @@ def build_interface():
                     step=0.1,
                     label="LLM Temperature",
                 )
+        btn = gr.Button("Run Pipeline")
+        pbar = gr.Text(label="Progress", elem_id="pbar", visible=True)
+        progress_log = gr.TextArea(elem_id="p_log", value="", show_label=False, visible=True)
+        process_inputs = [image_input, llm_model, llm_temperature]
+        # Check out: https://www.gradio.app/guides/blocks-and-event-listeners#running-events-consecutively
+        # and a good progress bar example: https://github.com/gradio-app/gradio/issues/8895
+        # Also this: https://www.gradio.app/guides/dynamic-apps-with-render-decorator
+        # btn.click(start, inputs=[], outputs=pbar, show_progress="full")
+        btn.click(process_images, inputs=process_inputs, outputs=pbar, show_progress="full")
 
-        process_button = gr.Button("Run Pipeline")
-        output = gr.Text(label="Report", visible=False)
-        process_button.click(process_images, inputs=[image_input,llm_model,llm_temperature], outputs=output)
+        def on_detect(p_log, progress):
+            return f"{p_log} ✅ {progress}\n"
 
-    return interface
+        pbar.change(on_detect, inputs=[progress_log, pbar], outputs=progress_log)
+
+    return interface.queue()

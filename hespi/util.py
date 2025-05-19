@@ -6,6 +6,8 @@ import string
 from rich.console import Console
 from difflib import get_close_matches, SequenceMatcher
 from rich.table import Column, Table
+import json
+from math import isnan
 
 
 console = Console()
@@ -28,19 +30,30 @@ label_fields = [
 ]
 
 
+# Utility class to catch the return value of a generator after all "yields"
+class Generator:
+    def __init__(self, gen):
+        self.gen = gen
+
+    def __iter__(self):
+        self.value = yield from self.gen
+        return self.value
+
+
 def adjust_case(field, value):
     if field in ["genus", "family"]:
         return value.title()
     elif field == "species":
         return value.lower()
-    
+
     return value
+
 
 def strip_punctuation(field, value):
     punctuation_to_strip = string.punctuation.replace('[', '').replace(']', '').replace('(', '').replace(')', '')
     if field in ["genus", "family", "species"]:
         return value.strip(punctuation_to_strip).strip()
-    
+
     return value
 
 
@@ -111,7 +124,7 @@ def flatten_single_item_lists(lst):
     return lst
 
 
-def ocr_data_df(data: dict, output_path: Path=None) -> pd.DataFrame:
+def ocr_data_df(data: dict, output_path: Path = None) -> pd.DataFrame:
     """    
     Creates a DataFrame of data, sorts columns and outputs a CSV with OCR values.
 
@@ -124,22 +137,27 @@ def ocr_data_df(data: dict, output_path: Path=None) -> pd.DataFrame:
     Returns:
         pd.DataFrame: The text recognition data as a Pandas dataframe
     """
+    # try:
+    #     with open(str(output_path.with_suffix('.new.json')), "w") as outfile:
+    #         json.dump(data, outfile, indent=3, sort_keys=False)
+    # except Exception as e:
+    #     console.print(f"Error writing JSON file: {e}")
     df = pd.DataFrame.from_dict(data, orient="index")
     df = df.fillna(value="")
     df = df.reset_index().rename(columns={"index": "institutional label"})
-    
+
     # Splitting the ocr_results columns into seperate original text, adjusted, and score
-    # Enables the html report to pull the data 
+    # Enables the html report to pull the data
     for col in df.columns:
         if 'ocr_results' in col:
             field_name = col.replace('_ocr_results', '')
             new_columns = df[f"{field_name}_ocr_results"].apply(process_row_ocr_results, field_name=field_name).apply(pd.Series)
 
             df = pd.concat([df, new_columns], axis=1)
-        
+
     # insert columns not included in dataframe, and re-order
     # including any columns not included in col_options to account for any updates
-    col_options = [ "institutional label", "id" ] + label_fields
+    col_options = ["institutional label", "id"] + label_fields
 
     missing_cols = [col for col in col_options if col not in df.columns]
     df[missing_cols] = ""
@@ -149,20 +167,20 @@ def ocr_data_df(data: dict, output_path: Path=None) -> pd.DataFrame:
     df['image_links-->'] = '    |    '
     df['ocr_results_split-->'] = '    |    '
 
-    # grouping other columns 
+    # grouping other columns
     score_cols = sorted([col for col in df.columns if '_match_score' in col and 'Tesseract' not in col and 'TrOCR' not in col], key=label_sort_key)
     ocr_cols = ['<--results|ocr_details-->'] + sorted([col for col in df.columns if '_ocr_results' in col], key=label_sort_key)
     image_files_cols = ['image_links-->'] + sorted([col for col in df.columns if '_image' in col or 'predictions' in col], key=label_sort_key)
     result_cols = ['ocr_results_split-->'] + sorted([col for col in df.columns if 'Tesseract' in col or 'TrOCR' in col], key=label_sort_key)
-    
-    cols = col_options + score_cols + ['label_classification'] + ocr_cols + result_cols + image_files_cols 
+
+    cols = col_options + score_cols + ['label_classification'] + ocr_cols + result_cols + image_files_cols
     extra_cols = [col for col in df.columns if col not in cols]
 
     cols = cols + extra_cols
-    
+
     # Filter for only the columns that are in the dataframe
     cols = [col for col in cols if col in df.columns]
-    
+
     df = df[cols]
     df = df.fillna('')
 
@@ -174,7 +192,7 @@ def ocr_data_df(data: dict, output_path: Path=None) -> pd.DataFrame:
     if output_path:
         output_path = Path(output_path)
         output_path.parent.mkdir(exist_ok=True, parents=True)
-        
+
         # If the file already exists, then concatenate it
         if output_path.exists():
             old_df = pd.read_csv(output_path)
@@ -183,13 +201,41 @@ def ocr_data_df(data: dict, output_path: Path=None) -> pd.DataFrame:
         else:
             console.print(f"Writing Hespi text results to: '{output_path}'")
             write_df = df
-        
+
         write_df.to_csv(output_path, index=False)
 
+        try:
+            # exported_df = pd.read_csv(output_path)
+            json_df = write_df.copy()
+            json_df = json_df.applymap(lambda x: str(x) if isinstance(x, Path) else x)
+            json_df.to_json(output_path.with_suffix('.json'), orient="records", indent=3)
+        except Exception as e:
+            console.print(f"Error writing JSON file: {e}")
     return df
 
 
-def ocr_result_str(row, field_name:str, ocr_type:str) -> str:
+def to_json(df):
+    json_list = json.loads(json.dumps(list(df.T.to_dict().values())))
+    json_clean = []
+
+    for obj in json_list:
+        clean_obj = {}
+        for k, v in obj.items():
+            try:
+                if isnan(v):
+                    obj[k] = None
+                    continue
+            except:
+                pass
+            clean_obj[k] = v
+        json_clean.append(clean_obj)
+    with open("hespi-results-list.json", "w") as f:
+        json.dump(json_list, f, indent=3)
+    with open("hespi-results-clean.json", "w") as f:
+        json.dump(json_clean, f, indent=3)
+
+
+def ocr_result_str(row, field_name: str, ocr_type: str) -> str:
     def get_list(row, key):
         result = row.get(key, "")
         if not isinstance(result, list):
@@ -208,12 +254,12 @@ def ocr_result_str(row, field_name:str, ocr_type:str) -> str:
         text = original
         if adjusted and adjusted != original:
             text += f" → {adjusted}"
-            
+
         if match_score:
             text += f" ({match_score})"
-        
+
         texts.append(text)
-        
+
     return " | ".join(texts)
 
 
@@ -242,7 +288,7 @@ def ocr_data_print_tables(df: pd.DataFrame) -> None:
         console.print(table)
 
 
-def adjust_text(field:str, recognised_text:str, fuzzy:bool, fuzzy_cutoff:float, reference:Dict):
+def adjust_text(field: str, recognised_text: str, fuzzy: bool, fuzzy_cutoff: float, reference: Dict):
     text_stripped = strip_punctuation(field, recognised_text)
     text_adjusted = adjust_case(field, text_stripped)
     match_score = ""
@@ -264,7 +310,7 @@ def adjust_text(field:str, recognised_text:str, fuzzy:bool, fuzzy_cutoff:float, 
     return (text_adjusted, match_score)
 
 
-def get_stub(path:Path) -> str:
+def get_stub(path: Path) -> str:
     """
     Gets the part of the filename before the last extension
 
@@ -277,5 +323,3 @@ def get_stub(path:Path) -> str:
     last_period = path.name.rfind(".")
     stub = path.name[:last_period] if last_period else path.name
     return stub
-
-    
