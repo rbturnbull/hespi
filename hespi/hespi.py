@@ -8,11 +8,13 @@ from collections import defaultdict
 from rich.progress import track
 from gradio import Progress as grProgress
 import llmloader
+import pickle
+
 
 from .yolo import yolo_output, predictions_filename
 from .ocr import Tesseract, TrOCR, TrOCRSize
 from .download import get_location
-from .util import mk_reference, ocr_data_df, adjust_text, get_stub, ocr_data_print_tables
+from .util import mk_reference, ocr_data_df, ocr_data_json, adjust_text, get_stub, ocr_data_print_tables
 from .ocr import TrOCRSize
 from .report import write_report
 from .llm import llm_correct_detection_results
@@ -184,7 +186,12 @@ class Hespi():
                     )
                     yield ocr_data[str(component)]  # Watch out for this one, it's a generator
 
-
+        with open(str(output_dir/'ocr_data.pkl'), 'wb') as f:
+            ocr_data_pkl = ocr_data.copy()
+            ocr_data_pkl["component_files"] = component_files
+            pickle.dump(ocr_data_pkl, f)
+            
+        ocr_data_json(ocr_data, component_files=component_files, output_path=output_dir/"hespi-results.json")
         df = ocr_data_df(ocr_data, output_path=output_dir/"hespi-results.csv")
         ocr_data_print_tables(df)
 

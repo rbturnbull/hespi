@@ -5,7 +5,7 @@ from pathlib import Path
 from .ocr import TrOCRSize
 from .hespi import DEFAULT_INSTITUTIONAL_LABEL_CLASSIFIER_WEIGHTS, DEFAULT_SHEET_COMPONENT_WEIGHTS, DEFAULT_LABEL_FIELD_WEIGHTS
 from .download import get_location
-from .util import DATA_DIR
+from .util import DATA_DIR, ocr_data_json
 
 console = Console()
 
@@ -66,3 +66,24 @@ def gui():
     compile_sass(Path(__file__).parent / "templates" / "assets")
     interface = build_blocks()
     interface.launch()
+    
+
+@app.command()
+def picklejson():
+    """
+    Converts a pickled HESPI output to a JSON file.
+    """
+    import pickle
+    import json
+    from pathlib import Path
+
+    out_dir = Path().cwd() / "hespi-output"
+    input_file = out_dir/"ocr_data.pkl"
+    output_file = out_dir/"ocr_data_pickle.json"
+
+    with open(str(input_file), "rb") as f:
+        ocr_data = pickle.load(f)
+        print(ocr_data)
+    ocr_data_json(ocr_data, output_path = output_file)
+
+    console.print(f"Converted {input_file} to {output_file}")
