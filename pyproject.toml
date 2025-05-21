@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "hespi"
-version = "0.5.1"
+version = "0.5.2"
 description = "HErbarium Specimen sheet PIpeline"
 authors = ["Robert Turnbull <robert.turnbull@unimelb.edu.au>"]
 license = "Apache-2.0"
@@ -20,7 +20,7 @@ classifiers = [
 ]
 
 [tool.poetry.dependencies]
-python = ">=3.10,<3.12"
+python = ">=3.10,<3.14"
 rich = ">=10.16.1"
 typer = ">=0.4.0"
 torchapp = ">=0.2.0"
