@@ -143,7 +143,17 @@ def clean_data_for_json(data: dict) -> dict:
         return data
 
 
-def clean_prediction_data(root: dict) -> dict:
+def relative_to_output(path, output_path: Path):
+    if isinstance(path, list):
+        return [str(relative_to_output(p, output_path)) for p in path]
+    try:
+        return str(Path(path).relative_to(output_path.parent))
+    except Exception as e:
+        print(f"Error converting path to relative: {e}")
+        return path
+
+
+def clean_prediction_data(root: dict, output_path: Path) -> dict:
     clean_root = {}
     for key in root.keys():
         is_label_field = False
@@ -156,7 +166,12 @@ def clean_prediction_data(root: dict) -> dict:
                 if subfield == field:
                     clean_root[field]["match_text"] = root[key]
                 else:
-                    clean_root[field][subfield] = root[key]
+                    if 'image' in subfield.lower():
+                        abs_path = root[key]
+                        rel_path = relative_to_output(abs_path, output_path)
+                        print(f"Found {field} image field ({key}).\n - Absolute path: {abs_path}\n - Relative path (to {output_path.parent}): {rel_path}")
+                        clean_root[field][subfield] = rel_path
+                        clean_root[field]["image_absolute"] = abs_path
                 break
         if not is_label_field:
             clean_root[key] = root[key]
@@ -164,12 +179,6 @@ def clean_prediction_data(root: dict) -> dict:
 
 
 def clean_sheet_components(component_files: Dict, output_path: Path = None) -> Dict:
-    def relative_to_output(path):
-        try:
-            return Path(path).relative_to(output_path.parent)
-        except Exception:
-            return path
-
     # def get_field_images(row, field, relative=True):
     #     images = []
     #     i = 1
@@ -195,7 +204,7 @@ def clean_sheet_components(component_files: Dict, output_path: Path = None) -> D
         for c in components:
             clean_components[key].append({
                 "absolute_path": str(c),
-                "relative_path": relative_to_output(c),
+                "relative_path": relative_to_output(c, output_path),
                 "classification": get_classification(c),
             })
     return clean_components
@@ -227,7 +236,7 @@ def ocr_data_json(data: dict, component_files: Dict = None, output_path: Path = 
             print(f"Skipping key {root_key} as it is a component file")
             continue
         print(f"\nCleaning JSON data for: {root_key}")
-        clean_root = clean_prediction_data(data[root_key])
+        clean_root = clean_prediction_data(data[root_key], output_path)
         clean_root["label_file"] = root_key
         if component_files is not None:
             clean_root["component_files"] = component_files[clean_root["id"]]
