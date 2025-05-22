@@ -9,6 +9,7 @@ from rich.progress import track
 from gradio import Progress as grProgress
 import llmloader
 import pickle
+from .util import Generator
 
 
 from hespi.yolo import yolo_output, predictions_filename
@@ -156,8 +157,21 @@ class Hespi():
             res=self.label_field_res,
         )
 
-    # This is now a generator, you need to yield all the results or it won't process anything, but it's good for progress tracking
+    # This is now a generator, you need to yield all the results or it won't process anything, but it's good for progress tracking    
     def detect(
+        self,
+        images: List[Path],
+        output_dir: Path,
+        report: bool = True
+    ) -> Path | None:
+        gen = Generator(self.detect_progress(images, output_dir))
+        # Go through the generator to advance the progress until the end
+        for ocr_data in gen:
+            pass
+        return gen.value
+        
+    
+    def detect_progress(
         self,
         images: List[Path],
         output_dir: Path,
@@ -193,7 +207,8 @@ class Hespi():
                         output_dir=output_dir / stub,
                         progress=self.progress
                     )
-                    yield ocr_data[str(component)]  # Watch out for this one, it's a generator
+                    if self.progress is not None:
+                        yield ocr_data[str(component)]  # Watch out for this one, it's a generator
 
         with open(str(output_dir/'ocr_data.pkl'), 'wb') as f:
             ocr_data_pkl = ocr_data.copy()

@@ -7,7 +7,7 @@ def process_images(image_list: list[str], llm_model: str, llm_temperature: float
     output_dir = Path().cwd() / "hespi-output"
     progress(0.0, desc="Starting")
     hespi = Hespi(llm_model=llm_model, llm_temperature=llm_temperature)
-    gen = Generator(hespi.detect(image_list, output_dir, progress=progress))
+    gen = Generator(hespi.detect_progress(image_list, output_dir, progress=progress))
     for ocr_data in gen:
         yield f"{ocr_data['id']}"
     yield f"HTML report: {str(gen.value)}"
