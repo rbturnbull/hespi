@@ -31,10 +31,10 @@ label_fields = [
 
 
 class POSIXPathEncoder(json.JSONEncoder):
-    def default(self, obj):
-        if isinstance(obj, Path):
-            return str(obj)
-        return super().default(obj)
+   def default(self, obj):
+      if isinstance(obj, Path):
+         return str(obj)
+      return super().default(obj)
 
 # Utility class to catch the return value of a generator after all "yields"
 
@@ -133,315 +133,336 @@ def flatten_single_item_lists(lst):
 
 
 def clean_data_for_json(data: dict) -> dict:
-    if isinstance(data, dict):
-        return {key: clean_data_for_json(value) for key, value in data.items()}
-    elif isinstance(data, list):
-        return [clean_data_for_json(item) for item in data]
-    elif isinstance(data, Path):
-        return str(data)
-    else:
-        return data
+   if isinstance(data, dict):
+      return {key: clean_data_for_json(value) for key, value in data.items()}
+   elif isinstance(data, list):
+      return [clean_data_for_json(item) for item in data]
+   elif isinstance(data, Path):
+      return str(data)
+   else:
+      return data
 
 
 def relative_to_output(path, output_path: Path):
     if isinstance(path, list):
-        return [str(relative_to_output(p, output_path)) for p in path]
+      return [relative_to_output(p, output_path) for p in path]
     try:
-        return str(Path(path).relative_to(output_path.parent))
+      return str(Path(path).relative_to(output_path.parent))
     except Exception as e:
-        print(f"Error converting path to relative: {e}")
-        return path
-
-
+      print(f"Error converting path '{path}' to path relative to '{output_path.parent}': {e}")
+      return path
+   
 def clean_prediction_data(root: dict, output_path: Path) -> dict:
-    clean_root = {}
-    for key in root.keys():
-        is_label_field = False
-        for field in label_fields:
-            if field.lower() in key.lower():
-                is_label_field = True
-                if field not in clean_root:
-                    clean_root[field] = {}
-                subfield = key.replace(f"{field}_", "")
-                if subfield == field:
-                    clean_root[field]["match_text"] = root[key]
-                else:
-                    if 'image' in subfield.lower():
-                        abs_path = root[key]
-                        rel_path = relative_to_output(abs_path, output_path)
-                        print(f"Found {field} image field ({key}).\n - Absolute path: {abs_path}\n - Relative path (to {output_path.parent}): {rel_path}")
-                        clean_root[field][subfield] = rel_path
-                        clean_root[field]["image_absolute"] = abs_path
-                break
-        if not is_label_field:
+   def process_field_images():
+      img_paths:Path = root[key]
+      if isinstance(img_paths, list):
+         img_paths = [ip.absolute() for ip in img_paths]
+      rel_path = relative_to_output(img_paths, output_path)
+      # print(f"Found {field} image field ({key}).\n\t- Absolute path: {img_paths}\n\t - Relative path (to {output_path.parent}): {rel_path}")
+      # print(f"Current clean_root[{field}]]: {clean_root[field]}")
+      if 'image' not in clean_root[field]:
+         clean_root[field]['image'] = {}
+      clean_root[field]['image']['relative'] = [str(p) for p in rel_path] if isinstance(rel_path, list) else str(rel_path)
+      clean_root[field]['image']['absolute'] = [str(p) for p in img_paths] if isinstance(img_paths, list) else str(rel_path)
+      
+   def process_ocr_results():
+      if isinstance(root[key], list):
+         clean_root[field][subfield] = [clean_data_for_json(item) for item in root[key]]
+   
+   clean_root = {}
+   print(f"*** Cleaning prediction data ***")
+   for key in root.keys():
+      print(f"\t Processing key: {key}")
+      is_field_key = False
+      for field in label_fields:
+         # print(f"\t\t Key [{key}]")
+         if field.lower() in key.lower():
+            # print(f"\t\t [{key}]: {key}")
+            is_label_field = True
+            subfield = key.replace(f"{field}_", "")
+            print(f"\t\t [{key}][{field} -> {subfield}]: ", end="")
+            if field not in clean_root:
+               clean_root[field] = {}
+            if subfield == field:
+               print(f"Found main key of [{field}]: [{key}]")
+               clean_root[field]["match_text"] = root[key]
+            elif 'image' in subfield.lower():
+               print(f"Found image key!")
+               process_field_images()
+            elif 'ocr_result' in subfield.lower():
+               print(f"Found ocr_results {subfield}")
+               process_ocr_results()
+            else:
+               print(f"Found unexpected field key {subfield}")
+            is_field_key = True
+            break
+      if not is_field_key:
+         # If the key is not a label field, just copy it over
+         if 'predictions' in key.lower():
+            clean_root[key] = relative_to_output(Path(root[key]).absolute(), output_path)
+         elif key not in clean_root:
             clean_root[key] = root[key]
-    return clean_root
+   return clean_root
 
 
 def clean_sheet_components(component_files: Dict, output_path: Path = None) -> Dict:
-    # def get_field_images(row, field, relative=True):
-    #     images = []
-    #     i = 1
-    #     while True:
-    #         suffix = f"_{i}" if i > 1 else ""
-    #         image = row.get(f"{field}_image{suffix}")
-    #         if image is None:
-    #             break
-    #         if relative:
-    #             image = relative_to_output(image)
-    #         images.append(image)
-    #         i += 1
-    #     return images
+   def get_classification(path):
+      return Path(path).name.split(".")[-2].replace("_", " ").title()
 
-    def get_classification(path):
-        return Path(path).name.split(".")[-2].replace("_", " ").title()
-
-    if component_files is None:
-        return None
-    clean_components = {}
-    for key, components in component_files.items():
-        clean_components[key] = []
-        for c in components:
-            clean_components[key].append({
-                "absolute_path": str(c),
-                "relative_path": relative_to_output(c, output_path),
-                "classification": get_classification(c),
-            })
-    return clean_components
+   if component_files is None:
+      return None
+   clean_components = {}
+   for key, components in component_files.items():
+      clean_components[key] = []
+      for c in components:
+         clean_components[key].append({
+            "absolute_path": str(c.absolute()),
+            "relative_path": relative_to_output(c.absolute(), output_path),
+            "classification": get_classification(c),
+         })
+   return clean_components
 
 
 def ocr_data_json(data: dict, component_files: Dict = None, output_path: Path = None) -> None:
-    """    
-    Exports a .hespi file (i.e. JSON) following the structure of the ocr_data Dict
+   """    
+   Exports a .hespi file (i.e. JSON) following the structure of the ocr_data Dict
 
-    Args:
-        data (dict): The data coming from the text recognition models. 
-            The keys are the institutional labels.
-            The values are dictionaries with the fields as keys and the values as the recognised text.
-        component_files (Dict): A dictionary with all the files generated by running the sheet component model.
-        output_path (Path, optional): Where to save a CSV file if given. Defaults to None.
+   Args:
+      data (dict): The data coming from the text recognition models. 
+         The keys are the institutional labels.
+         The values are dictionaries with the fields as keys and the values as the recognised text.
+      component_files (Dict): A dictionary with all the files generated by running the sheet component model.
+      output_path (Path, optional): Where to save a CSV file if given. Defaults to None.
 
-    Returns:
-        pd.DataFrame: The text recognition data as a Pandas dataframe
-    """
+   Returns:
+      pd.DataFrame: The text recognition data as a Pandas dataframe
+   """
+   output_path = Path(output_path).absolute() if isinstance(output_path, str) else output_path.absolute()
+   # Clean the component_files an extract relative paths and classification from the absolute path
+   component_files = clean_sheet_components(component_files, output_path)
 
-    # Clean the component_files an extract relative paths and classification from the absolute path
-    component_files = clean_sheet_components(component_files, output_path)
+   clean_data = {}
+   print(f"\n------Cleaning JSON data. Output path: {output_path}--------")
+   for root_key in data.keys():
+      # Do not process a component_files dict if it's one of the root keys
+      if "component_files" in root_key.lower():
+         print(f"Skipping key {root_key} as it is a component file")
+         continue
+      print(f"\nCleaning JSON data for: {root_key}.\n\t-Keys: {list(data[root_key].keys())}")
+      clean_root = clean_prediction_data(data[root_key], output_path)
+      clean_root["label_file"] = root_key
+      if component_files is not None:
+         clean_root["component_files"] = component_files[clean_root["id"]]
+         del component_files[clean_root["id"]]
+      print(f"Adding key {clean_root.get('id', 'NO_ID_KEY_IN_DICT')} to new clean JSON")
+      clean_data[clean_root["id"]] = clean_root
 
-    clean_data = {}
-    print(f"\n------Cleaning JSON data. Keys: {list(data.keys())}--------")
-    for root_key in data.keys():
-        # Do not process a component_files dict if it's one of the root keys
-        if "component_files" in root_key.lower():
-            print(f"Skipping key {root_key} as it is a component file")
-            continue
-        print(f"\nCleaning JSON data for: {root_key}")
-        clean_root = clean_prediction_data(data[root_key], output_path)
-        clean_root["label_file"] = root_key
-        if component_files is not None:
-            clean_root["component_files"] = component_files[clean_root["id"]]
-            del component_files[clean_root["id"]]
-        print(f"Adding key {clean_root.get('id', 'NO_ID_KEY_IN_DICT')} to new clean JSON")
-        clean_data[clean_root["id"]] = clean_root
-
-    # In case there is any component_files that was not in the ocr_data
-    if component_files is not None and len(component_files) > 0:
-        clean_data["_component_files"] = component_files
-    with open(str(output_path), "w") as f:
-        json.dump(clean_data, f, indent=3, cls=POSIXPathEncoder)
+   # In case there is any component_files that was not in the ocr_data
+   if component_files is not None and len(component_files) > 0:
+      clean_data["_component_files"] = component_files
+   with open(str(output_path), "w") as f:
+      json.dump(clean_data, f, indent=3, cls=POSIXPathEncoder)
 
 
 def ocr_data_df(data: dict, output_path: Path = None) -> pd.DataFrame:
-    """    
-    Creates a DataFrame of data, sorts columns and outputs a CSV with OCR values.
+   """    
+   Creates a DataFrame of data, sorts columns and outputs a CSV with OCR values.
 
-    Args:
-        data (dict): The data coming from the text recognition models. 
-            The keys are the institutional labels.
-            The values are dictionaries with the fields as keys and the values as the recognised text.
-        output_path (Path, optional): Where to save a CSV file if given. Defaults to None.
+   Args:
+      data (dict): The data coming from the text recognition models. 
+         The keys are the institutional labels.
+         The values are dictionaries with the fields as keys and the values as the recognised text.
+      output_path (Path, optional): Where to save a CSV file if given. Defaults to None.
 
-    Returns:
-        pd.DataFrame: The text recognition data as a Pandas dataframe
-    """
-    df = pd.DataFrame.from_dict(data, orient="index")
-    df = df.fillna(value="")
-    df = df.reset_index().rename(columns={"index": "institutional label"})
+   Returns:
+      pd.DataFrame: The text recognition data as a Pandas dataframe
+   """
+   df = pd.DataFrame.from_dict(data, orient="index")
+   df = df.fillna(value="")
+   df = df.reset_index().rename(columns={"index": "institutional label"})
 
-    # Splitting the ocr_results columns into seperate original text, adjusted, and score
-    # Enables the html report to pull the data
-    for col in df.columns:
-        if 'ocr_results' in col:
-            field_name = col.replace('_ocr_results', '')
-            new_columns = df[f"{field_name}_ocr_results"].apply(process_row_ocr_results, field_name=field_name).apply(pd.Series)
+   # Splitting the ocr_results columns into seperate original text, adjusted, and score
+   # Enables the html report to pull the data
+   for col in df.columns:
+      if 'ocr_results' in col:
+         field_name = col.replace('_ocr_results', '')
+         new_columns = df[f"{field_name}_ocr_results"].apply(process_row_ocr_results, field_name=field_name).apply(pd.Series)
 
-            df = pd.concat([df, new_columns], axis=1)
+         df = pd.concat([df, new_columns], axis=1)
 
-    # insert columns not included in dataframe, and re-order
-    # including any columns not included in col_options to account for any updates
-    col_options = ["institutional label", "id"] + label_fields
+   # insert columns not included in dataframe, and re-order
+   # including any columns not included in col_options to account for any updates
+   col_options = ["institutional label", "id"] + label_fields
 
-    missing_cols = [col for col in col_options if col not in df.columns]
-    df[missing_cols] = ""
+   missing_cols = [col for col in col_options if col not in df.columns]
+   df[missing_cols] = ""
 
-    # creating break columns
-    df['<--results|ocr_details-->'] = '    |    '
-    df['image_links-->'] = '    |    '
-    df['ocr_results_split-->'] = '    |    '
+   # creating break columns
+   df['<--results|ocr_details-->'] = '    |    '
+   df['image_links-->'] = '    |    '
+   df['ocr_results_split-->'] = '    |    '
 
-    # grouping other columns
-    score_cols = sorted([col for col in df.columns if '_match_score' in col and 'Tesseract' not in col and 'TrOCR' not in col], key=label_sort_key)
-    ocr_cols = ['<--results|ocr_details-->'] + sorted([col for col in df.columns if '_ocr_results' in col], key=label_sort_key)
-    image_files_cols = ['image_links-->'] + sorted([col for col in df.columns if '_image' in col or 'predictions' in col], key=label_sort_key)
-    result_cols = ['ocr_results_split-->'] + sorted([col for col in df.columns if 'Tesseract' in col or 'TrOCR' in col], key=label_sort_key)
+   # grouping other columns
+   score_cols = sorted([col for col in df.columns if '_match_score' in col and 'Tesseract' not in col and 'TrOCR' not in col], key=label_sort_key)
+   ocr_cols = ['<--results|ocr_details-->'] + sorted([col for col in df.columns if '_ocr_results' in col], key=label_sort_key)
+   image_files_cols = ['image_links-->'] + sorted([col for col in df.columns if '_image' in col or 'predictions' in col], key=label_sort_key)
+   result_cols = ['ocr_results_split-->'] + sorted([col for col in df.columns if 'Tesseract' in col or 'TrOCR' in col], key=label_sort_key)
 
-    cols = col_options + score_cols + ['label_classification'] + ocr_cols + result_cols + image_files_cols
-    extra_cols = [col for col in df.columns if col not in cols]
+   cols = col_options + score_cols + ['label_classification'] + ocr_cols + result_cols + image_files_cols
+   extra_cols = [col for col in df.columns if col not in cols]
 
-    cols = cols + extra_cols
+   cols = cols + extra_cols
 
-    # Filter for only the columns that are in the dataframe
-    cols = [col for col in cols if col in df.columns]
+   # Filter for only the columns that are in the dataframe
+   cols = [col for col in cols if col in df.columns]
 
-    df = df[cols]
-    df = df.fillna('')
+   df = df[cols]
+   df = df.fillna('')
 
-    # flattening all the lists so that if only one item, the list is removed, if no items, list is replaced with an empty string
-    for col in df.columns:
-        df[col] = df[col].apply(flatten_single_item_lists)
+   # flattening all the lists so that if only one item, the list is removed, if no items, list is replaced with an empty string
+   for col in df.columns:
+      df[col] = df[col].apply(flatten_single_item_lists)
 
-    # CSV output
-    if output_path:
-        output_path = Path(output_path)
-        output_path.parent.mkdir(exist_ok=True, parents=True)
+   # CSV output
+   if output_path:
+      output_path = Path(output_path)
+      output_path.parent.mkdir(exist_ok=True, parents=True)
 
-        # If the file already exists, then concatenate it
-        if output_path.exists():
-            old_df = pd.read_csv(output_path)
-            write_df = pd.concat([old_df, df])
-            console.print(f"Appending Hespi text results to: '{output_path}'")
-        else:
-            console.print(f"Writing Hespi text results to: '{output_path}'")
-            write_df = df
+      # If the file already exists, then concatenate it
+      if output_path.exists():
+         old_df = pd.read_csv(output_path)
+         write_df = pd.concat([old_df, df])
+         console.print(f"Appending Hespi text results to: '{output_path}'")
+      else:
+         console.print(f"Writing Hespi text results to: '{output_path}'")
+         write_df = df
 
-        write_df.to_csv(output_path, index=False)
-    return df
+      write_df.to_csv(output_path, index=False)
+      
+      # try:
+      #    # exported_df = pd.read_csv(output_path)
+      #    json_df = write_df.copy()
+      #    json_df = json_df.applymap(lambda x: str(x) if isinstance(x, Path) else x)
+      #    json_df.to_json(output_path.with_suffix('.full.json'), orient="records", indent=3)
+      # except Exception as e:
+      #    console.print(f"Error writing JSON file: {e}")
+   return df
 
 
 def to_json(df):
-    json_list = json.loads(json.dumps(list(df.T.to_dict().values())))
-    json_clean = []
+   json_list = json.loads(json.dumps(list(df.T.to_dict().values())))
+   json_clean = []
 
-    for obj in json_list:
-        clean_obj = {}
-        for k, v in obj.items():
-            try:
-                if isnan(v):
-                    obj[k] = None
-                    continue
-            except:
-                pass
-            clean_obj[k] = v
-        json_clean.append(clean_obj)
-    with open("hespi-results-list.json", "w") as f:
-        json.dump(json_list, f, indent=3)
-    with open("hespi-results-clean.json", "w") as f:
-        json.dump(json_clean, f, indent=3)
+   for obj in json_list:
+      clean_obj = {}
+      for k, v in obj.items():
+         try:
+               if isnan(v):
+                  obj[k] = None
+                  continue
+         except:
+               pass
+         clean_obj[k] = v
+      json_clean.append(clean_obj)
+   with open("hespi-results-list.json", "w") as f:
+      json.dump(json_list, f, indent=3)
+   with open("hespi-results-clean.json", "w") as f:
+      json.dump(json_clean, f, indent=3)
 
 
 def ocr_result_str(row, field_name: str, ocr_type: str) -> str:
-    def get_list(row, key):
-        result = row.get(key, "")
-        if not isinstance(result, list):
-            result = [result]
+   def get_list(row, key):
+      result = row.get(key, "")
+      if not isinstance(result, list):
+         result = [result]
 
-        return result
+      return result
 
-    original_list = get_list(row, f"{field_name}_{ocr_type}_original")
-    adjusted_list = get_list(row, f"{field_name}_{ocr_type}_adjusted")
-    match_score_list = get_list(row, f"{field_name}_{ocr_type}_match_score")
+   original_list = get_list(row, f"{field_name}_{ocr_type}_original")
+   adjusted_list = get_list(row, f"{field_name}_{ocr_type}_adjusted")
+   match_score_list = get_list(row, f"{field_name}_{ocr_type}_match_score")
 
-    assert len(original_list) == len(adjusted_list) == len(match_score_list)
+   assert len(original_list) == len(adjusted_list) == len(match_score_list)
 
-    texts = []
-    for original, adjusted, match_score in zip(original_list, adjusted_list, match_score_list):
-        text = original
-        if adjusted and adjusted != original:
-            text += f" → {adjusted}"
+   texts = []
+   for original, adjusted, match_score in zip(original_list, adjusted_list, match_score_list):
+      text = original
+      if adjusted and adjusted != original:
+         text += f" → {adjusted}"
 
-        if match_score:
-            text += f" ({match_score})"
+      if match_score:
+         text += f" ({match_score})"
 
-        texts.append(text)
+      texts.append(text)
 
-    return " | ".join(texts)
+   return " | ".join(texts)
 
 
 def ocr_data_print_tables(df: pd.DataFrame) -> None:
-    for _, row in df.iterrows():
-        filename = Path(row["institutional label"]).name
-        table = Table(
-            Column("Field"),
-            Column("Text"),
-            Column("Tesseract"),
-            Column("TrOCR"),
-            Column("LLM"),
-            title=f"Fields in institutional label: {filename}",
-        )
+   for _, row in df.iterrows():
+      filename = Path(row["institutional label"]).name
+      table = Table(
+         Column("Field"),
+         Column("Text"),
+         Column("Tesseract"),
+         Column("TrOCR"),
+         Column("LLM"),
+         title=f"Fields in institutional label: {filename}",
+      )
 
-        for field in label_fields:
-            if f"{field}_image" in row and row[f"{field}_image"]:
-                table.add_row(
-                    field,
-                    row[field],
-                    ocr_result_str(row, field, ocr_type="Tesseract"),
-                    ocr_result_str(row, field, ocr_type="TrOCR"),
-                    ocr_result_str(row, field, ocr_type="LLM"),
-                )
+      for field in label_fields:
+         if f"{field}_image" in row and row[f"{field}_image"]:
+               table.add_row(
+                  field,
+                  row[field],
+                  ocr_result_str(row, field, ocr_type="Tesseract"),
+                  ocr_result_str(row, field, ocr_type="TrOCR"),
+                  ocr_result_str(row, field, ocr_type="LLM"),
+               )
 
-        console.print(table)
+      console.print(table)
 
 
 def adjust_text(field: str, recognised_text: str, fuzzy: bool, fuzzy_cutoff: float, reference: Dict):
-    text_stripped = strip_punctuation(field, recognised_text)
-    text_adjusted = adjust_case(field, text_stripped)
-    match_score = ""
+   text_stripped = strip_punctuation(field, recognised_text)
+   text_adjusted = adjust_case(field, text_stripped)
+   match_score = ""
 
-    # Match with database
-    if fuzzy and field in reference:
-        close_matches = get_close_matches(
-            text_adjusted,
-            reference[field],
-            cutoff=fuzzy_cutoff,
-            n=1,
-        )
-        if close_matches:
-            match_score = round(SequenceMatcher(None, text_adjusted, close_matches[0]).ratio(), 3)
-            text_adjusted = close_matches[0]
-        else:
-            match_score = 0
+   # Match with database
+   if fuzzy and field in reference:
+      close_matches = get_close_matches(
+         text_adjusted,
+         reference[field],
+         cutoff=fuzzy_cutoff,
+         n=1,
+      )
+      if close_matches:
+         match_score = round(SequenceMatcher(None, text_adjusted, close_matches[0]).ratio(), 3)
+         text_adjusted = close_matches[0]
+      else:
+         match_score = 0
 
-    return (text_adjusted, match_score)
+   return (text_adjusted, match_score)
 
 
 def get_stub(path: Path) -> str:
-    """
-    Gets the part of the filename before the last extension
+   """
+   Gets the part of the filename before the last extension
 
-    Args:
-        path (Path): The path to the file
+   Args:
+      path (Path): The path to the file
 
-    Returns:
-        str: the part of the filename before the last extension
-    """
-    last_period = path.name.rfind(".")
-    stub = path.name[:last_period] if last_period else path.name
+   Returns:
+      str: the part of the filename before the last extension
+   """
+   last_period = path.name.rfind(".")
+   stub = path.name[:last_period] if last_period else path.name
 
-    # Remove any leading or trailing whitespace
-    stub = stub.strip()
+   # Remove any leading or trailing whitespace
+   stub = stub.strip()
 
-    # Replace punctuation with an underscore
-    translate = str.maketrans(string.punctuation, "_" * len(string.punctuation))
-    stub = stub.translate(translate)
+   # Replace punctuation with an underscore
+   translate = str.maketrans(string.punctuation, "_" * len(string.punctuation))
+   stub = stub.translate(translate)
 
-    return stub
+   return stub

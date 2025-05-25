@@ -70,24 +70,24 @@ def gui():
 
 @app.command()
 def picklejson():
-    """
-    Converts a pickled HESPI output to a JSON file.
-    """
-    import pickle
-    import json
-    from pathlib import Path
+   """
+   Converts a pickled HESPI output to a JSON file.
+   """
+   import pickle
+   import json
+   from pathlib import Path
 
-    out_dir = Path().cwd() / "hespi-output"
-    input_file = out_dir/"ocr_data.pkl"
-    output_file = out_dir/"ocr_data_pickle.json"
+   out_dir = Path().cwd() / "hespi-output"
+   input_file = out_dir/"ocr_data.pkl"
+   output_file = out_dir/"ocr_data_pickle.json"
 
-    with open(str(input_file), "rb") as f:
-        ocr_data = pickle.load(f)
-        # print(ocr_data)
-    component_files = None
-    if "component_files" in ocr_data:
-        component_files = ocr_data.get("component_files", None)
-        del ocr_data["component_files"]
-    ocr_data_json(ocr_data, component_files=component_files, output_path=output_file)
+   with open(str(input_file), "rb") as f:
+      ocr_data = pickle.load(f)
+      # print(ocr_data)
+   component_files = None
+   if "component_files" in ocr_data:
+      component_files = ocr_data.get("component_files", None)
+      del ocr_data["component_files"]
+   ocr_data_json(ocr_data, component_files=component_files, output_path=output_file)
 
-    console.print(f"Converted {input_file} to {output_file}")
+   console.print(f"Converted {input_file} to {output_file}")
