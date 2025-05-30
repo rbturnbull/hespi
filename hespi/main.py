@@ -10,7 +10,7 @@ from .ocr import TrOCRSize
 
 console = Console()
 
-app = typer.Typer()
+app = typer.Typer(pretty_exceptions_enable=False)
 
 @app.command()
 def detect(
