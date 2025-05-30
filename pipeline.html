@@ -1,24 +1,24 @@
+
+
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html5" lang="en" data-content_root="./">
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Pipeline &mdash; hespi 0.5.2 documentation</title>
-      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-      <link rel="stylesheet" href="_static/copybutton.css" type="text/css" />
-  <!--[if lt IE 9]>
-    <script src="_static/js/html5shiv.min.js"></script>
-  <![endif]-->
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
+
   
-        <script src="_static/jquery.js?v=5d32c60e"></script>
-        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js?v=ac2db539"></script>
-        <script src="_static/doctools.js?v=888ff710"></script>
-        <script src="_static/sphinx_highlight.js?v=4825356b"></script>
-        <script src="_static/clipboard.min.js?v=a7894cd8"></script>
-        <script src="_static/copybutton.js?v=71494f10"></script>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=8e576371"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="_static/copybutton.js?v=f281be69"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -89,10 +89,10 @@
            <div itemprop="articleBody">
              
   <section id="pipeline">
-<h1>Pipeline<a class="headerlink" href="#pipeline" title="Permalink to this heading"></a></h1>
+<h1>Pipeline<a class="headerlink" href="#pipeline" title="Link to this heading"></a></h1>
 <img alt="Hespi Pipeline Diagram" class="align-center" src="_images/HespiDiagram.jpg" />
 <section id="the-sheet-component-model">
-<h2>The Sheet-Component Model<a class="headerlink" href="#the-sheet-component-model" title="Permalink to this heading"></a></h2>
+<h2>The Sheet-Component Model<a class="headerlink" href="#the-sheet-component-model" title="Link to this heading"></a></h2>
 <p>This model takes specimen sheet images and outputs bounding boxes for 11 components:</p>
 <ol class="arabic simple">
 <li><p>institutional label</p></li>
@@ -110,7 +110,7 @@
 <img alt="Component Classes" class="align-center" src="_images/Sheet-Component-Classes.jpg" />
 </section>
 <section id="the-label-field-model">
-<h2>The Label-Field Model<a class="headerlink" href="#the-label-field-model" title="Permalink to this heading"></a></h2>
+<h2>The Label-Field Model<a class="headerlink" href="#the-label-field-model" title="Link to this heading"></a></h2>
 <p>The Label-Field Model takes any institutional label detected from the Sheet-Component Model
 and detects bounding boxes for the following fields:</p>
 <ol class="arabic simple">
@@ -130,7 +130,7 @@ and detects bounding boxes for the following fields:</p>
 <img alt="Field Classes" class="align-center" src="_images/Label-Fields-Classes.jpg" />
 </section>
 <section id="label-classifier">
-<h2>Label Classifier<a class="headerlink" href="#label-classifier" title="Permalink to this heading"></a></h2>
+<h2>Label Classifier<a class="headerlink" href="#label-classifier" title="Link to this heading"></a></h2>
 <p>We have trained a classifier to detect the following types of writing on the institutional label:</p>
 <ol class="arabic simple">
 <li><p>typewriter</p></li>
@@ -140,7 +140,7 @@ and detects bounding boxes for the following fields:</p>
 </ol>
 </section>
 <section id="text-recognition">
-<h2>Text Recognition<a class="headerlink" href="#text-recognition" title="Permalink to this heading"></a></h2>
+<h2>Text Recognition<a class="headerlink" href="#text-recognition" title="Link to this heading"></a></h2>
 <p>Each field detected by the Label-Field Model is input into the Text Recognition module. This uses the <a class="reference external" href="https://github.com/tesseract-ocr/tesseract">Tesseract</a> Optical Character Recognition (OCR) engine and the <a class="reference external" href="https://www.microsoft.com/en-us/research/publication/trocr-transformer-based-optical-character-recognition-with-pre-trained-models/">TrOCR</a> <cite>large</cite> HTR model.</p>
 <p>Text formatting is applied to OCR results for the family, genus, and species fields, where the standardized taxa format is expected. Family and genus fields are changed to title case, species to lower case. For all three, punctuation marks are stripped from the beginning and end of the text, as well as any whitespace/empty characters.</p>
 <p>For the family, genus, species and authority fields, any recognized text is cross-checked against the <a class="reference external" href="https://www.worldfloraonline.org/downloadData">World Flora Online database</a>, an international compendium of vascular plants and mosses, and against databases within the <a class="reference external" href="https://biodiversity.org.au/nsl">Australian National Species List</a>, a nationally recognized taxonomy of Australian biodata. The AuNSL databases used by Hespi are the:</p>
@@ -154,11 +154,11 @@ and detects bounding boxes for the following fields:</p>
 <p>If the extracted text matches to a taxonomic name in the reference database with a  similarity of 80% or more using the <a class="reference external" href="https://www.drdobbs.com/database/pattern-matching-the-gestalt-approach/184407970?pgno=5">Gestalt (Ratcliff/Obershelp) approach</a>, Hespi will assign the taxonomic name from the reference database to that field. In this way, minor differences of the taxon name/s on the specimen label or the extracted data to those in taxonomic reference databases are corrected. Such differences may be orthographic variants, incorrect spelling of the taxon name on the institutional label, or incorrect text recognition. The closeness of the matches indicate to Hespi whether to use the output from Tesseract or TrOCR when recording the text of the other fields. If no text recognition is found to be preferred (either because both generated the same score, or because neither had a similarity score over 80% and so were each given a score of 0), then handwritten or mixed labels will use the output from TrOCR and other labels will use output from Tesseract.</p>
 </section>
 <section id="large-language-model-llm-correction">
-<h2>Large Language Model (LLM) Correction<a class="headerlink" href="#large-language-model-llm-correction" title="Permalink to this heading"></a></h2>
+<h2>Large Language Model (LLM) Correction<a class="headerlink" href="#large-language-model-llm-correction" title="Link to this heading"></a></h2>
 <p>After the text recognition, the results are passed through a multimodal large language model (LLM) to correct any errors. By default, Hespi uses OpenAI’s <a href="#id1"><span class="problematic" id="id2">`</span></a>gpt-4o’ model citep{openai2023gpt4}. This can be changed to any other model from OpenAI or Anthropic by specifying the model name on the command line. The LLM is prompted with the image of the institutional label, the list of the desired fields, the currently accepted text for each field and the outputs from the OCR and HTR engines and how the text has been adjusted after cross-checking with the relevant databases. The LLM is requested to output the text for any fields where the accepted text is incorrect. Currently, no examples of this process are provided through the prompt and so Hespi is using the LLM as a <a href="#id3"><span class="problematic" id="id4">`</span></a>zero-shot’ learner citep{Radford2019LanguageMA}. Hespi could be modified to provide the LLM with examples of images from a particular herbarium and so use the LLM as a <a href="#id5"><span class="problematic" id="id6">`</span></a>few-shot’ learner which will likely improve the results for similar institutional labels citep{few_shot}. This is left for future experimentation.</p>
 </section>
 <section id="outputs">
-<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this heading"></a></h2>
+<h2>Outputs<a class="headerlink" href="#outputs" title="Link to this heading"></a></h2>
 <p>The pipeline outputs are summarized as an HTML report which displays the cropped images from each model and the derived recognized text. In this way it is possible to manually cross-check the accuracy of the derived text by comparing it with the original data, visualized from the entire  specimen label or the corresponding extracted data field. The CSV file includes the match score between 0 and 1 for the family, genus, species, and authority, alongside all OCR and HTR results. These scores are a value between 0 and 1, with 1 indicating a perfect match and no corrections made; 0.8 to 0.999 indicating how similar a match was, and 0 indicating no match found with a similarity of 80% or higher.</p>
 </section>
 </section>

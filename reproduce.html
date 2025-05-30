@@ -1,24 +1,24 @@
+
+
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html5" lang="en" data-content_root="./">
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Reproducing Test Results &mdash; hespi 0.5.2 documentation</title>
-      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-      <link rel="stylesheet" href="_static/copybutton.css" type="text/css" />
-  <!--[if lt IE 9]>
-    <script src="_static/js/html5shiv.min.js"></script>
-  <![endif]-->
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
+
   
-        <script src="_static/jquery.js?v=5d32c60e"></script>
-        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js?v=ac2db539"></script>
-        <script src="_static/doctools.js?v=888ff710"></script>
-        <script src="_static/sphinx_highlight.js?v=4825356b"></script>
-        <script src="_static/clipboard.min.js?v=a7894cd8"></script>
-        <script src="_static/copybutton.js?v=71494f10"></script>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=8e576371"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="_static/copybutton.js?v=f281be69"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -87,7 +87,7 @@
            <div itemprop="articleBody">
              
   <section id="reproducing-test-results">
-<h1>Reproducing Test Results<a class="headerlink" href="#reproducing-test-results" title="Permalink to this heading"></a></h1>
+<h1>Reproducing Test Results<a class="headerlink" href="#reproducing-test-results" title="Link to this heading"></a></h1>
 <p>This document describes how to reproduce the results of the paper.</p>
 <p>Make sure you have installed hespi.</p>
 <p>The results in the paper use the default LLM which is ChatGPT (gpt-4o).
@@ -109,7 +109,7 @@ unzip<span class="w"> </span>hespi-test-data.zip
 <li><p>The DILLEN Data (100 images in DILLEN.csv)</p></li>
 </ol>
 <section id="the-melu-print-typewriter-data">
-<h2>The MELU Print/Typewriter Data<a class="headerlink" href="#the-melu-print-typewriter-data" title="Permalink to this heading"></a></h2>
+<h2>The MELU Print/Typewriter Data<a class="headerlink" href="#the-melu-print-typewriter-data" title="Link to this heading"></a></h2>
 <p>To reproduce the results for the MELU Print/Typewriter Data, run the following commands:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="k">for</span><span class="w"> </span>URL<span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="sb">`</span>tail<span class="w"> </span>-n+2<span class="w"> </span>MELU-T.csv<span class="w"> </span><span class="p">|</span><span class="w"> </span>cut<span class="w"> </span>-f1<span class="w"> </span>-d,<span class="sb">`</span><span class="p">;</span><span class="w"> </span><span class="k">do</span>
 <span class="w">    </span>hespi<span class="w"> </span><span class="nv">$URL</span><span class="w"> </span>--output-dir<span class="w"> </span>MELU-T-results
@@ -132,7 +132,7 @@ If you wish to evaluate with case-sensitive comparison, then use the <cite>–ca
 The output of the script will also provide the accuracy of the label classification and the whether or not any particular field should be empty.</p>
 </section>
 <section id="the-melu-handwritten-data">
-<h2>The MELU Handwritten Data<a class="headerlink" href="#the-melu-handwritten-data" title="Permalink to this heading"></a></h2>
+<h2>The MELU Handwritten Data<a class="headerlink" href="#the-melu-handwritten-data" title="Link to this heading"></a></h2>
 <p>To reproduce the results for the MELU Handwritten Data, run the following commands:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="k">for</span><span class="w"> </span>URL<span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="sb">`</span>tail<span class="w"> </span>-n+2<span class="w"> </span>MELU-H.csv<span class="w"> </span><span class="p">|</span><span class="w"> </span>cut<span class="w"> </span>-f1<span class="w"> </span>-d,<span class="sb">`</span><span class="p">;</span><span class="w"> </span><span class="k">do</span>
 <span class="w">    </span>hespi<span class="w"> </span><span class="nv">$URL</span><span class="w"> </span>--output-dir<span class="w"> </span>MELU-H-results
@@ -145,7 +145,7 @@ python3<span class="w"> </span>./evaluate.py<span class="w"> </span>MELU-H.csv<s
 <img alt="MELU Handwritten Evaluation Results" class="align-center" src="_images/MELU-H-evaluation.png" />
 </section>
 <section id="the-dillen-data">
-<h2>The DILLEN Data<a class="headerlink" href="#the-dillen-data" title="Permalink to this heading"></a></h2>
+<h2>The DILLEN Data<a class="headerlink" href="#the-dillen-data" title="Link to this heading"></a></h2>
 <p>To reproduce the results for the DILLEN Data, run the following commands:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="k">for</span><span class="w"> </span>URL<span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="sb">`</span>tail<span class="w"> </span>-n+2<span class="w"> </span>DILLEN.csv<span class="w"> </span><span class="p">|</span><span class="w"> </span>cut<span class="w"> </span>-f1<span class="w"> </span>-d,<span class="sb">`</span><span class="p">;</span><span class="w"> </span><span class="k">do</span>
 <span class="w">    </span>hespi<span class="w"> </span><span class="nv">$URL</span><span class="w"> </span>--output-dir<span class="w"> </span>DILLEN-results
@@ -158,7 +158,7 @@ python3<span class="w"> </span>./evaluate.py<span class="w"> </span>DILLEN.csv<s
 <img alt="DILLEN Evaluation Results" class="align-center" src="_images/DILLEN-evaluation.png" />
 </section>
 <section id="other-options">
-<h2>Other options<a class="headerlink" href="#other-options" title="Permalink to this heading"></a></h2>
+<h2>Other options<a class="headerlink" href="#other-options" title="Link to this heading"></a></h2>
 <p>If you wish to run the pipeline without an LLM, then you can add <code class="docutils literal notranslate"><span class="pre">--llm</span> <span class="pre">none</span></code> to the command line arguments of Hespi.</p>
 <p>The evaluation script has a number of options. See them with this command:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./evaluate.py<span class="w"> </span>--help
