@@ -12,24 +12,17 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
+    - name: Setup Graphviz
+      uses: ts-graphviz/setup-graphviz@v1
+
     - name: Initialise Python ${{ matrix.python-version }}
       uses: actions/setup-python@v5
       with:
         python-version: ${{ matrix.python-version }}
-
+        cache: 'poetry'
+        
     - name: Install poetry
       run: pipx install poetry
-
-    - name: Setup Graphviz
-      uses: ts-graphviz/setup-graphviz@v1
-      
-    - name: Cache Poetry packages
-      uses: actions/cache@v3
-      with:
-        path: ~/.cache/pypoetry
-        key: ${{ runner.os }}-poetry-${{ matrix.python-version }}
-        restore-keys: |
-          ${{ runner.os }}-poetry-
 
     - name: Install dependencies
       run: |
