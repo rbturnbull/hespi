@@ -45,7 +45,6 @@ class Hespi():
         llm_model: str = "gpt-4o",
         llm_api_key: str = "",
         llm_temperature: float = 0.0,
-        tmp_dir:str = None,
         batch_size:int = 4,
         sheet_component_res:int = 1280,
         label_field_res:int = 1280,
@@ -58,7 +57,6 @@ class Hespi():
         self.fuzzy = fuzzy
         self.fuzzy_cutoff = fuzzy_cutoff
         self.htr = htr
-        self.tmp_dir = tmp_dir
         self.batch_size = batch_size
         self.sheet_component_res = sheet_component_res
         self.label_field_res = label_field_res
@@ -120,9 +118,7 @@ class Hespi():
             self.sheet_component_model, 
             images, 
             output_dir=output_dir, 
-            tmp_dir_prefix=self.tmp_dir, 
             res=self.sheet_component_res,
-            batch_size=self.batch_size,
         )
 
     def label_field_model_detect(
@@ -134,9 +130,7 @@ class Hespi():
             self.label_field_model, 
             images, 
             output_dir=output_dir, 
-            tmp_dir_prefix=self.tmp_dir, 
             res=self.label_field_res,
-            batch_size=self.batch_size,
         )
 
     def detect(
