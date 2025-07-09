@@ -83,7 +83,7 @@
 
               {% set my_ocr_df = ocr_df[ocr_df["id"] == stub] %}
               {% if len(my_ocr_df) %}
-                <h2>Institutional Labels</h2>
+                <h2>Primary Specimen Labels</h2>
           
                 {% for _, row in my_ocr_df.iterrows() %}
                   <center>

@@ -3,7 +3,7 @@ from rich.console import Console
 from pathlib import Path
 
 from .ocr import TrOCRSize
-from .hespi import DEFAULT_INSTITUTIONAL_LABEL_CLASSIFIER_WEIGHTS, DEFAULT_SHEET_COMPONENT_WEIGHTS, DEFAULT_LABEL_FIELD_WEIGHTS
+from .hespi import DEFAULT_PRIMARY_SPECIMEN_LABEL_CLASSIFIER_WEIGHTS, DEFAULT_SHEET_COMPONENT_WEIGHTS, DEFAULT_LABEL_FIELD_WEIGHTS
 from .download import get_location
 from .util import DATA_DIR
 
@@ -27,10 +27,10 @@ def label_field_location():
 
 
 @app.command()
-def institutional_label_classifier_location():
-    """ Shows the location of the default Institutional Label Classifier model weights. """
-    path = get_location(DEFAULT_INSTITUTIONAL_LABEL_CLASSIFIER_WEIGHTS)
-    console.print(f"The location of the default Institutional Label Classifier model is:\n{path}")
+def primary_specimen_label_classifier_location():
+    """ Shows the location of the default Primary Specimen Label Classifier model weights. """
+    path = get_location(DEFAULT_PRIMARY_SPECIMEN_LABEL_CLASSIFIER_WEIGHTS)
+    console.print(f"The location of the default Primary Specimen Label Classifier model is:\n{path}")
 
 
 @app.command()

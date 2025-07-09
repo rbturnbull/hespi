@@ -88,7 +88,7 @@ You can set the output directory with the command with the ``--output-dir`` argu
     hespi images/*.tif --output-dir ./hespi-output
 
 The detected components and text fields will be cropped and stored in the output directory. 
-There will also be a CSV file with the filename ``hespi-results.csv`` in the output directory with the text recognition results for any institutional labels found.
+There will also be a CSV file with the filename ``hespi-results.csv`` in the output directory with the text recognition results for any primary specimen labels found.
 
 By default ``hespi`` will use OpenAI's ``gpt-4o`` large language model (LLM) in the pipeline to produce the final results.
 If you wish to use a different model from OpenAI or Anthropic, add it on the command-line like this: ``--llm MODEL_NAME``

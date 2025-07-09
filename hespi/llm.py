@@ -21,8 +21,8 @@ def encode_image(path:Path|str) -> str:
     return base64_encoded_image
 
 
-def build_template(institutional_label_image:Path, detection_results:dict) -> ChatPromptTemplate:
-    base64_encoded_image = encode_image(institutional_label_image)
+def build_template(primary_specimen_label_image:Path, detection_results:dict) -> ChatPromptTemplate:
+    base64_encoded_image = encode_image(primary_specimen_label_image)
     value_dict = {key: value.replace('\n', ' ') for key, value in detection_results.items() if key in label_fields}
     values_string = "\n".join([f"{field}: {value}" for field, value in value_dict.items()])
 
@@ -47,7 +47,7 @@ def build_template(institutional_label_image:Path, detection_results:dict) -> Ch
 
     system_message = SystemMessage("You are an expert curator of a herbarium with vast knowledge of plant species.")
     main_prompt = f"""
-        We have a pipeline for automatically reading the institutional labels and extracting the following fields:\n{', '.join(label_fields)}.
+        We have a pipeline for automatically reading the primary specimen labels and extracting the following fields:\n{', '.join(label_fields)}.
         
         You need to inspect an image and see if the fields have been extracted correctly. 
         If there are errors, then print out the field name with a colon and then the correct value. Each correction is on a new line.
@@ -59,12 +59,12 @@ def build_template(institutional_label_image:Path, detection_results:dict) -> Ch
         species: alba
         -----
 
-        Here are the following fields that we have extracted from the institutional label:
+        Here are the following fields that we have extracted from the primary specimen label:
         {values_string}
 
         {ocr_results}
 
-        Here is the image of the institutional label:
+        Here is the image of the primary specimen label:
     """
     main_prompt = re.sub(r'[\t ]+', ' ', main_prompt).strip()
     human_message = HumanMessage(
@@ -134,8 +134,8 @@ def get_llm(
     raise ValueError(f"Model {model_id} not recognized.")
 
 
-def llm_correct_detection_results(llm:BaseChatModel, institutional_label_image:Path, detection_results:dict) -> None:
-    template = build_template(institutional_label_image, detection_results)
+def llm_correct_detection_results(llm:BaseChatModel, primary_specimen_label_image:Path, detection_results:dict) -> None:
+    template = build_template(primary_specimen_label_image, detection_results)
     
     chain = template | llm | StrOutputParser() | output_parser
 

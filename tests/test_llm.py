@@ -24,7 +24,7 @@ def test_encode_image():
 
 
 def test_build_template():
-    institutional_label_image = test_data_dir/"test.jpg"
+    primary_specimen_label_image = test_data_dir/"test.jpg"
     detection_results = {
         "family": "Piurnosacedie",
         "authority": "Ffisell .",
@@ -58,7 +58,7 @@ def test_build_template():
             }
         ],
     }
-    template = build_template(institutional_label_image, detection_results)
+    template = build_template(primary_specimen_label_image, detection_results)
     template_string = template.invoke({}).to_string()
     assert template_string is not None
     assert template_string.startswith("System: You are an expert")
@@ -105,16 +105,16 @@ def test_get_llm_error():
 
 @patch("hespi.llm.ChatOpenAI", mock_llm)
 def test_llm():
-    institutional_label_image = test_data_dir/"institution_label.jpg"
+    primary_specimen_label_image = test_data_dir/"institution_label.jpg"
     detection_results = {
         "id": "MELUD104449_sp66541195778794889279_medium",
         "label_classification": "handwritten",
         "predictions": Path(
-            "hespi-output/MELUD104449_sp66541195778794889279_medium/MELUD104449_sp66541195778794889279_medium.institutional_label/MELUD104449_sp66541195778794889279_medium.institutional_label.all.jpg"
+            "hespi-output/MELUD104449_sp66541195778794889279_medium/MELUD104449_sp66541195778794889279_medium.primary_specimen_label/MELUD104449_sp66541195778794889279_medium.primary_specimen_label.all.jpg"
         ),
         "collector_image": [
             Path(
-                "hespi-output/MELUD104449_sp66541195778794889279_medium/MELUD104449_sp66541195778794889279_medium.institutional_label/MELUD104449_sp66541195778794889279_medium.institutional_label.collector.jpg"
+                "hespi-output/MELUD104449_sp66541195778794889279_medium/MELUD104449_sp66541195778794889279_medium.primary_specimen_label/MELUD104449_sp66541195778794889279_medium.primary_specimen_label.collector.jpg"
             )
         ],
         "collector_ocr_results": [
@@ -127,22 +127,22 @@ def test_llm():
         ],
         "species_image": [
             Path(
-                "hespi-output/MELUD104449_sp66541195778794889279_medium/MELUD104449_sp66541195778794889279_medium.institutional_label/MELUD104449_sp66541195778794889279_medium.institutional_label.species.jpg"
+                "hespi-output/MELUD104449_sp66541195778794889279_medium/MELUD104449_sp66541195778794889279_medium.primary_specimen_label/MELUD104449_sp66541195778794889279_medium.primary_specimen_label.species.jpg"
             )
         ],
         "collector_number_image": [
             Path(
-                "hespi-output/MELUD104449_sp66541195778794889279_medium/MELUD104449_sp66541195778794889279_medium.institutional_label/MELUD104449_sp66541195778794889279_medium.institutional_label.collector_number.jpg"
+                "hespi-output/MELUD104449_sp66541195778794889279_medium/MELUD104449_sp66541195778794889279_medium.primary_specimen_label/MELUD104449_sp66541195778794889279_medium.primary_specimen_label.collector_number.jpg"
             )
         ],
         "authority_image": [
             Path(
-                "hespi-output/MELUD104449_sp66541195778794889279_medium/MELUD104449_sp66541195778794889279_medium.institutional_label/MELUD104449_sp66541195778794889279_medium.institutional_label.authority.jpg"
+                "hespi-output/MELUD104449_sp66541195778794889279_medium/MELUD104449_sp66541195778794889279_medium.primary_specimen_label/MELUD104449_sp66541195778794889279_medium.primary_specimen_label.authority.jpg"
             )
         ],
         "year_image": [
             Path(
-                "hespi-output/MELUD104449_sp66541195778794889279_medium/MELUD104449_sp66541195778794889279_medium.institutional_label/MELUD104449_sp66541195778794889279_medium.institutional_label.year.jpg"
+                "hespi-output/MELUD104449_sp66541195778794889279_medium/MELUD104449_sp66541195778794889279_medium.primary_specimen_label/MELUD104449_sp66541195778794889279_medium.primary_specimen_label.year.jpg"
             )
         ],
         "year_ocr_results": [
@@ -155,23 +155,23 @@ def test_llm():
         ],
         "month_image": [
             Path(
-                "hespi-output/MELUD104449_sp66541195778794889279_medium/MELUD104449_sp66541195778794889279_medium.institutional_label/MELUD104449_sp66541195778794889279_medium.institutional_label.month.jpg"
+                "hespi-output/MELUD104449_sp66541195778794889279_medium/MELUD104449_sp66541195778794889279_medium.primary_specimen_label/MELUD104449_sp66541195778794889279_medium.primary_specimen_label.month.jpg"
             )
         ],
         "locality_image": [
             Path(
-                "hespi-output/MELUD104449_sp66541195778794889279_medium/MELUD104449_sp66541195778794889279_medium.institutional_label/MELUD104449_sp66541195778794889279_medium.institutional_label.locality.jpg"
+                "hespi-output/MELUD104449_sp66541195778794889279_medium/MELUD104449_sp66541195778794889279_medium.primary_specimen_label/MELUD104449_sp66541195778794889279_medium.primary_specimen_label.locality.jpg"
             )
         ],
         "genus_image": [
             Path(
-                "hespi-output/MELUD104449_sp66541195778794889279_medium/MELUD104449_sp66541195778794889279_medium.institutional_label/MELUD104449_sp66541195778794889279_medium.institutional_label.genus.jpg"
+                "hespi-output/MELUD104449_sp66541195778794889279_medium/MELUD104449_sp66541195778794889279_medium.primary_specimen_label/MELUD104449_sp66541195778794889279_medium.primary_specimen_label.genus.jpg"
             )
         ],
         "collector": "MO. HAAN",
         "year": "Moy",
     }
-    llm_correct_detection_results(mock_llm(), institutional_label_image, detection_results)
+    llm_correct_detection_results(mock_llm(), primary_specimen_label_image, detection_results)
     assert detection_results["family"] == "Chlorophyceae"
     assert detection_results["genus"] == "Chlamydomonas"
     assert detection_results["species"] == "reinhardtii"

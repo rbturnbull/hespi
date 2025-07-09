@@ -5,6 +5,8 @@ import torch
 from unittest.mock import patch
 
 from hespi import yolo
+
+MOCK_CLASSES = ["institutional label", "handwritten label", "barcode", "other"]
     
 class MockBoxes():
     def __init__(self, boxes):
@@ -57,7 +59,7 @@ class MockYoloModelObject():
 class MockYoloModel():
     predictor = None
     model = MockYoloModelObject()
-    names = {x:str(x) for x in range(4)}
+    names = {x: MOCK_CLASSES[x] for x in range(4)}
     
     def predict(self, source, show=False, save=True, batch=4, imgsz=1280):
         return MockYoloOutput(source)

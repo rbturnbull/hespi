@@ -117,7 +117,7 @@ def ocr_data_df(data: dict, output_path: Path=None) -> pd.DataFrame:
 
     Args:
         data (dict): The data coming from the text recognition models. 
-            The keys are the institutional labels.
+            The keys are the primary specimen labels.
             The values are dictionaries with the fields as keys and the values as the recognised text.
         output_path (Path, optional): Where to save a CSV file if given. Defaults to None.
 
@@ -126,7 +126,7 @@ def ocr_data_df(data: dict, output_path: Path=None) -> pd.DataFrame:
     """
     df = pd.DataFrame.from_dict(data, orient="index")
     df = df.fillna(value="")
-    df = df.reset_index().rename(columns={"index": "institutional label"})
+    df = df.reset_index().rename(columns={"index": "primary specimen label"})
     
     # Splitting the ocr_results columns into seperate original text, adjusted, and score
     # Enables the html report to pull the data 
@@ -139,7 +139,7 @@ def ocr_data_df(data: dict, output_path: Path=None) -> pd.DataFrame:
         
     # insert columns not included in dataframe, and re-order
     # including any columns not included in col_options to account for any updates
-    col_options = [ "institutional label", "id" ] + label_fields
+    col_options = [ "primary specimen label", "id" ] + label_fields
 
     missing_cols = [col for col in col_options if col not in df.columns]
     df[missing_cols] = ""
@@ -219,14 +219,14 @@ def ocr_result_str(row, field_name:str, ocr_type:str) -> str:
 
 def ocr_data_print_tables(df: pd.DataFrame) -> None:
     for _, row in df.iterrows():
-        filename = Path(row["institutional label"]).name
+        filename = Path(row["primary specimen label"]).name
         table = Table(
             Column("Field"),
             Column("Text"),
             Column("Tesseract"),
             Column("TrOCR"),
             Column("LLM"),
-            title=f"Fields in institutional label: {filename}",
+            title=f"Fields in primary specimen label: {filename}",
         )
 
         for field in label_fields:

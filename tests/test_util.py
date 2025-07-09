@@ -62,7 +62,7 @@ def test_read_reference_unknown():
 
 def test_ocr_data_df():
     required_columns = [
-        'institutional label', 
+        'primary specimen label', 
         'id', 'family', 'genus', 'species',
         'infrasp_taxon', 'authority', 'collector_number', 'collector',
         'locality', 'geolocation', 'year', 'month', 'day',
@@ -70,7 +70,7 @@ def test_ocr_data_df():
     ]
     df = util.ocr_data_df(
         {
-            "institutional label": {
+            "primary specimen label": {
                 "family":"family",
                 "id":"id",
             }
@@ -84,12 +84,12 @@ def test_ocr_data_df():
         output_path = Path(tmpdir)/"out.csv"
         df = util.ocr_data_df(
             {
-                "institutional label 1": {
+                "primary specimen label 1": {
                     "family":"family",
                     "id":"id",
                     "extra1":"extra1",
                 },
-                "institutional label 2": {
+                "primary specimen label 2": {
                     "family":"family",
                     "id":"id",
                     "extra2":"extra2",
@@ -104,12 +104,12 @@ def test_ocr_data_df():
         # Test appending to existing file
         df = util.ocr_data_df(
             {
-                "institutional label 3": {
+                "primary specimen label 3": {
                     "family":"family",
                     "id":"id",
                     "extra1":"extra3",
                 },
-                "institutional label 4": {
+                "primary specimen label 4": {
                     "family":"family",
                     "id":"id",
                     "extra2":"extra3",
@@ -124,14 +124,14 @@ def test_ocr_data_df():
         assert "extra1" in output_text
         assert "extra3" in output_text
         for i in range(1,5):
-            assert f"institutional label {i}" in output_text
+            assert f"primary specimen label {i}" in output_text
 
 
 
 def test_ocr_data_df_ocr_results():
     df = util.ocr_data_df(
         {
-            "institutional label": {
+            "primary specimen label": {
                 "family":"family",
                 "id":"id",
                 "species_ocr_results": [
@@ -144,7 +144,7 @@ def test_ocr_data_df_ocr_results():
         }
     )
     required_columns = [
-        'institutional label', 'id', 'family', 'genus', 'species',
+        'primary specimen label', 'id', 'family', 'genus', 'species',
        'infrasp_taxon', 'authority', 'collector_number', 'collector',
        'locality', 'geolocation', 'year', 'month', 'day',
        '<--results|ocr_details-->', 'species_ocr_results', 'image_links-->',
@@ -167,7 +167,7 @@ def test_ocr_data_df_ocr_results():
 def test_ocr_data_df_ocr_results(capsys):
     df = util.ocr_data_df(
         {
-            "institutional label": {
+            "primary specimen label": {
                 "species":"zostericolum",
                 "species_image": "species.jpg",
                 "id":"id",
