@@ -8,7 +8,7 @@ hespi
 
 |pypi badge| |testing badge| |coverage badge| |docs badge| |black badge| |arxiv badge|
 
-.. |pypi badge| image:: https://img.shields.io/pypi/v/hespi
+.. |pypi badge| image:: https://img.shields.io/pypi/v/hespi?color=blue
     :target: https://pypi.org/project/hespi/
 
 .. |testing badge| image:: https://github.com/rbturnbull/hespi/actions/workflows/testing.yml/badge.svg
@@ -112,18 +112,32 @@ Credits
 
 .. start-credits
 
-Robert Turnbull, Emily Fitzgerald, Karen Thompson and Jo Birch from the University of Melbourne.
+`Robert Turnbull <https://robturnbull.com>`_, `Emily Fitzgerald <https://findanexpert.unimelb.edu.au/profile/196181-emily-fitzgerald>`_, `Karen Thompson <https://findanexpert.unimelb.edu.au/profile/866064-karen-thompson>`_, and `Jo Birch <https://findanexpert.unimelb.edu.au/profile/718286-jo-birch>`_ from The University of Melbourne.
 
-The paper describing the pipeline is available as a preprint:
+The paper describing the pipeline available in `BioScience <https://doi.org/10.1093/biosci/biaf042>`_:
 
-    Turnbull, R., Fitzgerald, E., Thompson, K., & Birch, J. L. (2024). 
-    *Hespi: A pipeline for automatically detecting information from herbarium specimen sheets*. 
-    `DOI: 10.48550/arXiv.2410.08740 <https://doi.org/10.48550/arXiv.2410.08740>`_.
+    Turnbull, Robert, Emily Fitzgerald, Karen Thompson, and Joanne L. Birch. 
+    “Hespi: a Pipeline for Automatically Detecting Information from Herbarium Specimen Sheets.” *BioScience* (2025).
+    `DOI: 10.1093/biosci/biaf042 <https://doi.org/10.1093/biosci/biaf042>`_.
+
+You can also find the preprint of the paper on arXiv: `arXiv:2410.08740 <https://arxiv.org/abs/2410.08740>`_.
+
+Here is the BibTeX entry for the paper:
+
+.. code-block:: bibtex
+
+    @article{hespi,
+        title = {Hespi: a pipeline for automatically detecting information from herbarium specimen sheets},
+        author = {Turnbull, Robert and Fitzgerald, Emily and Thompson, Karen and Birch, Joanne L.},
+        year = {2025},
+        journal = {BioScience},
+        doi = {10.1093/biosci/biaf042}
+    }
 
 This research was supported by The University of Melbourne’s Research Computing Services and the Petascale Campus Initiative. 
 The authors thank collaborators Niels Klazenga, Heroen Verbruggen, Nunzio Knerr, Noel Faux, Simon Mutch, Babak Shaban, Andrew Drinnan, Michael Bayly and Hannah Turnbull.
 
-Plant refererence data obtained from the `Australian National Species List (auNSL) <https://biodiversity.org.au/nsl>`_, as of March 2024, using the:
+Plant reference data obtained from the `Australian National Species List (auNSL) <https://biodiversity.org.au/nsl>`_, as of March 2024, using the:
 
 - Australian Plant Name Index (APNI)
 - Australian Bryophyte Name Index (AusMoss)
@@ -141,7 +155,7 @@ Logo derived from artwork by `ka reemov <https://thenounproject.com/icon/plant-1
 
 .. end-credits
 
-See the documentation for more information for references in BibTeX format or use the command:
+See the documentation for more information for references or use the command:
 
 .. code-block:: bash
 
