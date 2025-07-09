@@ -276,6 +276,7 @@ def get_stub(path:Path) -> str:
     """
     last_period = path.name.rfind(".")
     stub = path.name[:last_period] if last_period else path.name
+    stub = stub.replace(" ", "_").replace(".", "_").replace(":", "_").strip()
     return stub
 
     

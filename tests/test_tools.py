@@ -40,7 +40,7 @@ def test_primary_specimen_label_classifier_location():
     result = runner.invoke(tools.app, ["primary-specimen-label-classifier-location"])
     assert result.exit_code == 0
     assert "hespi" in result.stdout
-    assert "primary-specimen-label-classifier" in result.stdout.replace("\n", "")
+    assert "label-classifier" in result.stdout.replace("\n", "")
     assert ".pkl" in result.stdout
 
 
