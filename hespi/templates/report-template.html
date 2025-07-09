@@ -15,6 +15,8 @@
     {% include 'assets/css/bootstrap.hespi.min.css' %}
     {% include 'assets/css/hespi.min.css' %}
   </style>
+
+  <script src="assets/js/hespi-gui.js"></script>
 </head>
 
 <body>
@@ -29,7 +31,7 @@
   <div class="container-fluid">
     <div class="row">
 
-      <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block sidebar collapse">
+      <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block sidebar collapse vh-100 overflow-auto">
         <div id="brand">
           <a href="https://rbturnbull.github.io/hespi/" target="_blank">{% include 'assets/img/hespi-logo2.svg' %}</a>
         </div>
@@ -39,7 +41,7 @@
             {% for stub in component_files %}
               <li class="nav-item">
                 <a class="nav-link {% if loop.first %}active{% endif %}" aria-current="page" href="#"  id="{{ stub }}-tab" data-bs-toggle="tab" data-bs-target="#{{ stub }}" type="button" role="tab" aria-controls="{{ stub }}" aria-selected="true">
-                  {% include 'assets/img/feather-image.svg' %}
+                  <img src='{{ stub }}/{{ stub }}.thumbnail.jpg'/>
                   {{ truncate(stub) }}
                 </a>
               </li>
@@ -51,84 +53,89 @@
       <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
         <div class="tab-content" id="myTabContent">
           {% for stub, files in component_files.items() %}
-            <div class="tab-pane fade show {% if loop.first %}active{% endif %}" id="{{ stub }}" role="tabpanel" aria-labelledby="{{ stub }}-tab">
+            <div class="tab-pane fade {% if loop.first %}show active{% endif %}" id="{{ stub }}" role="tabpanel" aria-labelledby="{{ stub }}-tab">
               <h1>{{ stub }}</h1>
-              <center>
-              <a href='{{ stub }}/{{ stub }}.all.jpg'><img src='{{ stub }}/{{ stub }}.all.jpg' class="hespi-image"/></a>
-              </center>
-
-              <h2>Sheet Components</h2>
-              
-              <table class="table table-hover table-striped ">
-                <thead>
-                  <tr>
-                    <th scope="col">Component</th>
-                    <th scope="col">Image</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {% for file in files %}
-                    <tr>
-                      <th scope="row">{{ get_classification(file) }}</th>
-                      <td>
-                        <a href='{{ relative_to_output(file) }}'>
-                          <img src='{{ relative_to_output(file) }}' class="hespi-image"/>
-                        </a>
-                      </td>
-                    </tr>
-                  {% endfor %}  
-                </tbody>
-              </table>
-
 
               {% set my_ocr_df = ocr_df[ocr_df["id"] == stub] %}
-              {% if len(my_ocr_df) %}
-                <h2>Primary Specimen Labels</h2>
-          
+              <ul class="nav nav-tabs" id="{{ stub }}-tabs" role="tablist">
                 {% for _, row in my_ocr_df.iterrows() %}
-                  <center>
-                    <a href='{{ relative_to_output(row["predictions"]) }}'><img src='{{ relative_to_output(row["predictions"]) }}' class="hespi-image"/></a>
-                    <p>Classification: {{ row["label_classification"] }}</p>
-                  </center>
-
-                  <table class="table table-hover table-striped ">
-                    <thead>
-                      <tr>
-                        <th scope="col">Field</th>
-                        <th scope="col">Image</th>
-                        <th scope="col">Recognized Text</th>
-                        <th scope="col">OCR</th>
-                        <th scope="col">HTR</th>
-                        <th scope="col">LLM</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {% for field in label_fields %}
-                        {% if field in row  %}
-                          <tr>
-                            <th scope="row">{{ field }}</th>
-                            <td>
-                              {% for image in get_field_images(row, field) %}
-                                <a href='{{ image }}'>
-                                  <img src='{{ image }}' class="hespi-image"/>
-                                </a>
-                              {% endfor %}
-                            </td>
-                            <td>{{ row[field] }}</td>
-                            <td>{{ ocr_result_str(row, field, "Tesseract") }}</td>
-                            <td>{{ ocr_result_str(row, field, "TrOCR") }}</td>
-                            <td>{{ ocr_result_str(row, field, "LLM") }}</td>
-                          </div>
-                        {% endif %}
-                      {% endfor %}
-                    </tbody>
-                  </table>
-
-
+                <li class="nav-item" role="presentation">
+                  <button class="nav-link {% if loop.first %}show active{% endif %}" id="{{ stub }}-institional-label-tab-{{ loop.index }}" data-bs-toggle="tab" data-bs-target="#{{ stub }}-institional-label-{{ loop.index }}" type="button" role="tab" aria-controls="{{ stub }}-institional-label-{{ loop.index }}" aria-selected="true">Primary Specimen Label {% if not loop.first %}{{ loop.index }}{% endif %}</button>
+                </li>
                 {% endfor %}
-              {% endif %}
-
-
+                <li class="nav-item" role="presentation">
+                  <button class="nav-link {% if len(my_ocr_df) == 0 %}show active{% endif %}" id="{{ stub }}-sheet-components-tab" data-bs-toggle="tab" data-bs-target="#{{ stub }}-sheet-components" type="button" role="tab" aria-controls="{{ stub }}-sheet-components" aria-selected="{% if len(my_ocr_df) == 0 %}true{% else%}false{% endif %}">Sheet Components</button>
+                </li>
+              </ul>
+              <div class="tab-content" id="{{ stub }}-myTabContent">
+                {% for _, row in my_ocr_df.iterrows() %}
+                  <div class="tab-pane fade {% if loop.first %}show active{% endif %}" id="{{ stub }}-institional-label-{{ loop.index }}" role="tabpanel" aria-labelledby="{{ stub }}-institional-label-tab-{{ loop.index }}">              
+                      <center>
+                        <a href='{{ relative_to_output(row["predictions"]) }}'><img src='{{ relative_to_output(row["predictions"]) }}' class="hespi-image"/></a>
+                        <p>Classification: {{ row["label_classification"] }}</p>
+                      </center>
+    
+                      <table class="table table-hover table-striped ">
+                        <thead>
+                          <tr>
+                            <th scope="col">Field</th>
+                            <th scope="col">Image</th>
+                            <th scope="col">Text</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {% for field in label_fields %}
+                            {% if field in row  %}
+                              <tr>
+                                <th scope="row">{{ field }}</th>
+                                <td>
+                                  {% for image in get_field_images(row, field) %}
+                                    <a href='{{ image }}'>
+                                      <img src='{{ image }}' class="hespi-image"/>
+                                    </a>
+                                  {% endfor %}
+                                </td>
+                                <td>
+                                  <p class="recognized-text">{{ row[field] }}</p>
+                                  {% if ocr_result_str(row, field, "Tesseract") %}<p class="alternative-text">Tesseract: {{ ocr_result_str(row, field, "Tesseract")}}. </p>{% endif %}
+                                  {% if ocr_result_str(row, field, "TrOCR") %}<p class="alternative-text">TrOCR: {{ ocr_result_str(row, field, "TrOCR")}}. </p>{% endif %}
+                                  {% if ocr_result_str(row, field, "LLM") %}<p class="alternative-text">LLM: {{ ocr_result_str(row, field, "LLM")}}. </p>{% endif %}
+                                </td>
+                              </div>
+                            {% endif %}
+                          {% endfor %}
+                        </tbody>
+                      </table>
+                  </div>
+                {% endfor %}
+                <div class="tab-pane fade {% if len(my_ocr_df) == 0 %}show active{% endif %}" id="{{ stub }}-sheet-components" role="tabpanel" aria-labelledby="{{ stub }}-sheet-components-tab">
+                  <center>
+                    <a href='{{ stub }}/{{ stub }}.all.jpg'><img src='{{ stub }}/{{ stub }}.medium.jpg' class="hespi-image"/></a>
+                    </center>
+                    <h2>Sheet Components</h2>
+                    
+                    <table class="table table-hover table-striped ">
+                      <thead>
+                        <tr>
+                          <th scope="col">Component</th>
+                          <th scope="col">Image</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {% for file in files %}
+                          <tr>
+                            <th scope="row">{{ get_classification(file) }}</th>
+                            <td>
+                              <a href='{{ relative_to_output(file) }}'>
+                                <img src='{{ relative_to_output(file) }}' class="hespi-image"/>
+                              </a>
+                            </td>
+                          </tr>
+                        {% endfor %}  
+                      </tbody>
+                    </table>                  
+                </div>
+              </div>
             </div>
           {% endfor %}
         </div>        

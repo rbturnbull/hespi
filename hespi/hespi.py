@@ -20,7 +20,7 @@ console = Console()
 DEFAULT_RELEASE_PREFIX = "https://github.com/rbturnbull/hespi/releases/download/v0.4.0"
 DEFAULT_SHEET_COMPONENT_WEIGHTS = f"{DEFAULT_RELEASE_PREFIX}/sheet-component.pt.gz"
 DEFAULT_LABEL_FIELD_WEIGHTS = f"{DEFAULT_RELEASE_PREFIX}/label-field.pt.gz"
-DEFAULT_PRIMARY_SPECIMEN_LABEL_CLASSIFIER_WEIGHTS = f"https://github.com/rbturnbull/hespi/releases/download/v0.4.2/primary-specimen-label-classifier.pkl.gz"
+DEFAULT_PRIMARY_SPECIMEN_LABEL_CLASSIFIER_WEIGHTS = f"https://github.com/rbturnbull/hespi/releases/download/v0.4.2/institutional-label-classifier.pkl.gz"
 
 
 CLASSIFICATION_EMOJI = {
