@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Quickstart &mdash; hespi 0.5.2 documentation</title>
+  <title>Quickstart &mdash; hespi 0.6.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
@@ -14,7 +14,7 @@
   
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=8e576371"></script>
+      <script src="_static/documentation_options.js?v=8fa8b3e9"></script>
       <script src="_static/doctools.js?v=9bcbadda"></script>
       <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
       <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -121,7 +121,7 @@ You can set the output directory with the command with the <code class="docutils
 </pre></div>
 </div>
 <p>The detected components and text fields will be cropped and stored in the output directory.
-There will also be a CSV file with the filename <code class="docutils literal notranslate"><span class="pre">hespi-results.csv</span></code> in the output directory with the text recognition results for any institutional labels found.</p>
+There will also be a CSV file with the filename <code class="docutils literal notranslate"><span class="pre">hespi-results.csv</span></code> in the output directory with the text recognition results for any primary specimen labels found.</p>
 <p>By default <code class="docutils literal notranslate"><span class="pre">hespi</span></code> will use OpenAI’s <code class="docutils literal notranslate"><span class="pre">gpt-4o</span></code> large language model (LLM) in the pipeline to produce the final results.
 If you wish to use a different model from OpenAI or Anthropic, add it on the command-line like this: <code class="docutils literal notranslate"><span class="pre">--llm</span> <span class="pre">MODEL_NAME</span></code>
 You will need to include an API key for the LLM. This can be <code class="docutils literal notranslate"><span class="pre">OPENAI_API_KEY</span></code> for an OpenAI LLM or <code class="docutils literal notranslate"><span class="pre">ANTHROPIC_API_KEY</span></code> for Anthropic.

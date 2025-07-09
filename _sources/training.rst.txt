@@ -22,7 +22,7 @@ The dataset should have a YAML file which looks like this for the Sheet-Componen
     train: train.txt
     val: valid.txt
     nc: 11
-    names: ['small database label', 'handwritten data', 'stamp', 'annotation label', 'scale', 'swing tag', 'full database label', 'database label', 'swatch', 'institutional label', 'number']
+    names: ['small database label', 'handwritten data', 'stamp', 'annotation label', 'scale', 'swing tag', 'full database label', 'database label', 'swatch', 'primary specimen label', 'number']
 
 Or like this for the Label-Field model:
 
