@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Credits &mdash; hespi 0.6.0 documentation</title>
+  <title>Credits &mdash; hespi 0.6.1 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
@@ -14,7 +14,7 @@
   
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=8fa8b3e9"></script>
+      <script src="_static/documentation_options.js?v=2bd037f0"></script>
       <script src="_static/doctools.js?v=9bcbadda"></script>
       <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
       <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -85,20 +85,27 @@
   <section id="credits">
 <h1>Credits<a class="headerlink" href="#credits" title="Link to this heading"></a></h1>
 <p><a class="reference external" href="https://robturnbull.com">Robert Turnbull</a>, <a class="reference external" href="https://findanexpert.unimelb.edu.au/profile/196181-emily-fitzgerald">Emily Fitzgerald</a>, <a class="reference external" href="https://findanexpert.unimelb.edu.au/profile/866064-karen-thompson">Karen Thompson</a>, and <a class="reference external" href="https://findanexpert.unimelb.edu.au/profile/718286-jo-birch">Jo Birch</a> from The University of Melbourne.</p>
+<img alt="https://raw.githubusercontent.com/rbturnbull/hespi/main/docs/images/BioScience-Cover.jpg" src="https://raw.githubusercontent.com/rbturnbull/hespi/main/docs/images/BioScience-Cover.jpg" />
 <p>The paper describing the pipeline available in <a class="reference external" href="https://doi.org/10.1093/biosci/biaf042">BioScience</a>:</p>
 <blockquote>
 <div><p>Turnbull, Robert, Emily Fitzgerald, Karen Thompson, and Joanne L. Birch.
-“Hespi: a Pipeline for Automatically Detecting Information from Herbarium Specimen Sheets.” <em>BioScience</em> (2025).
+“Hespi: a Pipeline for Automatically Detecting Information from Herbarium Specimen Sheets.” <em>BioScience</em> (August 2025).
 <a class="reference external" href="https://doi.org/10.1093/biosci/biaf042">DOI: 10.1093/biosci/biaf042</a>.</p>
 </div></blockquote>
 <p>You can also find the preprint of the paper on arXiv: <a class="reference external" href="https://arxiv.org/abs/2410.08740">arXiv:2410.08740</a>.</p>
 <p>Here is the BibTeX entry for the paper:</p>
 <div class="highlight-bibtex notranslate"><div class="highlight"><pre><span></span><span class="nc">@article</span><span class="p">{</span><span class="nl">hespi</span><span class="p">,</span>
+<span class="w">    </span><span class="na">author</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">{Turnbull, Robert and Fitzgerald, Emily and Thompson, Karen M and Birch, Joanne L}</span><span class="p">,</span>
 <span class="w">    </span><span class="na">title</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">{Hespi: a pipeline for automatically detecting information from herbarium specimen sheets}</span><span class="p">,</span>
-<span class="w">    </span><span class="na">author</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">{Turnbull, Robert and Fitzgerald, Emily and Thompson, Karen and Birch, Joanne L.}</span><span class="p">,</span>
-<span class="w">    </span><span class="na">year</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">{2025}</span><span class="p">,</span>
 <span class="w">    </span><span class="na">journal</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">{BioScience}</span><span class="p">,</span>
-<span class="w">    </span><span class="na">doi</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">{10.1093/biosci/biaf042}</span>
+<span class="w">    </span><span class="na">pages</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">{biaf042}</span><span class="p">,</span>
+<span class="w">    </span><span class="na">year</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">{2025}</span><span class="p">,</span>
+<span class="w">    </span><span class="na">month</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">{08}</span><span class="p">,</span>
+<span class="w">    </span><span class="na">abstract</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">{Specimen-associated biodiversity data are crucial for biological, environmental, and conservation sciences. A rate shift is needed to extract data from specimen images efficiently, moving beyond human-mediated transcription. We developed Hespi (for herbarium specimen sheet pipeline) using advanced computer vision techniques to extract authoritative data applicable for a range of research purposes from primary specimen labels on herbarium specimens. Hespi integrates two object detection models: one for detecting the components of the sheet and another for fields on the primary specimen label. It classifies labels as printed, typed, handwritten, or mixed and uses optical character recognition and handwritten text recognition for extraction. The text is then corrected against authoritative taxon databases and refined using a multimodal large language model. Hespi accurately detects and extracts text from specimen sheets across international herbaria, and its modular design allows users to train and integrate custom models.}</span><span class="p">,</span>
+<span class="w">    </span><span class="na">issn</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">{1525-3244}</span><span class="p">,</span>
+<span class="w">    </span><span class="na">doi</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">{10.1093/biosci/biaf042}</span><span class="p">,</span>
+<span class="w">    </span><span class="na">url</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">{https://doi.org/10.1093/biosci/biaf042}</span><span class="p">,</span>
+<span class="w">    </span><span class="na">eprint</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">{https://academic.oup.com/bioscience/advance-article-pdf/doi/10.1093/biosci/biaf042/63667847/biaf042.pdf}</span><span class="p">,</span>
 <span class="p">}</span>
 </pre></div>
 </div>
@@ -120,11 +127,17 @@ Microsoft’s <a class="reference external" href="https://www.microsoft.com/en-u
 <section id="bibtex">
 <h2>BibTeX<a class="headerlink" href="#bibtex" title="Link to this heading"></a></h2>
 <div class="highlight-bibtex notranslate"><div class="highlight"><pre><span></span><span class="nc">@article</span><span class="p">{</span><span class="nl">hespi</span><span class="p">,</span>
+<span class="w">    </span><span class="na">author</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">{Turnbull, Robert and Fitzgerald, Emily and Thompson, Karen M and Birch, Joanne L}</span><span class="p">,</span>
 <span class="w">    </span><span class="na">title</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">{Hespi: a pipeline for automatically detecting information from herbarium specimen sheets}</span><span class="p">,</span>
-<span class="w">    </span><span class="na">author</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">{Turnbull, Robert and Fitzgerald, Emily and Thompson, Karen and Birch, Joanne L.}</span><span class="p">,</span>
-<span class="w">    </span><span class="na">year</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">{2025}</span><span class="p">,</span>
 <span class="w">    </span><span class="na">journal</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">{BioScience}</span><span class="p">,</span>
-<span class="w">    </span><span class="na">doi</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">{10.1093/biosci/biaf042}</span>
+<span class="w">    </span><span class="na">pages</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">{biaf042}</span><span class="p">,</span>
+<span class="w">    </span><span class="na">year</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">{2025}</span><span class="p">,</span>
+<span class="w">    </span><span class="na">month</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">{08}</span><span class="p">,</span>
+<span class="w">    </span><span class="na">abstract</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">{Specimen-associated biodiversity data are crucial for biological, environmental, and conservation sciences. A rate shift is needed to extract data from specimen images efficiently, moving beyond human-mediated transcription. We developed Hespi (for herbarium specimen sheet pipeline) using advanced computer vision techniques to extract authoritative data applicable for a range of research purposes from primary specimen labels on herbarium specimens. Hespi integrates two object detection models: one for detecting the components of the sheet and another for fields on the primary specimen label. It classifies labels as printed, typed, handwritten, or mixed and uses optical character recognition and handwritten text recognition for extraction. The text is then corrected against authoritative taxon databases and refined using a multimodal large language model. Hespi accurately detects and extracts text from specimen sheets across international herbaria, and its modular design allows users to train and integrate custom models.}</span><span class="p">,</span>
+<span class="w">    </span><span class="na">issn</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">{1525-3244}</span><span class="p">,</span>
+<span class="w">    </span><span class="na">doi</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">{10.1093/biosci/biaf042}</span><span class="p">,</span>
+<span class="w">    </span><span class="na">url</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">{https://doi.org/10.1093/biosci/biaf042}</span><span class="p">,</span>
+<span class="w">    </span><span class="na">eprint</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">{https://academic.oup.com/bioscience/advance-article-pdf/doi/10.1093/biosci/biaf042/63667847/biaf042.pdf}</span>
 <span class="p">}</span>
 
 <span class="nc">@article</span><span class="p">{</span><span class="nl">thompson2023_identification</span><span class="p">,</span>
