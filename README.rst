@@ -6,7 +6,7 @@ hespi
 
 .. start-badges
 
-|pypi badge| |testing badge| |coverage badge| |docs badge| |black badge| |arxiv badge|
+|pypi badge| |testing badge| |coverage badge| |docs badge| |black badge| |doi badge|
 
 .. |pypi badge| image:: https://img.shields.io/pypi/v/hespi?color=blue
     :target: https://pypi.org/project/hespi/
@@ -23,11 +23,10 @@ hespi
 .. |coverage badge| image:: https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/rbturnbull/f31036b00473b6d0af3a160ea681903b/raw/coverage-badge.json
     :target: https://rbturnbull.github.io/hespi/coverage/
 
-.. |arxiv badge| image:: https://img.shields.io/badge/arXiv-2410.08740-b31b1b.svg
-   :target: https://arxiv.org/abs/2410.08740
-   :alt: arXiv:2410.08740
+.. |doi badge| image:: https://img.shields.io/badge/DOI-10.1093/biosci/biaf042-blue.svg
+   :target: https://doi.org/10.1093/biosci/biaf042
+   :alt: 10.1093/biosci/biaf042
 
-    
 .. end-badges
 
 HErbarium Specimen sheet PIpeline
@@ -41,6 +40,19 @@ Hespi takes images of specimen sheets from herbaria and first detects the variou
     :alt: Hespi pipeline
     :align: center
 
+To read more about Hespi, see our paper in `BioScience <https://doi.org/10.1093/biosci/biaf042>`_ 
+or the article in `The Conversation<https://theconversation.com/botanical-time-machines-ai-is-unlocking-a-treasure-trove-of-data-held-in-herbarium-collections-253236>`_.`
+
+.. image:: https://raw.githubusercontent.com/rbturnbull/hespi/main/docs/images/HespiConversation.png
+    :alt: Hespi article in The Conversation
+    :align: center
+    :target: https://theconversation.com/botanical-time-machines-ai-is-unlocking-a-treasure-trove-of-data-held-in-herbarium-collections-253236
+
+
+.. image:: https://raw.githubusercontent.com/rbturnbull/hespi/main/docs/images/HespiPoster-Thumbnail.jpg
+    :alt: Hespi Poster
+    :align: center
+    :target: https://raw.githubusercontent.com/rbturnbull/hespi/main/docs/HespiPoster.pdf
 
 Hespi first takes a specimen sheet and detects the various components of it using the Sheet-Component Model. 
 Then any full database label detected is cropped and this is given to the Label-Field Model 
@@ -114,10 +126,12 @@ Credits
 
 `Robert Turnbull <https://robturnbull.com>`_, `Emily Fitzgerald <https://findanexpert.unimelb.edu.au/profile/196181-emily-fitzgerald>`_, `Karen Thompson <https://findanexpert.unimelb.edu.au/profile/866064-karen-thompson>`_, and `Jo Birch <https://findanexpert.unimelb.edu.au/profile/718286-jo-birch>`_ from The University of Melbourne.
 
+.. image:: https://raw.githubusercontent.com/rbturnbull/hespi/main/docs/images/BioScience-Cover.jpg
+
 The paper describing the pipeline available in `BioScience <https://doi.org/10.1093/biosci/biaf042>`_:
 
     Turnbull, Robert, Emily Fitzgerald, Karen Thompson, and Joanne L. Birch. 
-    “Hespi: a Pipeline for Automatically Detecting Information from Herbarium Specimen Sheets.” *BioScience* (2025).
+    “Hespi: a Pipeline for Automatically Detecting Information from Herbarium Specimen Sheets.” *BioScience* (August 2025).
     `DOI: 10.1093/biosci/biaf042 <https://doi.org/10.1093/biosci/biaf042>`_.
 
 You can also find the preprint of the paper on arXiv: `arXiv:2410.08740 <https://arxiv.org/abs/2410.08740>`_.
@@ -127,11 +141,17 @@ Here is the BibTeX entry for the paper:
 .. code-block:: bibtex
 
     @article{hespi,
+        author = {Turnbull, Robert and Fitzgerald, Emily and Thompson, Karen M and Birch, Joanne L},
         title = {Hespi: a pipeline for automatically detecting information from herbarium specimen sheets},
-        author = {Turnbull, Robert and Fitzgerald, Emily and Thompson, Karen and Birch, Joanne L.},
-        year = {2025},
         journal = {BioScience},
-        doi = {10.1093/biosci/biaf042}
+        pages = {biaf042},
+        year = {2025},
+        month = {08},
+        abstract = {Specimen-associated biodiversity data are crucial for biological, environmental, and conservation sciences. A rate shift is needed to extract data from specimen images efficiently, moving beyond human-mediated transcription. We developed Hespi (for herbarium specimen sheet pipeline) using advanced computer vision techniques to extract authoritative data applicable for a range of research purposes from primary specimen labels on herbarium specimens. Hespi integrates two object detection models: one for detecting the components of the sheet and another for fields on the primary specimen label. It classifies labels as printed, typed, handwritten, or mixed and uses optical character recognition and handwritten text recognition for extraction. The text is then corrected against authoritative taxon databases and refined using a multimodal large language model. Hespi accurately detects and extracts text from specimen sheets across international herbaria, and its modular design allows users to train and integrate custom models.},
+        issn = {1525-3244},
+        doi = {10.1093/biosci/biaf042},
+        url = {https://doi.org/10.1093/biosci/biaf042},
+        eprint = {https://academic.oup.com/bioscience/advance-article-pdf/doi/10.1093/biosci/biaf042/63667847/biaf042.pdf},
     }
 
 This research was supported by The University of Melbourne’s Research Computing Services and the Petascale Campus Initiative. 
