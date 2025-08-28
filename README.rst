@@ -41,17 +41,13 @@ Hespi takes images of specimen sheets from herbaria and first detects the variou
     :align: center
 
 To read more about Hespi, see our paper in `BioScience <https://doi.org/10.1093/biosci/biaf042>`_ 
-or the article in `The Conversation<https://theconversation.com/botanical-time-machines-ai-is-unlocking-a-treasure-trove-of-data-held-in-herbarium-collections-253236>`_.`
-
-.. image:: https://raw.githubusercontent.com/rbturnbull/hespi/main/docs/images/HespiConversation.png
-    :alt: Hespi article in The Conversation
-    :align: center
-    :target: https://theconversation.com/botanical-time-machines-ai-is-unlocking-a-treasure-trove-of-data-held-in-herbarium-collections-253236
+or the article in `The Conversation <https://theconversation.com/botanical-time-machines-ai-is-unlocking-a-treasure-trove-of-data-held-in-herbarium-collections-253236>`_.
 
 
 .. image:: https://raw.githubusercontent.com/rbturnbull/hespi/main/docs/images/HespiPoster-Thumbnail.jpg
     :alt: Hespi Poster
-    :align: center
+    :align: right
+    :width: 200px
     :target: https://raw.githubusercontent.com/rbturnbull/hespi/main/docs/HespiPoster.pdf
 
 Hespi first takes a specimen sheet and detects the various components of it using the Sheet-Component Model. 
@@ -64,7 +60,7 @@ The recognized text is then corrected using a multimodal Large Language Model (L
 Finally, the result of the fields is post-processed before being written into 
 an HTML report, a CSV file and text files. 
 
-The stages of the pipeline are explained in the `documentation for the pipeline <https://rbturnbull.github.io/hespi/pipeline.html>`_.
+The stages of the pipeline are explained in the `documentation for the pipeline <https://rbturnbull.github.io/hespi/pipeline.html>`_ and our `poster <https://raw.githubusercontent.com/rbturnbull/hespi/main/docs/HespiPoster.pdf>`_.
 
 
 Installation
@@ -127,6 +123,10 @@ Credits
 `Robert Turnbull <https://robturnbull.com>`_, `Emily Fitzgerald <https://findanexpert.unimelb.edu.au/profile/196181-emily-fitzgerald>`_, `Karen Thompson <https://findanexpert.unimelb.edu.au/profile/866064-karen-thompson>`_, and `Jo Birch <https://findanexpert.unimelb.edu.au/profile/718286-jo-birch>`_ from The University of Melbourne.
 
 .. image:: https://raw.githubusercontent.com/rbturnbull/hespi/main/docs/images/BioScience-Cover.jpg
+    :alt: BioScience Cover
+    :align: right
+    :target: https://doi.org/10.1093/biosci/biaf042
+    :width: 200px
 
 The paper describing the pipeline available in `BioScience <https://doi.org/10.1093/biosci/biaf042>`_:
 
