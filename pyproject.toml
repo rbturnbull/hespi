@@ -31,9 +31,9 @@ appdirs = ">=1.4.4"
 jinja2 = ">=3.1.2"
 ultralytics = ">=8.1.0"
 langchain = ">=0.2.0"
-gradio = ">=5.11.0"
 drawyolo = ">=0.1.2"
 llmloader = "^0.1.1"
+pyinstaller = "^6.15.0"
 
 [tool.poetry.group.dev.dependencies]
 rcssmin = ">=1.1.2"

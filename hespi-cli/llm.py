@@ -7,7 +7,7 @@ from langchain.schema.output_parser import StrOutputParser
 from langchain.chat_models.base import BaseChatModel
 
 
-from hespi.util import label_fields
+from util import label_fields
 
 def encode_image(path:Path|str) -> str:
     path = Path(path)

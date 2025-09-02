@@ -176,3 +176,4 @@ results/
 *.tif
 *.png
 hespi-output/
+*.p12

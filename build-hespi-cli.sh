@@ -1,0 +1,1 @@
+poetry run pyinstaller --clean hespi-cli.spec

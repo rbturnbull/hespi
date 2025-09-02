@@ -2,10 +2,10 @@ import typer
 from rich.console import Console
 from pathlib import Path
 
-from hespi.ocr import TrOCRSize
-from hespi.hespi import DEFAULT_INSTITUTIONAL_LABEL_CLASSIFIER_WEIGHTS, DEFAULT_SHEET_COMPONENT_WEIGHTS, DEFAULT_LABEL_FIELD_WEIGHTS
-from hespi.download import get_location
-from hespi.util import DATA_DIR, ocr_data_json
+from ocr import TrOCRSize
+from hespi import DEFAULT_INSTITUTIONAL_LABEL_CLASSIFIER_WEIGHTS, DEFAULT_SHEET_COMPONENT_WEIGHTS, DEFAULT_LABEL_FIELD_WEIGHTS
+from download import get_location
+from util import DATA_DIR, ocr_data_json
 
 console = Console()
 
@@ -50,7 +50,7 @@ def trocr(
     ),
 ):
     """ Run the TrOCR model on an image and print the recognized text. """
-    from hespi.ocr import TrOCR
+    from ocr import TrOCR
 
     ocr = TrOCR(size=size)
     text = ocr.get_text(image)
@@ -62,7 +62,7 @@ def gui():
     """
     Start the Hespi GUI
     """
-    from hespi.gui import build_blocks, compile_sass
+    from gui import build_blocks, compile_sass
     compile_sass(Path(__file__).parent / "templates" / "assets")
     interface = build_blocks()
     interface.launch()

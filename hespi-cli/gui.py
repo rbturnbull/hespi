@@ -1,7 +1,7 @@
 import gradio as gr
 from pathlib import Path
-from hespi.hespi import Hespi
-from .util import Generator
+from hespi import Hespi
+from util import Generator
 
 def process_images(image_list: list[str], llm_model: str, llm_temperature: float, progress=gr.Progress()):
     output_dir = Path().cwd() / "hespi-output"

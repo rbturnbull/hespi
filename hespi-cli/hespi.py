@@ -6,19 +6,19 @@ from functools import cached_property
 from rich.console import Console
 from collections import defaultdict
 from rich.progress import track
-from gradio import Progress as grProgress
 import llmloader
 import pickle
-from .util import Generator
+
+from util import Generator
 
 
-from hespi.yolo import yolo_output, predictions_filename
-from hespi.ocr import Tesseract, TrOCR, TrOCRSize
-from hespi.download import get_location
-from hespi.util import mk_reference, ocr_data_df, ocr_data_json, adjust_text, get_stub, ocr_data_print_tables
-from hespi.ocr import TrOCRSize
-from hespi.report import write_report
-from hespi.llm import llm_correct_detection_results
+from yolo import yolo_output, predictions_filename
+from ocr import Tesseract, TrOCR, TrOCRSize
+from download import get_location
+from util import mk_reference, ocr_data_df, ocr_data_json, adjust_text, get_stub, ocr_data_print_tables
+from ocr import TrOCRSize
+from report import write_report
+from llm import llm_correct_detection_results
 
 console = Console()
 
@@ -176,7 +176,7 @@ class Hespi():
       images: List[Path],
       output_dir: Path,
       report: bool = True,
-      progress: grProgress = None
+      progress = None
    ) -> Path | None:
       self.progress = progress
 
@@ -296,7 +296,7 @@ class Hespi():
 
       return best_text, best_match_score, best_engine
 
-   def primary_specimen_label_detect(self, component, stub, output_dir, progress: grProgress = None) -> Dict:
+   def primary_specimen_label_detect(self, component, stub, output_dir, progress = None) -> Dict:
       detection_results = {"id": stub}
 
       # Primary Specimen Label Classification

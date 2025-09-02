@@ -4,9 +4,9 @@ from pathlib import Path
 import pandas as pd
 from rich.console import Console
 
-from hespi.hespi import Hespi
-from hespi.hespi import DEFAULT_INSTITUTIONAL_LABEL_CLASSIFIER_WEIGHTS, DEFAULT_SHEET_COMPONENT_WEIGHTS, DEFAULT_LABEL_FIELD_WEIGHTS
-from hespi.ocr import TrOCRSize
+from hespi import Hespi
+from hespi import DEFAULT_INSTITUTIONAL_LABEL_CLASSIFIER_WEIGHTS, DEFAULT_SHEET_COMPONENT_WEIGHTS, DEFAULT_LABEL_FIELD_WEIGHTS
+from ocr import TrOCRSize
 
 console = Console()
 
@@ -90,5 +90,7 @@ def detect(
         label_field_res=label_field_res,
     )
     return hespi.detect(images, output_dir)
-    
+
+if __name__ == "__main__":
+    app()
 

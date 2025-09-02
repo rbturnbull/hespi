@@ -15,18 +15,18 @@ console = Console()
 DATA_DIR = Path(__file__).parent / "data"
 
 label_fields = [
-    "family",
-    "genus",
-    "species",
-    "infrasp_taxon",
-    "authority",
-    "collector_number",
-    "collector",
-    "locality",
-    "geolocation",
-    "year",
-    "month",
-    "day",
+   "family",
+   "genus",
+   "species",
+   "infrasp_taxon",
+   "authority",
+   "collector_number",
+   "collector",
+   "locality",
+   "geolocation",
+   "year",
+   "month",
+   "day",
 ]
 
 
@@ -40,96 +40,96 @@ class POSIXPathEncoder(json.JSONEncoder):
 
 
 class Generator:
-    def __init__(self, gen):
-        self.gen = gen
+   def __init__(self, gen):
+      self.gen = gen
 
-    def __iter__(self):
-        self.value = yield from self.gen
-        return self.value
+   def __iter__(self):
+      self.value = yield from self.gen
+      return self.value
 
 
 def adjust_case(field, value):
-    if field in ["genus", "family"]:
-        return value.title()
-    elif field == "species":
-        return value.lower()
+   if field in ["genus", "family"]:
+      return value.title()
+   elif field == "species":
+      return value.lower()
 
-    return value
+   return value
 
 
 def strip_punctuation(field, value):
-    punctuation_to_strip = string.punctuation.replace('[', '').replace(']', '').replace('(', '').replace(')', '')
-    if field in ["genus", "family", "species"]:
-        return value.strip(punctuation_to_strip).strip()
+   punctuation_to_strip = string.punctuation.replace('[', '').replace(']', '').replace('(', '').replace(')', '')
+   if field in ["genus", "family", "species"]:
+      return value.strip(punctuation_to_strip).strip()
 
-    return value
+   return value
 
 
 def read_reference(field):
-    path = DATA_DIR / f"{field}.txt"
-    if not path.exists():
-        raise FileNotFoundError(f"No reference file for field '{field}'.")
-    return path.read_text().strip().split("\n")
+   path = DATA_DIR / f"{field}.txt"
+   if not path.exists():
+      raise FileNotFoundError(f"No reference file for field '{field}'.")
+   return path.read_text().strip().split("\n")
 
 
 def mk_reference() -> Dict:
-    reference_fields = ["family", "genus", "species", "authority"]
-    return {field: read_reference(field) for field in reference_fields}
+   reference_fields = ["family", "genus", "species", "authority"]
+   return {field: read_reference(field) for field in reference_fields}
 
 
 def label_sort_key(s) -> int:
-    base_name = s.split('_')[0]
-    try:
-        return label_fields.index(base_name)
-    except ValueError:
-        return len(label_fields)
+   base_name = s.split('_')[0]
+   try:
+      return label_fields.index(base_name)
+   except ValueError:
+      return len(label_fields)
 
 
 def process_row_ocr_results(row, field_name):
-    trocr_original = []
-    trocr_adjusted = []
-    trocr_match_score = []
-    tesseract_original = []
-    tesseract_adjusted = []
-    tesseract_match_score = []
-    llm_original = []
-    llm_adjusted = []
-    llm_match_score = []
+   trocr_original = []
+   trocr_adjusted = []
+   trocr_match_score = []
+   tesseract_original = []
+   tesseract_adjusted = []
+   tesseract_match_score = []
+   llm_original = []
+   llm_adjusted = []
+   llm_match_score = []
 
-    for d in row:
-        if d['ocr'] == 'TrOCR':
-            trocr_original.append(d['original_text_detected'])
-            trocr_adjusted.append(d['adjusted_text'])
-            trocr_match_score.append(d['match_score'])
-        elif d['ocr'] == 'Tesseract':
-            tesseract_original.append(d['original_text_detected'])
-            tesseract_adjusted.append(d['adjusted_text'])
-            tesseract_match_score.append(d['match_score'])
-        elif d['ocr'] == 'LLM':
-            llm_original.append(d['original_text_detected'])
-            llm_adjusted.append(d['adjusted_text'])
-            llm_match_score.append(d['match_score'])
+   for d in row:
+      if d['ocr'] == 'TrOCR':
+         trocr_original.append(d['original_text_detected'])
+         trocr_adjusted.append(d['adjusted_text'])
+         trocr_match_score.append(d['match_score'])
+      elif d['ocr'] == 'Tesseract':
+         tesseract_original.append(d['original_text_detected'])
+         tesseract_adjusted.append(d['adjusted_text'])
+         tesseract_match_score.append(d['match_score'])
+      elif d['ocr'] == 'LLM':
+         llm_original.append(d['original_text_detected'])
+         llm_adjusted.append(d['adjusted_text'])
+         llm_match_score.append(d['match_score'])
 
-    return {
-        f"{field_name}_TrOCR_original": trocr_original,
-        f"{field_name}_TrOCR_adjusted": trocr_adjusted,
-        f"{field_name}_TrOCR_match_score": trocr_match_score,
-        f"{field_name}_Tesseract_original": tesseract_original,
-        f"{field_name}_Tesseract_adjusted": tesseract_adjusted,
-        f"{field_name}_Tesseract_match_score": tesseract_match_score,
-        f"{field_name}_LLM_original": llm_original,
-        f"{field_name}_LLM_adjusted": llm_adjusted,
-        f"{field_name}_LLM_match_score": llm_match_score,
-    }
+   return {
+      f"{field_name}_TrOCR_original": trocr_original,
+      f"{field_name}_TrOCR_adjusted": trocr_adjusted,
+      f"{field_name}_TrOCR_match_score": trocr_match_score,
+      f"{field_name}_Tesseract_original": tesseract_original,
+      f"{field_name}_Tesseract_adjusted": tesseract_adjusted,
+      f"{field_name}_Tesseract_match_score": tesseract_match_score,
+      f"{field_name}_LLM_original": llm_original,
+      f"{field_name}_LLM_adjusted": llm_adjusted,
+      f"{field_name}_LLM_match_score": llm_match_score,
+   }
 
 
 def flatten_single_item_lists(lst):
-    if isinstance(lst, list):
-        if len(lst) == 1:
-            return lst[0]
-        elif len(lst) == 0:
-            return ''
-    return lst
+   if isinstance(lst, list):
+      if len(lst) == 1:
+         return lst[0]
+      elif len(lst) == 0:
+         return ''
+   return lst
 
 
 def clean_data_for_json(data: dict) -> dict:
@@ -144,11 +144,11 @@ def clean_data_for_json(data: dict) -> dict:
 
 
 def relative_to_output(path, output_path: Path):
-    if isinstance(path, list):
+   if isinstance(path, list):
       return [relative_to_output(p, output_path) for p in path]
-    try:
+   try:
       return str(Path(path).relative_to(output_path.parent))
-    except Exception as e:
+   except Exception as e:
       print(f"Error converting path '{path}' to path relative to '{output_path.parent}': {e}")
       return path
    
