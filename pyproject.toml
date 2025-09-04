@@ -5,7 +5,7 @@ description = "HErbarium Specimen sheet PIpeline"
 authors = ["Robert Turnbull <robert.turnbull@unimelb.edu.au>"]
 license = "Apache-2.0"
 readme = "README.rst"
-exclude = ["hespi/data/plants.csv"]
+exclude = ["hespi-cli/data/plants.csv"]
 homepage = "https://rbturnbull.github.io/hespi/"
 repository = "https://github.com/rbturnbull/hespi"
 documentation = "https://rbturnbull.github.io/hespi/"
@@ -62,5 +62,5 @@ requires = ["setuptools","poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.poetry.scripts]
-hespi = "hespi.main:app"
-hespi-tools = "hespi.tools:app"
+hespi = "hespi-cli.main:app"
+hespi-tools = "hespi-cli.tools:app"

@@ -7,12 +7,10 @@ from drawyolo.draw import draw_box_on_image_with_yolo_result
 
 console = Console()
 
-from util import get_stub
-
+import util
 
 def predictions_filename(stub):
     return f"{stub}.all.jpg"
-
 
 def yolo_output(model, images, output_dir:str|Path, res:int=1280, thumbnail_width:int=240):
     output_files = defaultdict(list)
@@ -23,7 +21,7 @@ def yolo_output(model, images, output_dir:str|Path, res:int=1280, thumbnail_widt
         results = model.predict(source=[image], show=False, save=False, batch=1, imgsz=res)
         predictions = next(iter(results))
 
-        stub = get_stub(image)
+        stub = util.get_stub(image)
         image_output_dir = output_dir / stub
         prediction_path = image_output_dir / predictions_filename(stub)
         draw_box_on_image_with_yolo_result(
@@ -80,6 +78,6 @@ def yolo_output(model, images, output_dir:str|Path, res:int=1280, thumbnail_widt
             im_crop.convert('RGB').save(output_path)
             output_files[stub].append(output_path)
 
-    console.print(table)
+    util.hprint(table)
 
     return output_files

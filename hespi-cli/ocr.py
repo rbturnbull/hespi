@@ -3,7 +3,7 @@ from PIL import Image
 from enum import Enum
 from pathlib import Path
 import pytesseract
-
+import util
 
 
 class TrOCRSize(Enum):
@@ -63,7 +63,7 @@ class Tesseract(OCR):
         try:
             return pytesseract.image_to_string(str(image_path)).strip()
         except Exception as err:
-            print(f"No tesseract available: {err}")
+            util.hprint(f"No tesseract available: {err}", "red")
             self.no_tesseract = True
         
         return None

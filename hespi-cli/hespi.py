@@ -9,13 +9,13 @@ from rich.progress import track
 import llmloader
 import pickle
 
-from util import Generator
+import util
 
 
 from yolo import yolo_output, predictions_filename
 from ocr import Tesseract, TrOCR, TrOCRSize
 from download import get_location
-from util import mk_reference, ocr_data_df, ocr_data_json, adjust_text, get_stub, ocr_data_print_tables
+from util import mk_reference, ocr_data_df, ocr_data_json, adjust_text, get_stub, ocr_data_print_tables, Generator
 from ocr import TrOCRSize
 from report import write_report
 from llm import llm_correct_detection_results
@@ -51,7 +51,7 @@ class Hespi():
       llm_api_key: str = "",
       llm_temperature: float = 0.0,
       sheet_component_res: int = 1280,
-      label_field_res: int = 1280,
+      label_field_res: int = 1280
    ):
       self.trocr_size = trocr_size
       self.sheet_component_weights = sheet_component_weights or DEFAULT_SHEET_COMPONENT_WEIGHTS
@@ -64,16 +64,17 @@ class Hespi():
       self.sheet_component_res = sheet_component_res
       self.label_field_res = label_field_res
       self.progress = None
+      self.overall_progress = 0
 
       # Set LLM
       if not llm_model or str(llm_model).lower() == "none":
-         console.print(f"[red]LLM not being used[/red]")
+         util.hprint(f"LLM not being used", "red", self.overall_progress)
          self.llm = None
       else:
          try:
                self.llm = llmloader.load(model=llm_model, temperature=llm_temperature, api_key=llm_api_key)
          except ValueError as err:
-               console.print(f"[red]Error loading LLM model: {err}[/red]")
+               util.hprint(f"Error loading LLM model: {err}", "red", self.overall_progress)
                self.llm = None
 
       # Check if gpu is available
@@ -127,7 +128,7 @@ class Hespi():
    @cached_property
    def trocr(self):
       desc = f"Loading TrOCR model of size '{self.trocr_size}'"
-      print(desc)
+      util.hprint(desc, skip_if_structured=True)
       if self.progress is not None:
          self.progress(0.1, desc=desc)
       trocr = TrOCR(size=self.trocr_size)
@@ -184,14 +185,18 @@ class Hespi():
       if isinstance(images, (Path, str)):
          images = [images]
       images = [get_location(image, cache_dir=output_dir/"downloads") for image in images]
-      if len(images) == 1:
-         console.print(f"Processing '{images[0]}'")
-      else:
-         console.print(f"Processing {len(images)} images")
-
+      self.overall_progress = 0
+      msg = f"Processing '{images[0]}'"
+      if len(images) > 1:
+         msg = f"Processing {len(images)} images"
+         
+      util.hprint(msg, None, self.overall_progress)
+      
       # Sheet-Components predictions
       component_files = self.sheet_component_detect(images, output_dir=output_dir)
 
+      self.overall_progress = 0.1
+      processed_images = 0
       if self.progress is not None:
          self.progress(0.1, desc="Loading models...")
 
@@ -200,15 +205,17 @@ class Hespi():
       # Primary Specimen Label Field Detection Model Predictions
       for stub, components in component_files.items():
          for component in components:
-               if re.match(r".*\.primary_specimen_label-?\d*.jpg$", component.name):
-                  ocr_data[str(component)] = self.primary_specimen_label_detect(
-                     component,
-                     stub=stub,
-                     output_dir=output_dir / stub,
-                     progress=self.progress
-                  )
-                  if self.progress is not None:
-                     yield ocr_data[str(component)]  # Watch out for this one, it's a generator
+            if re.match(r".*\.primary_specimen_label-?\d*.jpg$", component.name):
+               ocr_data[str(component)] = self.primary_specimen_label_detect(
+                  component,
+                  stub=stub,
+                  output_dir=output_dir / stub,
+                  progress=self.progress
+               )
+               if self.progress is not None:
+                  yield ocr_data[str(component)]  # Watch out for this one, it's a generator
+         processed_images += 1
+         self.overall_progress = processed_images / len(component_files.items())
 
       with open(str(output_dir/'ocr_data.pkl'), 'wb') as f:
          ocr_data_pkl = ocr_data.copy()
@@ -238,7 +245,7 @@ class Hespi():
 
    def primary_specimen_label_classify(self, component: Path, classification_csv: Path) -> str:
       component = Path(component)
-      console.print(f"Classifying '{component.name}':")
+      util.hprint(f"Classifying '{component.name}':", None, self.overall_progress)
       classifier_results = self.primary_specimen_label_classifier(
          items=component,
          pretrained=self.primary_specimen_label_classifier.pretrained,
@@ -254,8 +261,8 @@ class Hespi():
 
       emoji = CLASSIFICATION_EMOJI.get(classification, "")
 
-      console.print(f"[red]{classification}[/red] {emoji}")
-      console.print(f"Classification result to '{classification_csv}'")
+      util.hprint(f"{classification} {emoji}", "red", self.progress)
+      util.hprint(f"Classification result to '{classification_csv}'")
 
       return classification
 
@@ -319,22 +326,29 @@ class Hespi():
       # Text Recognition on bounding boxes found by YOLO
       desc = f"Reading fields for {component.name}"
       for fields in field_files.values():
-         progress_track = track(fields, description=desc) if self.progress is None else self.progress.tqdm(fields, desc=desc)
+         progress_track = fields
+         if not util.structured_print:
+            progress_track = track(fields, description=desc) if self.progress is None else self.progress.tqdm(fields, desc=desc)
+         processed_count = 0
+         util.hprint(desc, None, self.overall_progress)
          for field_file in progress_track:
-               field_results = self.read_field_file(
-                  field_file,
-                  classification,
-               )
+            util.hprint(None, None, self.overall_progress, processed_count/len(fields))
+            field_results = self.read_field_file(
+               field_file,
+               classification,
+            )
 
-               for key, value in field_results.items():
-                  if key not in detection_results:
-                     detection_results[key] = value
-                  else:
-                     detection_results[key] = (
-                           detection_results[key] + value
-                           if isinstance(value, list)
-                           else [detection_results[key], value]
-                     )
+            for key, value in field_results.items():
+               if key not in detection_results:
+                  detection_results[key] = value
+               else:
+                  detection_results[key] = (
+                        detection_results[key] + value
+                        if isinstance(value, list)
+                        else [detection_results[key], value]
+                  )
+            processed_count += 1
+      self.overall_progress += 1
 
       results = {}
 
@@ -421,9 +435,7 @@ class Hespi():
       if self.htr:
          htr_text = self.trocr.get_text(field_file)
          if htr_text:
-               # console.print(
-               #     f"Handwritten Text Recognition (TrOCR): [red]'{htr_text}'[/red]"
-               # )
+               # util.hprint(f"Handwritten Text Recognition (TrOCR): [red]'{htr_text}'[/red]")
 
                adjusted_text, match_score = adjust_text(
                   field,
@@ -445,9 +457,7 @@ class Hespi():
       # OCR
       tesseract_text = self.tesseract.get_text(field_file)
       if tesseract_text:
-         # console.print(
-         #     f"Optical Character Recognition (Tesseract): [red]'{tesseract_text}'[/red]"
-         # )
+         # util.hprint(f"Optical Character Recognition (Tesseract): [red]'{tesseract_text}'[/red]")
 
          adjusted_text, match_score = adjust_text(
                field,

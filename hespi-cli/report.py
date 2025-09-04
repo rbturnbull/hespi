@@ -3,6 +3,7 @@ from pathlib import Path
 import pandas as pd
 from typing import Dict
 
+import util
 from util import console, ocr_result_str, label_fields
 
 def write_report(output:Path, component_files:Dict, ocr_df:pd.DataFrame):
@@ -63,6 +64,6 @@ def write_report(output:Path, component_files:Dict, ocr_df:pd.DataFrame):
         ocr_df=ocr_df,
     )
     with open(str(output), 'w') as f:
-        console.print(f"Writing HTML report to '{output}'")
+        util.hprint(f"Writing HTML report to '{output}'")
         f.write(result)                
 

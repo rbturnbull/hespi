@@ -3,6 +3,7 @@ import typer
 from pathlib import Path
 import pandas as pd
 from rich.console import Console
+import util
 
 from hespi import Hespi
 from hespi import DEFAULT_INSTITUTIONAL_LABEL_CLASSIFIER_WEIGHTS, DEFAULT_SHEET_COMPONENT_WEIGHTS, DEFAULT_LABEL_FIELD_WEIGHTS
@@ -65,6 +66,9 @@ def detect(
     force_download:bool = typer.Option(False, help="Whether or not to force download model weights even if a weights file is present."),
     sheet_component_res:int = typer.Option(1280, min=640, help="The resolution of images to use for the Sheet-Component model."),
     label_field_res:int = typer.Option(1280, min=640, help="The resolution of images to use for the Label-Field model."),
+    structured_print: bool = typer.Option(
+        False, help="Whether the output should be structured or verbose. Useful when running hespi as a CLI from a front-end GUI which might need structured output to show the program's progress"
+    ),
 ) -> pd.DataFrame:
     """
     HErbarium Specimen sheet PIpeline
@@ -73,6 +77,7 @@ def detect(
     It then classifies whether the institutional label is printed, typed, handwritten or a combination.
     If then detects the fields of the institutional label and attempts to read them through OCR and HTR models.
     """
+    util.set_structured_print(structured_print)
     hespi = Hespi(
         trocr_size=trocr_size,
         sheet_component_weights=sheet_component_weights,
@@ -87,7 +92,7 @@ def detect(
         llm_temperature=llm_temperature,
         htr=htr,
         sheet_component_res=sheet_component_res,
-        label_field_res=label_field_res,
+        label_field_res=label_field_res
     )
     return hespi.detect(images, output_dir)
 

@@ -1,5 +1,6 @@
 import pandas as pd
 from pathlib import Path
+import util
 
 
 def clean_value(value):
@@ -17,5 +18,5 @@ for column in ["family", "genus", "species", "authority"]:
     values = set(value for value in values if value)
     values = sorted(values)
     output_path = work_dir / f"{column}.txt"
-    print(output_path)
+    util.hprint(output_path)
     output_path.write_text("\n".join(values))

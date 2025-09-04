@@ -11,6 +11,7 @@ import json
 from math import isnan
 
 console = Console()
+structured_print = False
 
 DATA_DIR = Path(__file__).parent / "data"
 
@@ -46,7 +47,29 @@ class Generator:
    def __iter__(self):
       self.value = yield from self.gen
       return self.value
+   
+def set_structured_print(value: bool):
+   global structured_print
+   structured_print = value
 
+def hprint(message: str|Table, color: str = None, overall_progress: int = -1, progress: int = -1, skip_if_structured: bool = False):
+   global structured_print
+   if not structured_print:
+      if color is not None:
+         message = f"[{color}]{message}[/{color}]"
+      return console.print(message)
+   if skip_if_structured:
+      return
+   if type(message) is Table:
+      message = str(message)
+   console.print(
+      json.dumps({
+         "message": message,
+         "color": color,
+         "overall_progress": overall_progress,
+         "progress": progress
+      })
+   )
 
 def adjust_case(field, value):
    if field in ["genus", "family"]:
@@ -149,7 +172,7 @@ def relative_to_output(path, output_path: Path):
    try:
       return str(Path(path).relative_to(output_path.parent))
    except Exception as e:
-      print(f"Error converting path '{path}' to path relative to '{output_path.parent}': {e}")
+      hprint(f"Error converting path '{path}' to path relative to '{output_path.parent}': {e}")
       return path
    
 def clean_prediction_data(root: dict, output_path: Path) -> dict:
@@ -158,8 +181,8 @@ def clean_prediction_data(root: dict, output_path: Path) -> dict:
       if isinstance(img_paths, list):
          img_paths = [ip.absolute() for ip in img_paths]
       rel_path = relative_to_output(img_paths, output_path)
-      # print(f"Found {field} image field ({key}).\n\t- Absolute path: {img_paths}\n\t - Relative path (to {output_path.parent}): {rel_path}")
-      # print(f"Current clean_root[{field}]]: {clean_root[field]}")
+      # hprint(f"Found {field} image field ({key}).\n\t- Absolute path: {img_paths}\n\t - Relative path (to {output_path.parent}): {rel_path}")
+      # hprint(f"Current clean_root[{field}]]: {clean_root[field]}")
       if 'image' not in clean_root[field]:
          clean_root[field]['image'] = {}
       clean_root[field]['image']['relative'] = [str(p) for p in rel_path] if isinstance(rel_path, list) else str(rel_path)
@@ -170,30 +193,31 @@ def clean_prediction_data(root: dict, output_path: Path) -> dict:
          clean_root[field][subfield] = [clean_data_for_json(item) for item in root[key]]
    
    clean_root = {}
-   print(f"*** Cleaning prediction data ***")
+   # print(f"*** Cleaning prediction data ***")
    for key in root.keys():
-      print(f"\t Processing key: {key}")
+      # print(f"\t Processing key: {key}")
       is_field_key = False
       for field in label_fields:
-         # print(f"\t\t Key [{key}]")
+         # # print(f"\t\t Key [{key}]")
          if field.lower() in key.lower():
-            # print(f"\t\t [{key}]: {key}")
+            # # print(f"\t\t [{key}]: {key}")
             is_label_field = True
             subfield = key.replace(f"{field}_", "")
-            print(f"\t\t [{key}][{field} -> {subfield}]: ", end="")
+            # print(f"\t\t [{key}][{field} -> {subfield}]: ", end="")
             if field not in clean_root:
                clean_root[field] = {}
             if subfield == field:
-               print(f"Found main key of [{field}]: [{key}]")
+               # print(f"Found main key of [{field}]: [{key}]")
                clean_root[field]["match_text"] = root[key]
             elif 'image' in subfield.lower():
-               print(f"Found image key!")
+               # print(f"Found image key!")
                process_field_images()
             elif 'ocr_result' in subfield.lower():
-               print(f"Found ocr_results {subfield}")
+               # print(f"Found ocr_results {subfield}")
                process_ocr_results()
             else:
-               print(f"Found unexpected field key {subfield}")
+               # print(f"Found unexpected field key {subfield}")
+               pass
             is_field_key = True
             break
       if not is_field_key:
@@ -240,21 +264,21 @@ def ocr_data_json(data: dict, component_files: Dict = None, output_path: Path = 
    output_path = Path(output_path).absolute() if isinstance(output_path, str) else output_path.absolute()
    # Clean the component_files an extract relative paths and classification from the absolute path
    component_files = clean_sheet_components(component_files, output_path)
-
+   skip_if_structured = True
    clean_data = {}
-   print(f"\n------Cleaning JSON data. Output path: {output_path}--------")
+   hprint(f"\n------Cleaning JSON data. Output path: {output_path}--------", skip_if_structured=skip_if_structured)
    for root_key in data.keys():
       # Do not process a component_files dict if it's one of the root keys
       if "component_files" in root_key.lower():
-         print(f"Skipping key {root_key} as it is a component file")
+         hprint(f"Skipping key {root_key} as it is a component file", skip_if_structured=skip_if_structured)
          continue
-      print(f"\nCleaning JSON data for: {root_key}.\n\t-Keys: {list(data[root_key].keys())}")
+      hprint(f"\nCleaning JSON data for: {root_key}.\n\t-Keys: {list(data[root_key].keys())}", skip_if_structured=skip_if_structured)
       clean_root = clean_prediction_data(data[root_key], output_path)
       clean_root["label_file"] = root_key
       if component_files is not None:
          clean_root["component_files"] = component_files[clean_root["id"]]
          del component_files[clean_root["id"]]
-      print(f"Adding key {clean_root.get('id', 'NO_ID_KEY_IN_DICT')} to new clean JSON")
+      hprint(f"Adding key {clean_root.get('id', 'NO_ID_KEY_IN_DICT')} to new clean JSON", skip_if_structured=skip_if_structured)
       clean_data[clean_root["id"]] = clean_root
 
    # In case there is any component_files that was not in the ocr_data
@@ -332,9 +356,9 @@ def ocr_data_df(data: dict, output_path: Path = None) -> pd.DataFrame:
       if output_path.exists():
          old_df = pd.read_csv(output_path)
          write_df = pd.concat([old_df, df])
-         console.print(f"Appending Hespi text results to: '{output_path}'")
+         hprint(f"Appending Hespi text results to: '{output_path}'", skip_if_structured=True)
       else:
-         console.print(f"Writing Hespi text results to: '{output_path}'")
+         hprint(f"Writing Hespi text results to: '{output_path}'", skip_if_structured=True)
          write_df = df
 
       write_df.to_csv(output_path, index=False)
@@ -345,7 +369,7 @@ def ocr_data_df(data: dict, output_path: Path = None) -> pd.DataFrame:
       #    json_df = json_df.applymap(lambda x: str(x) if isinstance(x, Path) else x)
       #    json_df.to_json(output_path.with_suffix('.full.json'), orient="records", indent=3)
       # except Exception as e:
-      #    console.print(f"Error writing JSON file: {e}")
+      #    hprint(f"Error writing JSON file: {e}", "red")
    return df
 
 
@@ -420,7 +444,7 @@ def ocr_data_print_tables(df: pd.DataFrame) -> None:
                   ocr_result_str(row, field, ocr_type="LLM"),
                )
 
-      console.print(table)
+      hprint(table)
 
 
 def adjust_text(field: str, recognised_text: str, fuzzy: bool, fuzzy_cutoff: float, reference: Dict):
