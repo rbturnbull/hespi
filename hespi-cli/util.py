@@ -170,23 +170,38 @@ def relative_to_output(path, output_path: Path):
    if isinstance(path, list):
       return [relative_to_output(p, output_path) for p in path]
    try:
-      return str(Path(path).relative_to(output_path.parent))
+      rel_path = str(Path(path).relative_to(output_path.parent))
+      hprint(f"Converted path '{path}' to path relative to '{output_path.parent}': {rel_path}")
+      return rel_path
    except Exception as e:
       hprint(f"Error converting path '{path}' to path relative to '{output_path.parent}': {e}")
-      return path
    
 def clean_prediction_data(root: dict, output_path: Path) -> dict:
    def process_field_images():
-      img_paths:Path = root[key]
-      if isinstance(img_paths, list):
-         img_paths = [ip.absolute() for ip in img_paths]
+      img_paths = root[key]
+      try:
+         img_paths = [Path(p).absolute() for p in img_paths]
+      except Exception:
+         img_paths = Path(img_paths).absolute()         
       rel_path = relative_to_output(img_paths, output_path)
       # hprint(f"Found {field} image field ({key}).\n\t- Absolute path: {img_paths}\n\t - Relative path (to {output_path.parent}): {rel_path}")
       # hprint(f"Current clean_root[{field}]]: {clean_root[field]}")
       if 'image' not in clean_root[field]:
-         clean_root[field]['image'] = {}
-      clean_root[field]['image']['relative'] = [str(p) for p in rel_path] if isinstance(rel_path, list) else str(rel_path)
-      clean_root[field]['image']['absolute'] = [str(p) for p in img_paths] if isinstance(img_paths, list) else str(rel_path)
+         clean_root[field]['image'] = {
+            "relative": [],
+            "absolute": []
+         }
+      if rel_path:
+         if isinstance(rel_path, list):
+            clean_root[field]['image']['relative'] += [str(p) for p in rel_path]
+         else:
+            clean_root[field]['image']['relative'].append(str(rel_path))
+         
+      if img_paths:
+         if isinstance(img_paths, list):
+            clean_root[field]['image']['absolute'] += [str(p) for p in img_paths]
+         else:
+            clean_root[field]['image']['absolute'].append(str(img_paths))
       
    def process_ocr_results():
       if isinstance(root[key], list):
@@ -261,10 +276,16 @@ def ocr_data_json(data: dict, component_files: Dict = None, output_path: Path = 
    Returns:
       pd.DataFrame: The text recognition data as a Pandas dataframe
    """
+   skip_if_structured = True
    output_path = Path(output_path).absolute() if isinstance(output_path, str) else output_path.absolute()
+   try:
+      orig_path = str(output_path.parent / "hespi-original.json")
+      with open(orig_path, "w") as f:
+         json.dump(data, f, indent=3, cls=POSIXPathEncoder)
+   except Exception as e:
+      hprint(f"Error writing original JSON file to '{orig_path}': {e}", "red", skip_if_structured=skip_if_structured)
    # Clean the component_files an extract relative paths and classification from the absolute path
    component_files = clean_sheet_components(component_files, output_path)
-   skip_if_structured = True
    clean_data = {}
    hprint(f"\n------Cleaning JSON data. Output path: {output_path}--------", skip_if_structured=skip_if_structured)
    for root_key in data.keys():
