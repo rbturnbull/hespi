@@ -171,7 +171,7 @@ def relative_to_output(path, output_path: Path):
       return [relative_to_output(p, output_path) for p in path]
    try:
       rel_path = str(Path(path).relative_to(output_path.parent))
-      hprint(f"Converted path '{path}' to path relative to '{output_path.parent}': {rel_path}")
+      # hprint(f"Converted path '{path}' to path relative to '{output_path.parent}': {rel_path}")
       return rel_path
    except Exception as e:
       hprint(f"Error converting path '{path}' to path relative to '{output_path.parent}': {e}")
@@ -284,23 +284,31 @@ def ocr_data_json(data: dict, component_files: Dict = None, output_path: Path = 
          json.dump(data, f, indent=3, cls=POSIXPathEncoder)
    except Exception as e:
       hprint(f"Error writing original JSON file to '{orig_path}': {e}", "red", skip_if_structured=skip_if_structured)
+      
    # Clean the component_files an extract relative paths and classification from the absolute path
    component_files = clean_sheet_components(component_files, output_path)
+   hprint(f"Component files:\n {component_files}", skip_if_structured=skip_if_structured)
    clean_data = {}
    hprint(f"\n------Cleaning JSON data. Output path: {output_path}--------", skip_if_structured=skip_if_structured)
    for root_key in data.keys():
+      img_id = data[root_key].get("id", None)
       # Do not process a component_files dict if it's one of the root keys
       if "component_files" in root_key.lower():
          hprint(f"Skipping key {root_key} as it is a component file", skip_if_structured=skip_if_structured)
          continue
-      hprint(f"\nCleaning JSON data for: {root_key}.\n\t-Keys: {list(data[root_key].keys())}", skip_if_structured=skip_if_structured)
+      # hprint(f"\nCleaning JSON data for: {root_key}.\n\t-Keys: {list(data[root_key].keys())}", skip_if_structured=skip_if_structured)
       clean_root = clean_prediction_data(data[root_key], output_path)
       clean_root["label_file"] = root_key
-      if component_files is not None:
-         clean_root["component_files"] = component_files[clean_root["id"]]
-         del component_files[clean_root["id"]]
       hprint(f"Adding key {clean_root.get('id', 'NO_ID_KEY_IN_DICT')} to new clean JSON", skip_if_structured=skip_if_structured)
-      clean_data[clean_root["id"]] = clean_root
+      if img_id not in clean_data:
+         clean_data[img_id] = {
+            "id": img_id,
+            "primary_specimen_labels": []
+         }
+      clean_data[img_id]["primary_specimen_labels"].append(clean_root)
+      if component_files is not None and img_id in component_files:
+         clean_data[img_id]["component_files"] = component_files[img_id]
+         del component_files[img_id] # Only add component sheet component files once
 
    # In case there is any component_files that was not in the ocr_data
    if component_files is not None and len(component_files) > 0:
