@@ -8,9 +8,11 @@ from collections import defaultdict
 from rich.progress import track
 import llmloader
 import pickle
+import zipfile
+import os
 
 import util
-
+from datetime import datetime
 
 from yolo import yolo_output, predictions_filename
 from ocr import Tesseract, TrOCR, TrOCRSize
@@ -65,6 +67,8 @@ class Hespi():
       self.label_field_res = label_field_res
       self.progress = None
       self.overall_progress = 0
+      self.started_at = datetime.now()
+      self.time_str = self.started_at.strftime("%d%b%Y_%H%M%S")
 
       # Set LLM
       if not llm_model or str(llm_model).lower() == "none":
@@ -162,10 +166,10 @@ class Hespi():
    def detect(
       self,
       images: List[Path],
-      output_dir: Path,
+      out_root_dir: Path,
       report: bool = True
    ) -> Path | None:
-      gen = Generator(self.detect_progress(images, output_dir))
+      gen = Generator(self.detect_progress(images, out_root_dir))
       # Go through the generator to advance the progress until the end
       for ocr_data in gen:
          pass
@@ -175,15 +179,25 @@ class Hespi():
    def detect_progress(
       self,
       images: List[Path],
-      output_dir: Path,
+      out_root_dir: Path,
       report: bool = True,
       progress = None
    ) -> Path | None:
+      
       self.progress = progress
-
       # Clean up images input
       if isinstance(images, (Path, str)):
          images = [images]
+         
+      out_file_name = f"hespi-{self.time_str}"
+      if len(images) == 1:
+         out_file_name = f"hespi-{images[0].stem}"
+      output_dir = out_root_dir / out_file_name
+      bundle_filename = f"{out_file_name}.zip"
+      json_filename = output_dir/f"{out_file_name}.json"
+      csv_filename = output_dir/f"{out_file_name}.csv"
+      
+      
       images = [get_location(image, cache_dir=output_dir/"downloads") for image in images]
       self.overall_progress = 0
       msg = f"Processing '{images[0]}'"
@@ -216,14 +230,15 @@ class Hespi():
                   yield ocr_data[str(component)]  # Watch out for this one, it's a generator
          processed_images += 1
          self.overall_progress = processed_images / len(component_files.items())
+         
 
       with open(str(output_dir/'ocr_data.pkl'), 'wb') as f:
          ocr_data_pkl = ocr_data.copy()
          ocr_data_pkl["component_files"] = component_files
          pickle.dump(ocr_data_pkl, f)
 
-      ocr_data_json(ocr_data, component_files=component_files, output_path=output_dir/"hespi-results.json")
-      df = ocr_data_df(ocr_data, output_path=output_dir/"hespi-results.csv")
+      ocr_data_json(ocr_data, component_files=component_files, output_path=json_filename)
+      df = ocr_data_df(ocr_data, output_path=csv_filename)
       ocr_data_print_tables(df)
 
       # Write report
@@ -241,8 +256,40 @@ class Hespi():
 
          write_report(report_path, component_files, df)
 
-         return report_path
+      self.create_bundle(output_dir, out_root_dir/bundle_filename, ignored_extensions=[".log", ".pyc"])
 
+      return bundle_filename
+
+   
+   def create_bundle(self, source_dir, output_file, ignored_extensions=None):
+      """
+      Create a ZIP bundle from all files in a directory.
+      
+      Args:
+         source_dir: Directory to bundle
+         output_file: Output bundle file path
+         ignored_extensions: List of file extensions to ignore (e.g., ['.txt', '.log'])
+      """
+      if ignored_extensions is None:
+         ignored_extensions = []
+      else:
+         # Ensure all extensions are lowercase start with a dot
+         ignored_extensions = [ext.lower() if ext.startswith('.') else f'.{ext.lower()}' for ext in ignored_extensions]
+
+      util.hprint(f"Bundling up output in '{output_file}':", None, self.overall_progress)
+      with zipfile.ZipFile(output_file, 'w', zipfile.ZIP_DEFLATED, compresslevel=3) as zipf:
+         for root, dirs, files in os.walk(source_dir):
+            for file in files:
+                  # Check if file extension should be ignored
+                  file_ext = os.path.splitext(file)[1].lower()
+                  if file_ext in ignored_extensions:
+                     continue
+                  file_path = os.path.join(root, file)
+                  # Store relative path from source_dir
+                  arcname = os.path.relpath(file_path, source_dir)
+                  zipf.write(file_path, arcname)
+                     
+                     
    def primary_specimen_label_classify(self, component: Path, classification_csv: Path) -> str:
       component = Path(component)
       util.hprint(f"Classifying '{component.name}':", None, self.overall_progress)
