@@ -113,13 +113,16 @@ def output_parser(text:str) -> dict[str, str]:
 def get_llm(
     model_id:str="gpt-4o",
     api_key:str="",
+    base_url:str="",
     temperature:float=0.0,
 ) -> BaseChatModel:
-    if model_id.startswith('gpt'):
+    # Handle OpenAI and OpenAPI compatible models (including OpenRouter)
+    if model_id.startswith('gpt') or base_url:
         return ChatOpenAI(
-            openai_api_key=api_key, 
+            openai_api_key=api_key,
             temperature=temperature,
             model_name=model_id,
+            base_url=base_url if base_url else None,
         )
     
     if model_id.startswith('claude'):
