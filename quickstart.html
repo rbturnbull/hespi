@@ -130,6 +130,8 @@ There will also be a CSV file with the filename <code class="docutils literal no
 If you wish to use a different model from OpenAI or Anthropic, add it on the command-line like this: <code class="docutils literal notranslate"><span class="pre">--llm</span> <span class="pre">MODEL_NAME</span></code>
 You will need to include an API key for the LLM. This can be <code class="docutils literal notranslate"><span class="pre">OPENAI_API_KEY</span></code> for an OpenAI LLM or <code class="docutils literal notranslate"><span class="pre">ANTHROPIC_API_KEY</span></code> for Anthropic.
 You can also pass the API key to hespi with the <code class="docutils literal notranslate"><span class="pre">--llm-api-key</span> <span class="pre">API_KEY</span></code> argument.</p>
+<p>For OpenAPI compatible endpoints (such as OpenRouter), you can specify the base URL with the <code class="docutils literal notranslate"><span class="pre">--llm-base-url</span> <span class="pre">BASE_URL</span></code> argument.
+For example, to use OpenRouter, you would use: <code class="docutils literal notranslate"><span class="pre">--llm-base-url</span> <span class="pre">https://openrouter.ai/api/v1</span></code></p>
 <p>More information on the command line arguments can be found in the <a class="reference external" href="https://rbturnbull.github.io/hespi/cli.html">Command Line Reference</a> in the documentation.</p>
 <p>There is another command line utility called <code class="docutils literal notranslate"><span class="pre">hespi-tools</span></code> which provides additional functionality.
 See the <a class="reference external" href="https://rbturnbull.github.io/hespi/cli.html#hespi-tools">documentation</a> for more information.</p>
