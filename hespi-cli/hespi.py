@@ -191,6 +191,7 @@ class Hespi():
          
       out_file_name = f"hespi-{self.time_str}"
       if len(images) == 1:
+         images[0] = Path(images[0])
          out_file_name = f"hespi-{images[0].stem}"
       output_dir = out_root_dir / out_file_name
       bundle_filename = f"{out_file_name}.zip"
@@ -497,6 +498,7 @@ class Hespi():
                      'ocr': 'TrOCR',
                      'original_text_detected': htr_text,
                      'adjusted_text': adjusted_text,
+                     'edited_text': adjusted_text,
                      'match_score': match_score,
                   }
                )
@@ -519,6 +521,7 @@ class Hespi():
                   'ocr': 'Tesseract',
                   'original_text_detected': tesseract_text,
                   'adjusted_text': adjusted_text,
+                  'edited_text': adjusted_text,
                   'match_score': match_score,
                }
          )

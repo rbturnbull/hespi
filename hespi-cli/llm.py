@@ -123,6 +123,7 @@ def llm_correct_detection_results(llm:BaseChatModel, primary_specimen_label_imag
             ocr="LLM",
             original_text_detected=value,
             adjusted_text="",
+            edited_text="",
             match_score=0,
         ))
 
