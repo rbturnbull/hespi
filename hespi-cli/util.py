@@ -224,6 +224,7 @@ def clean_prediction_data(root: dict, output_path: Path) -> dict:
             if subfield == field:
                # print(f"Found main key of [{field}]: [{key}]")
                clean_root[field]["match_text"] = root[key]
+               clean_root[field]["edited_text"] = root[key]
             elif 'image' in subfield.lower():
                # print(f"Found image key!")
                process_field_images()
@@ -262,7 +263,7 @@ def clean_sheet_components(component_files: Dict, output_path: Path = None) -> D
    return clean_components
 
 
-def ocr_data_json(data: dict, component_files: Dict = None, output_path: Path = None) -> None:
+def ocr_data_json(data: dict, component_files: Dict = None, output_path: Path = None, separate_json_files=False) -> None:
    """    
    Exports a .hespi file (i.e. JSON) following the structure of the ocr_data Dict
 
@@ -313,8 +314,16 @@ def ocr_data_json(data: dict, component_files: Dict = None, output_path: Path = 
    # In case there is any component_files that was not in the ocr_data
    if component_files is not None and len(component_files) > 0:
       clean_data["_component_files"] = component_files
-   with open(str(output_path), "w") as f:
-      json.dump(clean_data, f, indent=3, cls=POSIXPathEncoder)
+      
+   if separate_json_files:
+      for img_id in clean_data.keys():
+         img_output_path = output_path.parent / f"{img_id}.hespi.json"
+         hprint(f"Writing separate Hespi text results to: '{img_output_path}'", skip_if_structured=skip_if_structured)
+         with open(str(img_output_path), "w") as f:
+            json.dump(clean_data[img_id], f, indent=3, cls=POSIXPathEncoder)
+   else:
+      with open(str(output_path), "w") as f:
+         json.dump(clean_data, f, indent=3, cls=POSIXPathEncoder)
 
 
 def ocr_data_df(data: dict, output_path: Path = None) -> pd.DataFrame:

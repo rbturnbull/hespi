@@ -498,7 +498,6 @@ class Hespi():
                      'ocr': 'TrOCR',
                      'original_text_detected': htr_text,
                      'adjusted_text': adjusted_text,
-                     'edited_text': adjusted_text,
                      'match_score': match_score,
                   }
                )
@@ -521,7 +520,6 @@ class Hespi():
                   'ocr': 'Tesseract',
                   'original_text_detected': tesseract_text,
                   'adjusted_text': adjusted_text,
-                  'edited_text': adjusted_text,
                   'match_score': match_score,
                }
          )
