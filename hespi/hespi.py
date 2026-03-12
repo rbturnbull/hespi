@@ -197,13 +197,16 @@ class Hespi():
     def primary_specimen_label_classify(self, component:Path, classification_csv:Path) -> str:
         component = Path(component)
         console.print(f"Classifying '{component.name}':")
-        classifier_results = self.primary_specimen_label_classifier(
-            items=component,
-            pretrained=self.primary_specimen_label_classifier.pretrained,
-            gpu=self.gpu,
-            output_csv=classification_csv,
-            verbose=False,
-        )
+        try:
+            classifier_results = self.primary_specimen_label_classifier(
+                items=component,
+                pretrained=self.primary_specimen_label_classifier.pretrained,
+                gpu=self.gpu,
+                output_csv=classification_csv,
+                verbose=False,
+            )
+        except Exception:
+            classifier_results = "Classifier Failure"
         # Get classification of institution label
         if isinstance(classifier_results, pd.DataFrame):
             classification = classifier_results.iloc[0]["prediction"]

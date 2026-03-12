@@ -77,6 +77,7 @@ def test_primary_specimen_label_classifier():
     assert isinstance(model, ImageClassifier)
     assert model.pretrained == weights
 
+
 @patch("hespi.llm.ChatOpenAI", mock_llm)
 def test_reference():
     hespi = Hespi()
@@ -206,6 +207,20 @@ def test_primary_specimen_label_classify():
     for path in mapper.keys():
         result = hespi.primary_specimen_label_classify(path, "csv_output") 
         assert result == path.split('.')[0]
+
+
+@patch("hespi.llm.ChatOpenAI", mock_llm)
+def test_primary_specimen_label_classify_failure():
+    hespi = Hespi()
+    targets = ["typewriter", "printed", "handwritten", ""]
+    mapper = {}
+    for t in targets:
+        mapper[f"{t}.jpg"] = pd.DataFrame([dict(prediction=t)]) if t else ""
+
+    hespi.primary_specimen_label_classifier = None
+    for path in mapper.keys():
+        result = hespi.primary_specimen_label_classify(path, "csv_output") 
+        assert result == "Classifier Failure"
 
 
 @patch('hespi.hespi.yolo_output', return_value={"species":["species.jpg"]})
