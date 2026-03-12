@@ -32,11 +32,15 @@ def detect(
     ),
     llm: str = typer.Option(
         "gpt-4o",
-        help="The Large Langauge Model to use. Currently OpenAI and Anthropic Claude models supported.",
+        help="The Large Language Model to use. Currently OpenAI, Anthropic Claude, and OpenAPI compatible models are supported. For OpenAPI compatible models, also specify --llm-base-url.",
     ),
     llm_api_key: str = typer.Option(
         "",
         help="The API key to use for the Large Language Model. Can be set as an environment variable using the standard variable names.",
+    ),
+    llm_base_url: str = typer.Option(
+        "",
+        help="The base URL for OpenAPI compatible endpoints (e.g., OpenRouter). Use this for models hosted on OpenRouter or other OpenAPI compatible services.",
     ),
     llm_temperature: float = typer.Option(
         0.0,
@@ -85,6 +89,7 @@ def detect(
         fuzzy_cutoff=fuzzy_cutoff,
         llm_model=llm,
         llm_api_key=llm_api_key,
+        llm_base_url=llm_base_url,
         llm_temperature=llm_temperature,
         htr=htr,
         batch_size=batch_size,

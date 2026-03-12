@@ -44,6 +44,7 @@ class Hespi():
         htr: bool = True,
         llm_model: str = "gpt-4o",
         llm_api_key: str = "",
+        llm_base_url: str = "",
         llm_temperature: float = 0.0,
         batch_size:int = 4,
         sheet_component_res:int = 1280,
@@ -62,7 +63,7 @@ class Hespi():
         self.label_field_res = label_field_res
 
         if llm_model and llm_model.lower() != "none":
-            self.llm = get_llm(llm_model, llm_api_key, llm_temperature)
+            self.llm = get_llm(llm_model, llm_api_key, llm_base_url, llm_temperature)
         else:
             self.llm = None
         

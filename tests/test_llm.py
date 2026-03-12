@@ -104,6 +104,13 @@ def test_get_llm_error():
 
 
 @patch("hespi.llm.ChatOpenAI", mock_llm)
+def test_get_llm_openapi():
+    # Test that OpenAPI compatible models work with base_url
+    llm = get_llm("openai-model", "test-key", "https://api.openrouter.ai/api/v1")
+    assert llm is not None
+
+
+@patch("hespi.llm.ChatOpenAI", mock_llm)
 def test_llm():
     primary_specimen_label_image = test_data_dir/"institution_label.jpg"
     detection_results = {

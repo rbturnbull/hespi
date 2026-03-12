@@ -103,6 +103,9 @@ If you wish to use a different model from OpenAI or Anthropic, add it on the com
 You will need to include an API key for the LLM. This can be ``OPENAI_API_KEY`` for an OpenAI LLM or ``ANTHROPIC_API_KEY`` for Anthropic.
 You can also pass the API key to hespi with the ``--llm-api-key API_KEY`` argument.
 
+For OpenAPI compatible endpoints (such as OpenRouter), you can specify the base URL with the ``--llm-base-url BASE_URL`` argument.
+For example, to use OpenRouter, you would use: ``--llm-base-url https://openrouter.ai/api/v1``
+
 More information on the command line arguments can be found in the `Command Line Reference <https://rbturnbull.github.io/hespi/cli.html>`_ in the documentation.
 
 There is another command line utility called ``hespi-tools`` which provides additional functionality.
