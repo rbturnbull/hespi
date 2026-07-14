@@ -288,8 +288,8 @@ def ocr_data_json(data: dict, component_files: Dict = None, output_path: Path = 
       
    # Clean the component_files an extract relative paths and classification from the absolute path
    component_files = clean_sheet_components(component_files, output_path)
-   # hprint(f"Component files:\n {component_files}", skip_if_structured=skip_if_structured)
-   # hprint(f"Current Data:\n {data}", skip_if_structured=skip_if_structured)
+   hprint(f"Component files:\n {component_files}", skip_if_structured=skip_if_structured)
+   hprint(f"Current Data:\n {data}", skip_if_structured=skip_if_structured)
    clean_data = {}
    hprint(f"\n------Cleaning JSON data. Output path: {output_path}--------", skip_if_structured=skip_if_structured)
    for root_key in data.keys():
@@ -315,16 +315,14 @@ def ocr_data_json(data: dict, component_files: Dict = None, output_path: Path = 
    # In case there is any component_files that was not in the ocr_data
    if component_files is not None and len(component_files) > 0:
       # This might also happen when the image has no primary specimen label, but the sheet component model still detected components
-      if len(data.keys()) <= 0:
-         hprint(f"Warning: There are component files that were not in the ocr_data. Adding them to the clean data.", "yellow", skip_if_structured=skip_if_structured)
-         for img_id in component_files.keys():
+      for img_id in component_files.keys():
+         if img_id not in clean_data:
+            hprint(f"Warning: There are component files that were not in the ocr_data. Adding them to the clean data.", "yellow", skip_if_structured=skip_if_structured)
             clean_data[img_id] = {
                "id": img_id,
                # "primary_specimen_labels": [],
                "component_files": component_files[img_id]
             }
-      else:
-         clean_data["_component_files"] = component_files
       
    if separate_json_files:
       for img_id in clean_data.keys():
