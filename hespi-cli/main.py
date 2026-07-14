@@ -32,7 +32,7 @@ def detect(
         help="Whether or not to do handwritten text recognition using Microsoft's TrOCR.",
     ),
     llm: str = typer.Option(
-        "gpt-4o",
+        "gpt-5.4",
         help="The Large Langauge Model to use. Currently OpenAI and Anthropic Claude models supported.",
     ),
     llm_api_key: str = typer.Option(
@@ -69,6 +69,7 @@ def detect(
     structured_print: bool = typer.Option(
         False, help="Whether the output should be structured or verbose. Useful when running hespi as a CLI from a front-end GUI which might need structured output to show the program's progress"
     ),
+    bundle_output: bool = typer.Option(False, help="Whether to create a bundle of the output files.")
 ) -> pd.DataFrame:
     """
     HErbarium Specimen sheet PIpeline
@@ -92,7 +93,8 @@ def detect(
         llm_temperature=llm_temperature,
         htr=htr,
         sheet_component_res=sheet_component_res,
-        label_field_res=label_field_res
+        label_field_res=label_field_res,
+        bundle_output=bundle_output,
     )
     return hespi.detect(images, output_dir)
 

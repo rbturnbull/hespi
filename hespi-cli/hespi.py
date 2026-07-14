@@ -29,6 +29,7 @@ DEFAULT_SHEET_COMPONENT_WEIGHTS = f"{DEFAULT_RELEASE_PREFIX}/sheet-component.pt.
 DEFAULT_LABEL_FIELD_WEIGHTS = f"{DEFAULT_RELEASE_PREFIX}/label-field.pt.gz"
 DEFAULT_INSTITUTIONAL_LABEL_CLASSIFIER_WEIGHTS = f"https://github.com/rbturnbull/hespi/releases/download/v0.4.2/institutional-label-classifier.pkl.gz"
 
+SAVE_OCR_PICKLE = False
 
 CLASSIFICATION_EMOJI = {
    "handwritten": "✍️",
@@ -49,11 +50,12 @@ class Hespi():
       fuzzy: bool = True,
       fuzzy_cutoff: float = 0.8,
       htr: bool = True,
-      llm_model: str = "gpt-4o",
+      llm_model: str = "gpt-5.4",
       llm_api_key: str = "",
       llm_temperature: float = 0.0,
       sheet_component_res: int = 1280,
-      label_field_res: int = 1280
+      label_field_res: int = 1280,
+      bundle_output: bool = False,
    ):
       self.trocr_size = trocr_size
       self.sheet_component_weights = sheet_component_weights or DEFAULT_SHEET_COMPONENT_WEIGHTS
@@ -69,7 +71,9 @@ class Hespi():
       self.overall_progress = 0
       self.started_at = datetime.now()
       self.time_str = self.started_at.strftime("%d%b%Y_%H%M%S")
+      self.bundle_output = bundle_output
 
+      util.hprint(f"Starting Hespi at {self.time_str}\nLLM model: {llm_model}, temperature: {llm_temperature}, HTR: {htr}, GPU: {gpu}, fuzzy matching: {fuzzy} (cutoff: {fuzzy_cutoff}),\nBundling output: {self.bundle_output}",)
       # Set LLM
       if not llm_model or str(llm_model).lower() == "none":
          util.hprint(f"LLM not being used", "red", self.overall_progress)
@@ -231,12 +235,12 @@ class Hespi():
                   yield ocr_data[str(component)]  # Watch out for this one, it's a generator
          processed_images += 1
          self.overall_progress = processed_images / len(component_files.items())
-         
 
-      with open(str(output_dir/'ocr_data.pkl'), 'wb') as f:
-         ocr_data_pkl = ocr_data.copy()
-         ocr_data_pkl["component_files"] = component_files
-         pickle.dump(ocr_data_pkl, f)
+      if SAVE_OCR_PICKLE:
+         with open(str(output_dir/'ocr_data.pkl'), 'wb') as f:
+            ocr_data_pkl = ocr_data.copy()
+            ocr_data_pkl["component_files"] = component_files
+            pickle.dump(ocr_data_pkl, f)
 
       ocr_data_json(ocr_data, component_files=component_files, output_path=json_filename)
       df = ocr_data_df(ocr_data, output_path=csv_filename)
@@ -257,7 +261,8 @@ class Hespi():
 
          write_report(report_path, component_files, df)
 
-      self.create_bundle(output_dir, out_root_dir/bundle_filename, ignored_extensions=[".log", ".pyc"])
+      if self.bundle_output:
+         self.create_bundle(output_dir, out_root_dir/bundle_filename, ignored_extensions=[".log", ".pyc"])
 
       return bundle_filename
 
