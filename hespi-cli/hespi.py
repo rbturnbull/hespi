@@ -30,6 +30,7 @@ DEFAULT_LABEL_FIELD_WEIGHTS = f"{DEFAULT_RELEASE_PREFIX}/label-field.pt.gz"
 DEFAULT_INSTITUTIONAL_LABEL_CLASSIFIER_WEIGHTS = f"https://github.com/rbturnbull/hespi/releases/download/v0.4.2/institutional-label-classifier.pkl.gz"
 
 SAVE_OCR_PICKLE = False
+EXPORT_CSV = False
 
 CLASSIFICATION_EMOJI = {
    "handwritten": "✍️",
@@ -198,7 +199,7 @@ class Hespi():
          images[0] = Path(images[0])
          out_file_name = f"hespi-{images[0].stem}"
       output_dir = out_root_dir / out_file_name
-      bundle_filename = f"{out_file_name}.zip"
+      bundle_filename = f"{out_file_name}.hespi"
       json_filename = output_dir/f"{out_file_name}.json"
       csv_filename = output_dir/f"{out_file_name}.csv"
       
@@ -243,7 +244,7 @@ class Hespi():
             pickle.dump(ocr_data_pkl, f)
 
       ocr_data_json(ocr_data, component_files=component_files, output_path=json_filename)
-      df = ocr_data_df(ocr_data, output_path=csv_filename)
+      df = ocr_data_df(ocr_data, output_path=csv_filename if EXPORT_CSV else None)
       ocr_data_print_tables(df)
 
       # Write report
